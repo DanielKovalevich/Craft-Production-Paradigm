@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npm-run-all --parallel compile database dev",
+    "start-win": "npm-run-all --parallel compile database-win dev",
     "database": "mongod --dbpath=./data --fork --logpath /dev/null",
+    "database-win": "mongod --dbpath=./data",
     "compile": "tsc --watch",
     "dev": "nodemon dist/server.js --watch",
     "stop": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
