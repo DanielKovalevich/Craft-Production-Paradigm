@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "strict": true,
-      "module": "commonjs",
-      "outDir": "dist",
-      "sourceMap": false
-    },
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "node_modules"
-    ]
-  }
+  "compilerOptions": {
+    "target": "es6",
+    "strict": true,
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": false
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
