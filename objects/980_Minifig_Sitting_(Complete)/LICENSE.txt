@@ -1,0 +1,18 @@
+All stl files in this archive were converted by LDView from official LDraw Library http://www.ldraw.org/
+
+Files are licensed under the Creative Commons - Attribution license.
+http://creativecommons.org/licenses/by/2.0/
+
+Attribution:
+
+980 - "Minifig Sitting (Complete)" by Leonardo Zide
+3624 - "Minifig Police Hat" by James Jessiman
+3626b - "Minifig Head with Hollow Stud" by Tore Eriksson [Tore_Eriksson]
+3815 - "Minifig Hips" by Steve Bliss [sbliss]
+3816 - "Minifig Leg Right" by Steve Bliss [sbliss]
+3817 - "Minifig Leg Left" by Steve Bliss [sbliss]
+3818 - "Minifig Arm Right" by Chris Dee [cwdee]
+3819 - "Minifig Arm Left" by Chris Dee [cwdee]
+3820 - "Minifig Hand" by Orion Pobursky [OrionP]
+3838 - "Minifig Airtanks" by Leonardo Zide
+973 - "Minifig Torso" by Steve Bliss [sbliss]

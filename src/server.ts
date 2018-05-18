@@ -1,5 +1,6 @@
 /* app/server.ts */
 import * as express from 'express';
+import * as path from 'path';
 
 // Import WelcomeController from controllers entry point
 import {WelcomeController} from './routes';
