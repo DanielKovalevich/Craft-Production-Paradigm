@@ -6,8 +6,8 @@ var camera, scene, renderer, controls;
 var plane, cube;
 var mouse, raycaster, isCtrlDown = false;
 var rollOverMesh, material, collisionBox;
-var cubeGeo, cubeMaterial;
-var objects = [];
+var planeDimensions = 1000;
+var objects = [], collisionObjects = [];
 
 var currentObj = 'twoByTwo';
 var directories = {
@@ -32,33 +32,40 @@ function init() {
     let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
     rollOverMesh = new THREE.Mesh(geometry, material);
     scene.add(rollOverMesh);
-    console.log(rollOverMesh);
     rollOverMesh.scale.set(3, 3, 3);
     rollOverMesh.rotation.x += -1.60;
     rollOverMesh.rotation.y += 0;
     rollOverMesh.rotation.z += 0;
-    rollOverMesh.position.z += 50;
 
-    var rollOverGeo = new THREE.BoxGeometry(25, 25, 25);
-    var collisionMaterial = new THREE.MeshBasicMaterial({ color: 0xff00ff, opacity: .15, transparent: true });
-    collisionBox = new THREE.Mesh(rollOverGeo, collisionMaterial);
-    scene.add(collisionBox);
-    collisionBox.position.set(0, 40, 0);
+    // generate collision box
+    let box = new THREE.Box3().setFromObject(rollOverMesh);
+    let size = new THREE.Vector3();
+    box.getSize(size);
+    let geo = new THREE.BoxGeometry(size.x, size.y, size.z);
+    let mat = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    let cube = new THREE.Mesh(geo, mat);
+    scene.add(cube);
+    cube.position.y += size.y / 2;
+    rollOverMesh.children.push(cube);
+    rollOverMesh.userData.size = size;
+
+    let helper = new THREE.BoxHelper(cube, 0xff0000);
+    helper.update();
+    // visible bounding box
+    scene.add(helper);
   });
 
-  
-  // cubes
-  cubeGeo = new THREE.BoxGeometry(25, 25, 25);
-  cubeMaterial = new THREE.MeshPhongMaterial({ color: 0xC7C7C7 });
   // grid
   var gridHelper = new THREE.GridHelper(1000, 40);
   scene.add(gridHelper);
-  //
-  var geometry = new THREE.PlaneBufferGeometry(1000, 1000);
+  // plane
+  var geometry = new THREE.PlaneBufferGeometry(planeDimensions, planeDimensions);
   geometry.rotateX(-Math.PI / 2);
-  plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
+  plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({visible: false}));
+  plane.name = 'plane';
   scene.add(plane);
-  objects.push(plane);
+  collisionObjects.push(plane);
+  //objects.push(plane);
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
   addSceneLights();
@@ -123,60 +130,18 @@ function onDocumentMouseMove(event) {
   event.preventDefault();
   mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .1))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
-  var intersects = raycaster.intersectObjects(objects);
+  var intersects = raycaster.intersectObjects(collisionObjects);
   if (intersects.length > 0) {
     var intersect = intersects[0];
+    let dim = rollOverMesh.userData.size;
     rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
-    collisionBox.position.copy(intersect.point).add(intersect.face.normal);
-    rollOverMesh.position.divideScalar(25).floor().multiplyScalar(25).addScalar(12.5);
-    rollOverMesh.position.y += 25;
-    collisionBox.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+    rollOverMesh.children[0].position.copy(intersect.point).add(intersect.face.normal);
+    // If I want to do snapping to grid, I need to figure out these numbers
+    //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
+    rollOverMesh.position.y += dim.y;
+    rollOverMesh.children[0].position.y += dim.y / 2;
   }
-  render();
-}
-
-function onDocumentMouseDown(event) {
-  event.preventDefault();
-  mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .1))) * 2 + 1);
-  raycaster.setFromCamera(mouse, camera);
-  var intersects = raycaster.intersectObjects(objects);
-  if (intersects.length > 0) {
-    var intersect = intersects[0];
-    // delete cube
-    if (isCtrlDown) {
-      if (intersect.object != plane) {
-        scene.remove(intersect.object);
-        objects.splice(objects.indexOf(intersect.object), 1);
-      }
-      // create cube
-    }
-    else {
-      /*
-      var voxel = new THREE.Mesh(rollOverMesh, cubeMaterial);
-      voxel.position.copy(intersect.point).add(intersect.face.normal);
-      voxel.position.divideScalar(25).floor().multiplyScalar(25).addScalar(12.5);
-      scene.add(voxel);
-      objects.push(voxel);*/
-      let loader = new THREE.STLLoader();
-      loader.load(directories[currentObj], function (geometry) {
-        geometry.computeBoundingSphere();
-        let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
-        let voxel = new THREE.Mesh(geometry, material);
-        voxel.rotation.x += -1.60;
-        voxel.rotation.y += 0;
-        voxel.rotation.z += 0;
-        voxel.scale.set(3,3,3);
-
-        voxel.position.copy(intersect.point).add(intersect.face.normal);
-        voxel.position.divideScalar(25).floor().multiplyScalar(25).addScalar(12.5);
-        voxel.position.y += 25;
-
-        scene.add(voxel);
-        objects.push(voxel);
-      });
-    }
-    render();
-  }
+  render(); 
 }
 
 // handles all the keyboard presses
@@ -195,6 +160,7 @@ function onDocumentKeyDown(event) {
   }
   camera.position.add(vector);
 }
+
 function onDocumentKeyUp(event) {
   switch (event.keyCode) {
     case 17:
@@ -202,10 +168,136 @@ function onDocumentKeyUp(event) {
       break;
   }
 }
+
 function render() {
   renderer.render(scene, camera);
 }
+
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+}
+
+/**
+ * Functions below deal with the creation and deletion of the legos
+ */
+
+function onDocumentMouseDown(event) {
+  event.preventDefault();
+  mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .1))) * 2 + 1);
+  raycaster.setFromCamera(mouse, camera);
+  var intersects = raycaster.intersectObjects(collisionObjects);
+  var objIntersect = raycaster.intersectObjects(objects);
+  if (intersects.length > 0 || objIntersect.length > 0) {
+    var intersect = intersects[0];
+    var objIntersect = objIntersect[0];
+    // delete cube
+    if (isCtrlDown) {
+      // FIXME: Bug that doesn't delete object if collision object has been already deleted
+      if (intersect.object != plane) {
+        if (intersect) {
+          scene.remove(intersect.object); 
+          collisionObjects.splice(collisionObjects.indexOf(intersect.object), 1);
+        }
+        if (objIntersect) {
+          scene.remove(objIntersect.object);
+          objects.splice(objects.indexOf(objIntersect.object), 1);
+        }
+      }
+    }
+    else {
+      placeLego(intersect);
+    }
+    render();
+  }
+}
+
+function placeLego(intersect) {
+  let loader = new THREE.STLLoader();
+  loader.load(directories[currentObj], function (geometry) {
+    geometry.computeBoundingBox();
+    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
+    let voxel = new THREE.Mesh(geometry, material);
+    voxel.rotation.x += -1.60;
+    voxel.rotation.y += 0;
+    voxel.rotation.z += 0;
+    voxel.scale.set(3,3,3);
+
+    /*console.log("----------------------INTERSECT-----------------------");
+    console.log(intersect);
+    console.log(intersect.face);
+    console.log("----------------------INTERSECT-----------------------");*/
+
+    scene.add(voxel);
+
+    let box = new THREE.Box3().setFromObject(voxel);
+    let size = new THREE.Vector3();
+    box.getSize(size);
+
+    // QUICK MAFFS
+    if (intersect.object.name == 'plane') {
+      // makes sure that the plane can handle snapping objects of different sizes
+      // Stops objects from overlapping (Legos don't overlap)
+      let normalizedCoord = {};
+      normalizedCoord.x = Math.floor(intersect.point.x);
+      normalizedCoord.z = Math.floor(intersect.point.z);
+      normalizedCoord.x += normalizedCoord.x < 0 ? size.x / 2 : size.x / -2;
+      normalizedCoord.z += normalizedCoord.z < 0 ? size.z / 2 : size.z / -2;
+      normalizedCoord.x = Math.floor(normalizedCoord.x / size.x);
+      normalizedCoord.z = Math.floor(normalizedCoord.z / size.z);
+      //voxel.position.copy(intersect.point).add(intersect.face.normal);
+      voxel.position.x = size.x / 2 + size.x * normalizedCoord.x;
+      voxel.position.z = size.z / 2 + size.z * normalizedCoord.z;
+      voxel.position.y += size.y;
+    }
+    else {
+      /**
+       * This is when an object is placed on another
+       * Determines the face of the object then moves accordingly
+       */
+      console.log('object on object');
+      voxel.position.copy(intersect.object.position);
+      let dim = intersect.face.normal;
+      dim.normalize();
+      if (dim.z == 1) voxel.position.z += size.z;
+      else if (dim.x == 1) voxel.position.x += size.x;
+      else if (dim.y == 1) voxel.position.y += size.y;
+      else if (dim.z == -1) voxel.position.z -= size.z;
+      else if (dim.x == -1) voxel.position.x -= size.x;
+      else voxel.position.y -= size.y;
+      console.log(size);
+      voxel.position.y += Math.floor(size.y / 2);
+    }
+
+    // Create the collision cube
+    let geo = new THREE.BoxGeometry(size.x, size.y, size.z);
+    let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
+    let cube = new THREE.Mesh(geo, mat);
+    scene.add(cube);
+    cube.position.copy(voxel.position);
+    cube.position.y -= size.y / 2;
+    collisionObjects.push(cube);
+
+    // TODO: Remove this when I finish these functions
+    let helper = new THREE.BoxHelper(cube, 0xff0000);
+    helper.update();
+    // visible bounding box
+    scene.add(helper);
+    
+    // add names to all of the objects for debugging purposes
+    voxel.name = 'obj' + objects.length;
+    cube.name = voxel.name + '.collisionObj';
+    helper.name = voxel.name + ".helper";
+
+    cube.children.push(voxel);
+
+    /*
+    console.log('----------------Testing------------------');
+    console.log(voxel);
+    console.log(cube);
+    console.log('----------------Testing------------------');
+    */
+
+    objects.push(voxel);
+  });
 }
