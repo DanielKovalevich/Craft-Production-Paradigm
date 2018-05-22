@@ -41,18 +41,9 @@ function init() {
     let box = new THREE.Box3().setFromObject(rollOverMesh);
     let size = new THREE.Vector3();
     box.getSize(size);
-    let geo = new THREE.BoxGeometry(size.x, size.y, size.z);
-    let mat = new THREE.MeshBasicMaterial({color: 0x00ff00});
-    let cube = new THREE.Mesh(geo, mat);
-    scene.add(cube);
-    cube.position.y += size.y / 2;
-    rollOverMesh.children.push(cube);
-    rollOverMesh.userData.size = size;
 
-    let helper = new THREE.BoxHelper(cube, 0xff0000);
-    helper.update();
-    // visible bounding box
-    scene.add(helper);
+    rollOverMesh.position.y += size.y;
+    rollOverMesh.userData.size = size;
   });
 
   // grid
@@ -134,12 +125,7 @@ function onDocumentMouseMove(event) {
   if (intersects.length > 0) {
     var intersect = intersects[0];
     let dim = rollOverMesh.userData.size;
-    rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
-    rollOverMesh.children[0].position.copy(intersect.point).add(intersect.face.normal);
-    // If I want to do snapping to grid, I need to figure out these numbers
-    //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
-    rollOverMesh.position.y += dim.y;
-    rollOverMesh.children[0].position.y += dim.y / 2;
+    changeObjPosOnPlane(rollOverMesh, intersect, dim);
   }
   render(); 
 }
@@ -236,18 +222,7 @@ function placeLego(intersect) {
 
     // QUICK MAFFS
     if (intersect.object.name == 'plane') {
-      // makes sure that the plane can handle snapping objects of different sizes
-      // Stops objects from overlapping (Legos don't overlap)
-      let normalizedCoord = {};
-      normalizedCoord.x = Math.floor(intersect.point.x);
-      normalizedCoord.z = Math.floor(intersect.point.z);
-      normalizedCoord.x += normalizedCoord.x < 0 ? size.x / 2 : size.x / -2;
-      normalizedCoord.z += normalizedCoord.z < 0 ? size.z / 2 : size.z / -2;
-      normalizedCoord.x = Math.floor(normalizedCoord.x / size.x);
-      normalizedCoord.z = Math.floor(normalizedCoord.z / size.z);
-      //voxel.position.copy(intersect.point).add(intersect.face.normal);
-      voxel.position.x = size.x / 2 + size.x * normalizedCoord.x;
-      voxel.position.z = size.z / 2 + size.z * normalizedCoord.z;
+      changeObjPosOnPlane(voxel, intersect, size);
       voxel.position.y += size.y;
     }
     else {
@@ -300,4 +275,26 @@ function placeLego(intersect) {
 
     objects.push(voxel);
   });
+}
+
+/**
+ * Changes position of passed in object so that it snaps to grid
+ * This is to avoid overlapping that can happen if two objects are too close
+ * This allows the plane to handle the different sized legos
+ * @param {THREE.Mesh} obj 
+ * @param {THREE.Object3D} intersect
+ * @param {THREE.Vector3} size
+ */
+function changeObjPosOnPlane(obj, intersect, size) {
+  // QUICK MAFFS
+  let normalizedCoord = {};
+  normalizedCoord.x = Math.floor(intersect.point.x);
+  normalizedCoord.z = Math.floor(intersect.point.z);
+  normalizedCoord.x += normalizedCoord.x < 0 ? size.x / 2 : size.x / -2;
+  normalizedCoord.z += normalizedCoord.z < 0 ? size.z / 2 : size.z / -2;
+  normalizedCoord.x = Math.floor(normalizedCoord.x / size.x);
+  normalizedCoord.z = Math.floor(normalizedCoord.z / size.z);
+  //obj.position.copy(intersect.point).add(intersect.face.normal);
+  obj.position.x = size.x / 2 + size.x * normalizedCoord.x;
+  obj.position.z = size.z / 2 + size.z * normalizedCoord.z;
 }
