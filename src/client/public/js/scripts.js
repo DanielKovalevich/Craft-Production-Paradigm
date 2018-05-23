@@ -15,6 +15,7 @@ var directories = {
   oneByOne: '../objects/1x1.stl',
   twoByTwo: '../objects/2x2.stl'
 }
+var pieces = ['lego_man', 'oneByOne', 'twoByTwo'];
 
 init();
 animate();
@@ -25,37 +26,7 @@ function init() {
   initCamera();
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf0f0f0);
-  // roll-over helpers
-  let loader = new THREE.STLLoader();
-  loader.load(directories[currentObj], function (geometry) {
-    geometry.computeBoundingBox();
-    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
-    rollOverMesh = new THREE.Mesh(geometry, material);
-    scene.add(rollOverMesh);
-    rollOverMesh.scale.set(3, 3, 3);
-    rollOverMesh.rotation.x += -1.60;
-    rollOverMesh.rotation.y += 0;
-    rollOverMesh.rotation.z += 0;
-
-    // generate collision box
-    let box = new THREE.Box3().setFromObject(rollOverMesh);
-    let size = new THREE.Vector3();
-    box.getSize(size);
-
-    rollOverMesh.position.y += size.y;
-    rollOverMesh.userData.size = size;
-  });
-
-  // grid
-  var gridHelper = new THREE.GridHelper(1000, 40);
-  scene.add(gridHelper);
-  // plane
-  var geometry = new THREE.PlaneBufferGeometry(planeDimensions, planeDimensions);
-  geometry.rotateX(-Math.PI / 2);
-  plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({visible: false}));
-  plane.name = 'plane';
-  scene.add(plane);
-  collisionObjects.push(plane);
+  createGridAndPlane();
   //objects.push(plane);
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
@@ -111,6 +82,17 @@ function addSceneLights() {
   container.appendChild(renderer.domElement);
 }
 
+function createGridAndPlane() {
+  var gridHelper = new THREE.GridHelper(1000, 40);
+  scene.add(gridHelper);
+  var geometry = new THREE.PlaneBufferGeometry(planeDimensions, planeDimensions);
+  geometry.rotateX(-Math.PI / 2);
+  plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({visible: false}));
+  plane.name = 'plane';
+  scene.add(plane);
+  collisionObjects.push(plane);
+}
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / (window.innerHeight + (window.innerHeight * .1));
   camera.updateProjectionMatrix();
@@ -123,9 +105,25 @@ function onDocumentMouseMove(event) {
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
   if (intersects.length > 0) {
-    var intersect = intersects[0];
-    let dim = rollOverMesh.userData.size;
-    changeObjPosOnPlane(rollOverMesh, intersect, dim);
+    // Need to load the rollOverMesh once the user enters the plane one again
+    // this is to avoid lingering rollOverMeshes when you cycle through different pieces
+    if (!rollOverMesh) loadRollOverMesh();
+    else {
+      let dim = rollOverMesh.userData.size;
+      var intersect = intersects[0];
+      if (intersect.object.name == 'plane') 
+        changeObjPosOnPlane(rollOverMesh, intersect, dim);
+      else {
+        rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
+        // If I want to do snapping to grid, I need to figure out these numbers
+        //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
+        rollOverMesh.position.y += dim.y / 2;
+      }
+    }
+  }
+  else {
+    scene.remove(rollOverMesh);
+    rollOverMesh = null;
   }
   render(); 
 }
@@ -164,8 +162,33 @@ function animate() {
   controls.update();
 }
 
+function loadRollOverMesh() {
+  let loader = new THREE.STLLoader();
+  loader.load(directories[currentObj], function (geometry) {
+    geometry.computeBoundingBox();
+    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
+    rollOverMesh = new THREE.Mesh(geometry, material);
+    scene.add(rollOverMesh);
+    rollOverMesh.scale.set(3, 3, 3);
+    rollOverMesh.rotation.x += -1.60;
+    rollOverMesh.rotation.y += 0;
+    rollOverMesh.rotation.z += 0;
+
+    // generate collision box
+    let box = new THREE.Box3().setFromObject(rollOverMesh);
+    let size = new THREE.Vector3();
+    box.getSize(size);
+
+    rollOverMesh.position.y += size.y;
+    rollOverMesh.userData.size = size;
+  });
+}
+
 /**
+ * ================================================================
  * Functions below deal with the creation and deletion of the legos
+ * ================================================================
+ * 
  */
 
 function onDocumentMouseDown(event) {
@@ -298,3 +321,15 @@ function changeObjPosOnPlane(obj, intersect, size) {
   obj.position.x = size.x / 2 + size.x * normalizedCoord.x;
   obj.position.z = size.z / 2 + size.z * normalizedCoord.z;
 }
+
+/**
+ * ================================================================
+ *                    HTML BUTTOM FUNCTIONS
+ * ================================================================
+ */
+
+ function cycle() {
+  let index = pieces.indexOf(currentObj);
+  currentObj = ++index == pieces.length ? pieces[0] : pieces[index];
+  loadRollOverMesh();
+ }
