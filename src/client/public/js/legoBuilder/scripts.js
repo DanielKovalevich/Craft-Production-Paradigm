@@ -1,4 +1,16 @@
+/**
+ * author: Daniel Kovalevich
+ * purpose: Created for research project with Dr. Aqlan of PSU
+ */
+
 'use strict';
+
+/**
+ * ================================================================
+ *          INITIALIZE SCENE AND STATE VARIABLES
+ * ================================================================
+ */
+
 if (!Detector.webgl)
   Detector.addGetWebGLMessage();
 var container;
@@ -8,18 +20,14 @@ var mouse, raycaster, isCtrlDown = false;
 var rollOverMesh, material, collisionBox;
 var planeDimensions = 1000;
 var objects = [], collisionObjects = [];
+var currentObj = twoByTwo;
 
-var currentObj = 'twoByTwo';
-var directories = {
-  lego_man: '../objects/lego_man.stl',
-  oneByOne: '../objects/1x1.stl',
-  twoByTwo: '../objects/2x2.stl'
-}
-var pieces = ['lego_man', 'oneByOne', 'twoByTwo'];
-
-init();
-animate();
-render();
+// Kicks off the program
+$(function() {
+  init();
+  animate();
+  render();
+});
 
 function init() {
   generateHeaderInfo();
@@ -27,6 +35,7 @@ function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf0f0f0);
   createGridAndPlane();
+  loadRollOverMesh();
   //objects.push(plane);
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
@@ -66,7 +75,10 @@ function generateHeaderInfo() {
   //info.style.top = '10px';
   info.style.width = '100%';
   info.style.textAlign = 'center';
-  info.innerHTML = '<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - lego painter - webgl<br><strong>click</strong>: add voxel, <strong>ctrl + click</strong>: remove voxel';
+  info.innerHTML = 
+    '<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>' +
+    '- lego painter - webgl<br>' + 
+    '<strong>click</strong>: add voxel, <strong>ctrl + click</strong>: remove voxel';
   container.appendChild(info);
 }
 
@@ -96,8 +108,45 @@ function createGridAndPlane() {
 function onWindowResize() {
   camera.aspect = window.innerWidth / (window.innerHeight + (window.innerHeight * .1));
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight - window.innerHeight * .1);
 }
+
+function render() { renderer.render(scene, camera); }
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+}
+
+function loadRollOverMesh() {
+  let loader = new THREE.STLLoader();
+  let index = allModels.indexOf(currentObj);
+  loader.load(allModels[index].directory, function (geometry) {
+    geometry.computeBoundingBox();
+    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
+    rollOverMesh = new THREE.Mesh(geometry, material);
+    scene.add(rollOverMesh);
+    rollOverMesh.scale.set(3, 3, 3);
+    rollOverMesh.rotation.x += -1.60;
+    rollOverMesh.rotation.y += 0;
+    rollOverMesh.rotation.z += 0;
+
+    // generate collision box
+    let box = new THREE.Box3().setFromObject(rollOverMesh);
+    let size = new THREE.Vector3();
+    box.getSize(size);
+
+    rollOverMesh.position.y += (currentObj.modelBottomAnchor ? 0 : size.y);
+    rollOverMesh.userData.dimensions = size;
+    rollOverMesh.name = 'rollOverMesh';
+  });
+}
+
+/**
+ * ================================================================
+ *                  KEYBOARD AND MOUSE INPUT
+ * ================================================================
+ */
 
 function onDocumentMouseMove(event) {
   event.preventDefault();
@@ -107,23 +156,30 @@ function onDocumentMouseMove(event) {
   if (intersects.length > 0) {
     // Need to load the rollOverMesh once the user enters the plane one again
     // this is to avoid lingering rollOverMeshes when you cycle through different pieces
-    if (!rollOverMesh) loadRollOverMesh();
+    if (scene.children.indexOf(rollOverMesh) == -1) scene.add(rollOverMesh);
     else {
-      let dim = rollOverMesh.userData.size;
+      let dim = rollOverMesh.userData.dimensions;
       var intersect = intersects[0];
-      if (intersect.object.name == 'plane') 
+      if (intersect.object.name == 'plane')  {
         changeObjPosOnPlane(rollOverMesh, intersect, dim);
+        rollOverMesh.position.y = (currentObj.modelBottomAnchor ? 0 : rollOverMesh.userData.dimensions.y);
+      }
       else {
         rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
         // If I want to do snapping to grid, I need to figure out these numbers
         //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
-        rollOverMesh.position.y += dim.y / 2;
+        let intersectY = intersect.object.userData.dimensions.y;
+        rollOverMesh.position.y = intersectY + (intersect.point.y - intersectY) + (currentObj.modelBottomAnchor ? 0 : dim.y);
       }
     }
   }
   else {
-    scene.remove(rollOverMesh);
-    rollOverMesh = null;
+    // solves issue that if you rapidly click the cylce button
+    // it would place unremovable rollOverMeshes on the scene
+    scene.children.forEach(element => {
+      if (element.name == 'rollOverMesh')
+        scene.remove(element);
+    });
   }
   render(); 
 }
@@ -153,40 +209,9 @@ function onDocumentKeyUp(event) {
   }
 }
 
-function render() {
-  renderer.render(scene, camera);
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-}
-
-function loadRollOverMesh() {
-  let loader = new THREE.STLLoader();
-  loader.load(directories[currentObj], function (geometry) {
-    geometry.computeBoundingBox();
-    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
-    rollOverMesh = new THREE.Mesh(geometry, material);
-    scene.add(rollOverMesh);
-    rollOverMesh.scale.set(3, 3, 3);
-    rollOverMesh.rotation.x += -1.60;
-    rollOverMesh.rotation.y += 0;
-    rollOverMesh.rotation.z += 0;
-
-    // generate collision box
-    let box = new THREE.Box3().setFromObject(rollOverMesh);
-    let size = new THREE.Vector3();
-    box.getSize(size);
-
-    rollOverMesh.position.y += size.y;
-    rollOverMesh.userData.size = size;
-  });
-}
-
 /**
  * ================================================================
- * Functions below deal with the creation and deletion of the legos
+ *        CREATION AND DELETION OF THE MODELS IN THE SCENE
  * ================================================================
  * 
  */
@@ -221,32 +246,30 @@ function onDocumentMouseDown(event) {
   }
 }
 
+/**
+ * Handles placing the object on the scene and creating the collision object
+ * @param {THREE.Intersection} intersect 
+ */
 function placeLego(intersect) {
   let loader = new THREE.STLLoader();
-  loader.load(directories[currentObj], function (geometry) {
+  let index = allModels.indexOf(currentObj);
+  loader.load(allModels[index].directory, function (geometry) {
     geometry.computeBoundingBox();
-    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
+    let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
     let voxel = new THREE.Mesh(geometry, material);
     voxel.rotation.x += -1.60;
     voxel.rotation.y += 0;
     voxel.rotation.z += 0;
     voxel.scale.set(3,3,3);
-
-    /*console.log("----------------------INTERSECT-----------------------");
-    console.log(intersect);
-    console.log(intersect.face);
-    console.log("----------------------INTERSECT-----------------------");*/
-
     scene.add(voxel);
 
     let box = new THREE.Box3().setFromObject(voxel);
     let size = new THREE.Vector3();
     box.getSize(size);
 
-    // QUICK MAFFS
     if (intersect.object.name == 'plane') {
       changeObjPosOnPlane(voxel, intersect, size);
-      voxel.position.y += size.y;
+      voxel.position.y += currentObj.modelBottomAnchor ? 0 : size.y;
     }
     else {
       /**
@@ -254,17 +277,10 @@ function placeLego(intersect) {
        * Determines the face of the object then moves accordingly
        */
       console.log('object on object');
-      voxel.position.copy(intersect.object.position);
       let dim = intersect.face.normal;
       dim.normalize();
-      if (dim.z == 1) voxel.position.z += size.z;
-      else if (dim.x == 1) voxel.position.x += size.x;
-      else if (dim.y == 1) voxel.position.y += size.y;
-      else if (dim.z == -1) voxel.position.z -= size.z;
-      else if (dim.x == -1) voxel.position.x -= size.x;
-      else voxel.position.y -= size.y;
-      console.log(size);
-      voxel.position.y += Math.floor(size.y / 2);
+      //console.log(intersect.object.position, rollOverMesh.position, intersect.point);
+      determineModelPosition(voxel, intersect, size, dim);
     }
 
     // Create the collision cube
@@ -273,8 +289,10 @@ function placeLego(intersect) {
     let cube = new THREE.Mesh(geo, mat);
     scene.add(cube);
     cube.position.copy(voxel.position);
-    cube.position.y -= size.y / 2;
+    // some of these models are stupid and require special treatment ...
+    cube.position.y -= (currentObj.modelBottomAnchor ? -size.y / 2 : size.y / 2);
     collisionObjects.push(cube);
+
 
     // TODO: Remove this when I finish these functions
     let helper = new THREE.BoxHelper(cube, 0xff0000);
@@ -286,18 +304,55 @@ function placeLego(intersect) {
     voxel.name = 'obj' + objects.length;
     cube.name = voxel.name + '.collisionObj';
     helper.name = voxel.name + ".helper";
+    cube.userData.dimensions = size;
 
     cube.children.push(voxel);
-
-    /*
-    console.log('----------------Testing------------------');
-    console.log(voxel);
-    console.log(cube);
-    console.log('----------------Testing------------------');
-    */
-
     objects.push(voxel);
   });
+}
+
+/**
+ * Determines which face of the model the object is being placed on
+ * and then adjusts the objects position in the scene accoridingly 
+ * @param {THREE.Mesh} voxel 
+ * @param {THREE.Intersection} intersect 
+ * @param {THREE.Vector3} size 
+ * @param {THREE.Vector3} dim 
+ */
+function determineModelPosition(voxel, intersect, size, dim) {
+  let rollPos = rollOverMesh.position;
+  let interPos = intersect.object.position;
+
+  if (dim.z == 1) {
+    voxel.position.z = interPos.z + size.z;
+    voxel.position.y = rollPos.y;
+    voxel.position.x = rollPos.x;
+  }
+  else if (dim.x == 1) {
+    voxel.position.x = interPos.x + size.x;
+    voxel.position.y = rollPos.y;
+    voxel.position.z = rollPos.z;
+  }
+  else if (dim.y == 1) {
+    voxel.position.y = currentObj.modelBottomAnchor ? rollPos.y : size.y + (size.y / 2) + interPos.y;
+    voxel.position.x = rollPos.x;
+    voxel.position.z = rollPos.z;
+  }
+  else if (dim.z == -1) {
+    voxel.position.z = interPos.z - size.z;
+    voxel.position.y = rollPos.y;
+    voxel.position.x = rollPos.x;
+  }
+  else if (dim.x == -1) {
+    voxel.position.x = interPos.x - size.x;
+    voxel.position.y = rollPos.y;
+    voxel.position.z = rollPos.z;
+  }
+  else {
+    voxel.position.y = interPos.y - (size.y / 2) - size.y;
+    voxel.position.x = rollPos.x;
+    voxel.position.z = rollPos.z;
+  }
 }
 
 /**
@@ -329,7 +384,7 @@ function changeObjPosOnPlane(obj, intersect, size) {
  */
 
  function cycle() {
-  let index = pieces.indexOf(currentObj);
-  currentObj = ++index == pieces.length ? pieces[0] : pieces[index];
+  let index = allModels.indexOf(currentObj);
+  currentObj = ++index == allModels.length ? allModels[0] : allModels[index];
   loadRollOverMesh();
  }
