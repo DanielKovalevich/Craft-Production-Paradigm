@@ -4,42 +4,42 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>My first three.js app</title>
-		<link rel="stylesheet" type="text/css" href="css/builder.css">
     <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
 		<script src="semantic/dist/semantic.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/builder.css">
 	</head>
 	<body>
     <div>
-      <div class="ui buttons">
+      <div id="models" class="ui buttons">
         <button class="ui button" onclick="getModel('lego_man');">Man</button>
         <button class="ui button" onclick="getModel('oneByOne');">1x1</button>
 				<button class="ui button" onclick="getModel('twoByTwo');">2x2</button>
 				<button class="ui button" onclick="getModel('oneByTwoPin');">1x2wPin</button>
-        <button class="ui button" onclick="getModel('tire1');">Tire 1</button>
+				<button class="ui button" onclick="getModel('twoByTwoPin');">2x2wPin</button>
+				<button class="ui button" onclick="getModel('twoByTwoByTwoPin');">2x2x2wPin</button>
+				<button class="ui button" onclick="getModel('twoByTwoDouble');">2x2 Double</button>
+				<button class="ui button" onclick="getModel('tire1');">Tire 1</button>
+				<button class="ui button" onclick="getModel('tire2');">Tire 2</button>
+				<button class="ui button" onclick="getModel('tire3');">Tire 3</button>
+        <button class="ui button" onclick="getModel('rim1');">Rim 1</button>
+				<button class="ui button" onclick="getModel('rim2');">Rim 2</button>
+				<button class="ui button" onclick="getModel('rim3');">Rim 3</button>
 				<button class="ui button" onclick="getModel('twoByThreeByTwo');">2x3x2</button>
 				<button class="ui button" onclick="getModel('oneByTwo');">1x2</button>
         <button class="ui button" onclick="getModel('oneByFour');">1x4</button>
-				<button class="ui button" onclick="getModel('lego_man');">9</button>
-				<button class="ui button" onclick="getModel('lego_man');">10</button>
-        <button class="ui button" onclick="getModel('lego_man');">11</button>
-				<button class="ui button" onclick="getModel('lego_man');">12</button>
-				<button class="ui button" onclick="getModel('lego_man');">13</button>
-        <button class="ui button" onclick="getModel('lego_man');">14</button>
-				<button class="ui button" onclick="getModel('lego_man');">15</button>
-				<button class="ui button" onclick="getModel('lego_man');">16</button>
-        <button class="ui button" onclick="getModel('lego_man');">17</button>
-				<button class="ui button" onclick="getModel('lego_man');">18</button>
-				<button class="ui button" onclick="getModel('lego_man');">19</button>
-        <button class="ui button" onclick="getModel('lego_man');">20</button>
-        <button class="ui button" onclick="getModel('lego_man');">21</button>
+				<button class="ui button" onclick="getModel('oneByTwoPlate');">1x2P</button>
+				<button class="ui button" onclick="getModel('fourBySixPlate');">4x6P</button>
+				<button class="ui button" onclick="getModel('sixByEightPlate');">6x8P</button>
+				<button class="ui button" onclick="getModel('twoByTenPlate');">2x10P</button>
+				<button class="ui button" onclick="getModel('windshield');">Windshield</button>
+        <button class="ui button" onclick="getModel('steering');">Steering Wheel</button>
 			</div>
 			<div id="header-info">
-					<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>
-					- lego painter - webgl
+					Powered by: <a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>
 					<br>
 					<strong>shift + click</strong>: add voxel, <strong>ctrl + click</strong>: remove voxel
 			</div>

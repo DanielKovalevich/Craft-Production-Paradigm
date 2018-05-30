@@ -11,7 +11,9 @@ canvas {
   height: 100% 
 }
 
-#header-info {
+#header-info, #models {
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
   background-color: #f0f0f0;
 }

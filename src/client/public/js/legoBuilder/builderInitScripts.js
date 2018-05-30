@@ -54,11 +54,11 @@ function initCamera() {
   camera.lookAt(new THREE.Vector3());
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.rotateSpeed = 1.0;
-  controls.zoomSpeed = 1.2;
+  controls.zoomSpeed = 1;
   controls.panSpeed = 0.8;
   controls.enableZoom = true;
   controls.enablePan = true;
-  controls.enableDamping = true;
+  controls.enableDamping = false;
   controls.dampingFactor = 0.75;
   controls.minDistance = 200;
 	controls.maxDistance = 2000;

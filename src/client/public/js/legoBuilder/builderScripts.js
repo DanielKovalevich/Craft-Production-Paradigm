@@ -7,7 +7,7 @@ function loadRollOverMesh() {
     rollOverMesh = new THREE.Mesh(geometry, material);
     scene.add(rollOverMesh);
     rollOverMesh.scale.set(currentObj.scale, currentObj.scale, currentObj.scale);
-    rollOverMesh.rotation.x += -1.60;
+    rollOverMesh.rotation.x += -1.57;
     rollOverMesh.rotation.y += 0;
     rollOverMesh.rotation.z += 0;
 
@@ -146,7 +146,7 @@ function placeLego(intersect) {
     geometry.computeBoundingBox();
     let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
     let voxel = new THREE.Mesh(geometry, material);
-    voxel.rotation.x += -1.60;
+    voxel.rotation.x += -1.57;
     voxel.rotation.y += 0;
     voxel.rotation.z += 0;
     voxel.scale.set(currentObj.scale,currentObj.scale,currentObj.scale);
@@ -245,9 +245,17 @@ function determineModelPosition(voxel, intersect, size, dim) {
   }
 }
 
+/**
+ * A lot of the models have different center points
+ * so I need to make sure all they link correctly with the plane and other modles
+ */
 function determineModelYTranslation() {
+  // whoever made these retarded models needs to learn about consistency
+  if (currentObj.name == 'steering') {
+    return rollOverMesh.userData.dimensions.y / 2 - 9;
+  }
   switch(currentObj.yTranslation) {
-    case 1: return rollOverMesh.userData.dimensions.y - 7;
+    case 1: return rollOverMesh.userData.dimensions.y - 5;
     case 0: return rollOverMesh.userData.dimensions.y / 2;
     case -1: return 0;
   }
