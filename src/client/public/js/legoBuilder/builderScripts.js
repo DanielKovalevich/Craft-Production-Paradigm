@@ -1,123 +1,3 @@
-/**
- * author: Daniel Kovalevich
- * purpose: Created for research project with Dr. Aqlan of PSU
- */
-
-'use strict';
-
-/**
- * ================================================================
- *          INITIALIZE SCENE AND STATE VARIABLES
- * ================================================================
- */
-
-if (!Detector.webgl)
-  Detector.addGetWebGLMessage();
-var container;
-var camera, scene, renderer, controls;
-var plane, cube;
-var mouse, raycaster, isCtrlDown = false;
-var rollOverMesh, material, collisionBox;
-var planeDimensions = 1000;
-var objects = [], collisionObjects = [];
-var currentObj = twoByTwo;
-
-// Kicks off the program
-$(function() {
-  init();
-  animate();
-  render();
-});
-
-function init() {
-  generateHeaderInfo();
-  initCamera();
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf0f0f0);
-  createGridAndPlane();
-  loadRollOverMesh();
-  //objects.push(plane);
-  raycaster = new THREE.Raycaster();
-  mouse = new THREE.Vector2();
-  addSceneLights();
-  // Event listeners
-  document.addEventListener('mousemove', onDocumentMouseMove, false);
-  document.addEventListener('mousedown', onDocumentMouseDown, false);
-  document.addEventListener('keydown', onDocumentKeyDown, false);
-  document.addEventListener('keyup', onDocumentKeyUp, false);
-  window.addEventListener('resize', onWindowResize, false);
-}
-
-// Initializes the camera -- Allows to use mouse wheel to zoom
-function initCamera() {
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / (window.innerHeight + (window.innerHeight * .1)), 1, 10000);
-  camera.position.set(0, 500, 800);
-  camera.lookAt(new THREE.Vector3());
-  controls = new THREE.TrackballControls(camera);
-  controls.rotateSpeed = 1.0;
-  controls.zoomSpeed = 1.2;
-  controls.panSpeed = 0.8;
-  controls.noZoom = false;
-  controls.noPan = false;
-  controls.staticMoving = true;
-  controls.dynamicDampingFactor = 0.3;
-  controls.keys = [65, 83, 68];
-  controls.addEventListener('change', render);
-}
-
-// Adds header information at the top of the page
-function generateHeaderInfo() {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-  var info = document.createElement('div');
-  info.style.position = 'relative';
-  info.style.backgroundColor = '0xf0f0f0';
-  //info.style.top = '10px';
-  info.style.width = '100%';
-  info.style.textAlign = 'center';
-  info.innerHTML = 
-    '<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>' +
-    '- lego painter - webgl<br>' + 
-    '<strong>click</strong>: add voxel, <strong>ctrl + click</strong>: remove voxel';
-  container.appendChild(info);
-}
-
-function addSceneLights() {
-  var ambientLight = new THREE.AmbientLight(0x606060);
-  scene.add(ambientLight);
-  var directionalLight = new THREE.DirectionalLight(0xffffff);
-  directionalLight.position.set(1, 0.75, 0.5).normalize();
-  scene.add(directionalLight);
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  container.appendChild(renderer.domElement);
-}
-
-function createGridAndPlane() {
-  var gridHelper = new THREE.GridHelper(1000, 40);
-  scene.add(gridHelper);
-  var geometry = new THREE.PlaneBufferGeometry(planeDimensions, planeDimensions);
-  geometry.rotateX(-Math.PI / 2);
-  plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({visible: false}));
-  plane.name = 'plane';
-  scene.add(plane);
-  collisionObjects.push(plane);
-}
-
-function onWindowResize() {
-  camera.aspect = window.innerWidth / (window.innerHeight + (window.innerHeight * .1));
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight - window.innerHeight * .1);
-}
-
-function render() { renderer.render(scene, camera); }
-
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-}
-
 function loadRollOverMesh() {
   let loader = new THREE.STLLoader();
   let index = allModels.indexOf(currentObj);
@@ -126,7 +6,7 @@ function loadRollOverMesh() {
     let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
     rollOverMesh = new THREE.Mesh(geometry, material);
     scene.add(rollOverMesh);
-    rollOverMesh.scale.set(3, 3, 3);
+    rollOverMesh.scale.set(currentObj.scale, currentObj.scale, currentObj.scale);
     rollOverMesh.rotation.x += -1.60;
     rollOverMesh.rotation.y += 0;
     rollOverMesh.rotation.z += 0;
@@ -136,9 +16,10 @@ function loadRollOverMesh() {
     let size = new THREE.Vector3();
     box.getSize(size);
 
-    rollOverMesh.position.y += (currentObj.modelBottomAnchor ? 0 : size.y);
     rollOverMesh.userData.dimensions = size;
     rollOverMesh.name = 'rollOverMesh';
+
+    rollOverMesh.position.y += determineModelYTranslation();
   });
 }
 
@@ -162,14 +43,14 @@ function onDocumentMouseMove(event) {
       var intersect = intersects[0];
       if (intersect.object.name == 'plane')  {
         changeObjPosOnPlane(rollOverMesh, intersect, dim);
-        rollOverMesh.position.y = (currentObj.modelBottomAnchor ? 0 : rollOverMesh.userData.dimensions.y);
+        rollOverMesh.position.y = determineModelYTranslation();
       }
       else {
         rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
         // If I want to do snapping to grid, I need to figure out these numbers
         //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
         let intersectY = intersect.object.userData.dimensions.y;
-        rollOverMesh.position.y = intersectY + (intersect.point.y - intersectY) + (currentObj.modelBottomAnchor ? 0 : dim.y);
+        rollOverMesh.position.y = intersectY + (intersect.point.y - intersectY) + determineModelYTranslation();
       }
     }
   }
@@ -189,23 +70,32 @@ function onDocumentMouseMove(event) {
 function onDocumentKeyDown(event) {
   var vector = new THREE.Vector3();
   switch (event.keyCode) {
-    case 17: isCtrlDown = true; break;     // Shift
-    case 87: vector.set(0, 10, 0); break;  // W
-    case 65: vector.set(10, 0, 0); break;  // A
-    case 83: vector.set(0, -10, 0); break; // S
-    case 68: vector.set(-10, 0, 0); break; // D
-    case 81: vector.set(0, 0, -10); break; // Q
-    case 69: vector.set(0, 0, 10); break;  // E
-    case 32: controls.reset(); break;      // Space
+    case 16: // Shift
+      isShiftDown = true; break;
+    case 17: // Ctrl
+      isCtrlDown = true; break;
+    case 87: // W
+      vector.set(0, 10, 0); break;
+    case 65: // A
+      vector.set(10, 0, 0); break;
+    case 83: // S
+      vector.set(0, -10, 0); break;
+    case 68: // D
+      vector.set(-10, 0, 0); break;
+    case 81: // Q
+      vector.set(0, 0, -10); break;
+    case 69: // E
+      vector.set(0, 0, 10); break;
+    case 32: // Space
+      controls.reset(); break;
   }
   camera.position.add(vector);
 }
 
 function onDocumentKeyUp(event) {
   switch (event.keyCode) {
-    case 17:
-      isCtrlDown = false;
-      break;
+    case 16: isShiftDown = false; break;
+    case 17: isCtrlDown = false; break;
   }
 }
 
@@ -230,16 +120,15 @@ function onDocumentMouseDown(event) {
       // FIXME: Bug that doesn't delete object if collision object has been already deleted
       if (intersect.object != plane) {
         if (intersect) {
-          scene.remove(intersect.object); 
+          if (intersect.object.children[1]) scene.remove(intersect.object.children[1]);
+          scene.remove(intersect.object);
+          scene.remove(intersect.object.children[0]);
+          objects.splice(objects.indexOf(intersect.object.children[0]), 1);
           collisionObjects.splice(collisionObjects.indexOf(intersect.object), 1);
-        }
-        if (objIntersect) {
-          scene.remove(objIntersect.object);
-          objects.splice(objects.indexOf(objIntersect.object), 1);
         }
       }
     }
-    else {
+    else if (isShiftDown) {
       placeLego(intersect);
     }
     render();
@@ -260,7 +149,7 @@ function placeLego(intersect) {
     voxel.rotation.x += -1.60;
     voxel.rotation.y += 0;
     voxel.rotation.z += 0;
-    voxel.scale.set(3,3,3);
+    voxel.scale.set(currentObj.scale,currentObj.scale,currentObj.scale);
     scene.add(voxel);
 
     let box = new THREE.Box3().setFromObject(voxel);
@@ -269,7 +158,7 @@ function placeLego(intersect) {
 
     if (intersect.object.name == 'plane') {
       changeObjPosOnPlane(voxel, intersect, size);
-      voxel.position.y += currentObj.modelBottomAnchor ? 0 : size.y;
+      voxel.position.y += determineModelYTranslation();
     }
     else {
       /**
@@ -290,7 +179,7 @@ function placeLego(intersect) {
     scene.add(cube);
     cube.position.copy(voxel.position);
     // some of these models are stupid and require special treatment ...
-    cube.position.y -= (currentObj.modelBottomAnchor ? -size.y / 2 : size.y / 2);
+    cube.position.y -= determineModelYTranslation() - rollOverMesh.userData.dimensions.y / 2;
     collisionObjects.push(cube);
 
 
@@ -307,6 +196,7 @@ function placeLego(intersect) {
     cube.userData.dimensions = size;
 
     cube.children.push(voxel);
+    cube.children.push(helper);
     objects.push(voxel);
   });
 }
@@ -334,7 +224,7 @@ function determineModelPosition(voxel, intersect, size, dim) {
     voxel.position.z = rollPos.z;
   }
   else if (dim.y == 1) {
-    voxel.position.y = currentObj.modelBottomAnchor ? rollPos.y : size.y + (size.y / 2) + interPos.y;
+    voxel.position.y = currentObj.yTranslation ? rollPos.y : size.y + (size.y / 2) + interPos.y;
     voxel.position.x = rollPos.x;
     voxel.position.z = rollPos.z;
   }
@@ -352,6 +242,14 @@ function determineModelPosition(voxel, intersect, size, dim) {
     voxel.position.y = interPos.y - (size.y / 2) - size.y;
     voxel.position.x = rollPos.x;
     voxel.position.z = rollPos.z;
+  }
+}
+
+function determineModelYTranslation() {
+  switch(currentObj.yTranslation) {
+    case 1: return rollOverMesh.userData.dimensions.y - 7;
+    case 0: return rollOverMesh.userData.dimensions.y / 2;
+    case -1: return 0;
   }
 }
 
@@ -387,4 +285,11 @@ function changeObjPosOnPlane(obj, intersect, size) {
   let index = allModels.indexOf(currentObj);
   currentObj = ++index == allModels.length ? allModels[0] : allModels[index];
   loadRollOverMesh();
+ }
+
+ function getModel(name) {
+   allModels.forEach((element) => {
+    if (element.name == name) currentObj = element;
+   });
+   loadRollOverMesh();
  }

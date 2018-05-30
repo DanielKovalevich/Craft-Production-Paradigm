@@ -4,17 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>My first three.js app</title>
-		<style>
-			body { 
-				margin: 0; 
-				font-family: Monospace;
-				background-color: #f0f0f0;
-				margin: 0px;
-				overflow: hidden;
-			}
-			canvas { width: 100%; height: 100% }
-      #oldie { background-color: #ddd !important }
-    </style>
+		<link rel="stylesheet" type="text/css" href="css/builder.css">
     <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -25,12 +15,36 @@
 	<body>
     <div>
       <div class="ui buttons">
-        <button class="ui button" onclick="cycle();">One</button>
-        <button class="ui button active">Two</button>
-        <button class="ui button">Three</button>
-      </div>
+        <button class="ui button" onclick="getModel('lego_man');">Man</button>
+        <button class="ui button" onclick="getModel('oneByOne');">1x1</button>
+				<button class="ui button" onclick="getModel('twoByTwo');">2x2</button>
+				<button class="ui button" onclick="getModel('oneByTwoPin');">1x2wPin</button>
+        <button class="ui button" onclick="getModel('tire1');">Tire 1</button>
+				<button class="ui button" onclick="getModel('twoByThreeByTwo');">2x3x2</button>
+				<button class="ui button" onclick="getModel('oneByTwo');">1x2</button>
+        <button class="ui button" onclick="getModel('oneByFour');">1x4</button>
+				<button class="ui button" onclick="getModel('lego_man');">9</button>
+				<button class="ui button" onclick="getModel('lego_man');">10</button>
+        <button class="ui button" onclick="getModel('lego_man');">11</button>
+				<button class="ui button" onclick="getModel('lego_man');">12</button>
+				<button class="ui button" onclick="getModel('lego_man');">13</button>
+        <button class="ui button" onclick="getModel('lego_man');">14</button>
+				<button class="ui button" onclick="getModel('lego_man');">15</button>
+				<button class="ui button" onclick="getModel('lego_man');">16</button>
+        <button class="ui button" onclick="getModel('lego_man');">17</button>
+				<button class="ui button" onclick="getModel('lego_man');">18</button>
+				<button class="ui button" onclick="getModel('lego_man');">19</button>
+        <button class="ui button" onclick="getModel('lego_man');">20</button>
+        <button class="ui button" onclick="getModel('lego_man');">21</button>
+			</div>
+			<div id="header-info">
+					<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>
+					- lego painter - webgl
+					<br>
+					<strong>shift + click</strong>: add voxel, <strong>ctrl + click</strong>: remove voxel
+			</div>
 		</div>
-		<script> var exports = {}; </script>
+		<!-- All the libraries I need to run the three.js stuff properly -->
 		<script src="js/libs/three.min.js"></script>
 		<script src="js/libs/loader.js"></script>
 		<script src="js/renderers/Projector.js"></script>
@@ -38,7 +52,11 @@
 		<script src="js/libs/stats.min.js"></script>
 		<script src="js/libs/Detector.js"></script>
 		<script src="js/controls/TrackballControls.js"></script>
+		<script src="js/controls/Orbit.js"></script>
+
+		<!-- My own javascript files -->
 		<script src="js/legoBuilder/modelProperties.js"></script>
-		<script src="js/legoBuilder/scripts.js"></script>
+		<script src="js/legoBuilder/builderInitScripts.js"></script>
+		<script src="js/legoBuilder/builderScripts.js"></script>
 	</body>
 </html>
