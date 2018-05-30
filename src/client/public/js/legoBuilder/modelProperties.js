@@ -14,7 +14,7 @@
  *  -> Most pieces can only be put together by a few of the surfaces
  */
 
-function Model(name, directory, scale, yTranslation, top, bottom, front, back, left, right) {
+function Model(name, directory, scale, yTranslation, top, bottom, front, back, left, right, collisionX, collisionY, collisionZ) {
   this.name = name;
   this.directory = directory;
   this.scale = scale
@@ -25,6 +25,9 @@ function Model(name, directory, scale, yTranslation, top, bottom, front, back, l
   this.back = back;
   this.left = left;
   this.right = right;
+  this.collisionX = collisionX;
+  this.collisionY = collisionY;
+  this.collisionZ = collisionZ;
 };
 
 var lego_man = new Model('lego_man', '../objects/lego_man.stl', 3, -1, 0, 1, 0, 0, 0 ,0);
@@ -36,7 +39,7 @@ var twoByTwoByTwoPin = new Model('twoByTwoByTwoPin', '../objects/2x2x2wPin.stl',
 var twoByTwoDouble = new Model('twoByTwoDouble', '../objects/2x2Double.stl', 3, 1, 1, 1, 1, 0, 0, 0);
 var tire1 = new Model('tire1', '../objects/tire1.stl', 1.5, 0, 0, 0, 1, 1, 0, 0);
 var tire2 = new Model('tire2', '../objects/tire2.stl', 3, 0, 0, 0, 1, 1, 0, 0);4
-var tire3 = new Model('tire3', '../objects/tire3.stl', .75, 0, 0, 0, 1, 1, 0, 0);
+var tire3 = new Model('tire3', '../objects/tire3.stl', 3, 0, 0, 0, 1, 1, 0, 0);
 var rim1 = new Model('rim1', '../objects/rim1.stl', 1.45, 0, 0, 0, 1, 1, 0, 0);
 var rim2 = new Model('rim2', '../objects/rim2.stl', 3, 0, 0, 0, 0, 1, 0, 0);
 var rim3 = new Model('rim3', '../objects/rim3.stl', 3, 0, 0, 0, 0, 1, 0, 0);
