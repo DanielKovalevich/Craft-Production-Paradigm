@@ -7,7 +7,7 @@ function loadRollOverMesh() {
     rollOverMesh = new THREE.Mesh(geometry, material);
     scene.add(rollOverMesh);
     rollOverMesh.scale.set(currentObj.scale, currentObj.scale, currentObj.scale);
-    rollOverMesh.rotation.x += -1.57;
+    rollOverMesh.rotation.x += - Math.PI / 2;
 
     // generate collision box
     let box = new THREE.Box3().setFromObject(rollOverMesh);
@@ -81,9 +81,9 @@ function onDocumentKeyDown(event) {
     case 68: // D
       vector.set(-10, 0, 0); break;
     case 81: // Q
-      rollOverMesh.rotation.z += 1.575; render(); break;
+      rollOverMesh.rotation.z += Math.PI / 2; render(); break;
     case 69: // E
-      rollOverMesh.rotation.z -= 1.575; render(); break;
+      rollOverMesh.rotation.z -= Math.PI / 2; render(); break;
     case 32: // Space
       controls.reset(); break;
   }
@@ -144,7 +144,7 @@ function placeLego(intersect) {
     geometry.computeBoundingBox();
     let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
     let voxel = new THREE.Mesh(geometry, material);
-    voxel.rotation.x += -1.57;
+    voxel.rotation.x = rollOverMesh.rotation.x;
     voxel.rotation.y = rollOverMesh.rotation.y;
     voxel.rotation.z = rollOverMesh.rotation.z;
     voxel.scale.set(currentObj.scale,currentObj.scale,currentObj.scale);
@@ -191,7 +191,9 @@ function placeLego(intersect) {
     voxel.name = 'obj' + objects.length;
     cube.name = voxel.name + '.collisionObj';
     helper.name = voxel.name + ".helper";
+    
     cube.userData.dimensions = size;
+    cube.userData.obj = currentObj;
 
     cube.children.push(voxel);
     cube.children.push(helper);
