@@ -201,6 +201,7 @@ function placeLego(intersect) {
     
     cube.userData.dimensions = size;
     cube.userData.obj = currentObj;
+    cube.userData.rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
 
     cube.children.push(voxel);
     cube.children.push(helper);
@@ -219,6 +220,9 @@ function placeLego(intersect) {
 function determineModelPosition(voxel, intersect, size, dim) {
   let rollPos = rollOverMesh.position;
   let interPos = intersect.object.position;
+  let collisionModel = intersect.object.userData.obj;
+
+  console.log(intersect.object.userData.rotation);
 
   if (dim.z == 1) {
     voxel.position.z = interPos.z + size.z;
