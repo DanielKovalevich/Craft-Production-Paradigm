@@ -9,6 +9,10 @@ function loadRollOverMesh() {
     rollOverMesh.scale.set(currentObj.scale, currentObj.scale, currentObj.scale);
     rollOverMesh.rotation.x += - Math.PI / 2;
 
+    // so some of these models are really dumb
+    // i need to manually fix the positioning of them
+    //if (currentObj == twoByThreeByTwo) rollOverMesh.position.x -= 15;
+
     // generate collision box
     let box = new THREE.Box3().setFromObject(rollOverMesh);
     let size = new THREE.Vector3();
@@ -142,6 +146,7 @@ function placeLego(intersect) {
   let index = allModels.indexOf(currentObj);
   loader.load(allModels[index].directory, function (geometry) {
     geometry.computeBoundingBox();
+    
     let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
     let voxel = new THREE.Mesh(geometry, material);
     voxel.rotation.x = rollOverMesh.rotation.x;
@@ -171,15 +176,17 @@ function placeLego(intersect) {
     }
 
     // Create the collision cube
-    let geo = new THREE.BoxGeometry(size.x, size.y, size.z);
+    console.log(size.x, size.y, size.z);
+    let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
+    let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0; 
+    let geo = new THREE.BoxGeometry(size.x, size.y - yModifier, size.z - zModifier);
     let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
     let cube = new THREE.Mesh(geo, mat);
     scene.add(cube);
     cube.position.copy(voxel.position);
     // some of these models are stupid and require special treatment ...
-    cube.position.y -= determineModelYTranslation() - rollOverMesh.userData.dimensions.y / 2;
+    cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
     collisionObjects.push(cube);
-
 
     // TODO: Remove this when I finish these functions
     let helper = new THREE.BoxHelper(cube, 0xff0000);
@@ -197,7 +204,7 @@ function placeLego(intersect) {
 
     cube.children.push(voxel);
     cube.children.push(helper);
-    objects.push(voxel);
+    objects.push(voxel);    
   });
 }
 
