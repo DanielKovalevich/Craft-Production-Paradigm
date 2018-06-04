@@ -221,8 +221,9 @@ function determineModelPosition(voxel, intersect, size, dim) {
   let rollPos = rollOverMesh.position;
   let interPos = intersect.object.position;
   let collisionModel = intersect.object.userData.obj;
+  let rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
 
-  console.log(intersect.object.userData.rotation);
+  determineRotationMatrix(intersect, rotation);
 
   if (dim.z == 1) {
     voxel.position.z = interPos.z + size.z;
@@ -254,6 +255,30 @@ function determineModelPosition(voxel, intersect, size, dim) {
     voxel.position.x = rollPos.x;
     voxel.position.z = rollPos.z;
   }
+}
+
+function determineRotationMatrix(intersect, rotation) {
+  let userData = intersect.object.userData.obj;
+  let possiblePlacement = [userData.front, userData.right, userData.back, userData.left];
+  let adjustedArray = [];
+
+  possiblePlacement.forEach((elem, i) => {
+    adjustedArray[mod(i + rotation, possiblePlacement.length)] = elem;
+  });
+
+  console.log(possiblePlacement);
+  console.log(adjustedArray);
+  
+  return adjustedArray;
+}
+
+/**
+ * Apparently Javascript is super dumb and doesn't want to handle negative modulo operations
+ * @param {Modulo} m
+ * @param {Integer} n
+ */
+function mod(n, m) {
+  return (((n % m) + m) % m);
 }
 
 /**
