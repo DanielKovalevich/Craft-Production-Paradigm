@@ -72,24 +72,15 @@ function onDocumentMouseMove(event) {
 function onDocumentKeyDown(event) {
   var vector = new THREE.Vector3();
   switch (event.keyCode) {
-    case 16: // Shift
-      isShiftDown = true; break;
-    case 17: // Ctrl
-      isCtrlDown = true; break;
-    case 87: // W
-      vector.set(0, 10, 0); break;
-    case 65: // A
-      vector.set(10, 0, 0); break;
-    case 83: // S
-      vector.set(0, -10, 0); break;
-    case 68: // D
-      vector.set(-10, 0, 0); break;
-    case 81: // Q
-      rollOverMesh.rotation.z += Math.PI / 2; render(); break;
-    case 69: // E
-      rollOverMesh.rotation.z -= Math.PI / 2; render(); break;
-    case 32: // Space
-      controls.reset(); break;
+    case 16: isShiftDown = true; break; // Shift
+    case 17: isCtrlDown = true; break;  // Ctrl
+    case 87: vector.set(0, 10, 0); break;  // W
+    case 65: vector.set(10, 0, 0); break;  // A
+    case 83: vector.set(0, -10, 0); break; // S
+    case 68: vector.set(-10, 0, 0); break; // D
+    case 81: rollOverMesh.rotation.z += Math.PI / 2; render(); break; // Q
+    case 69: rollOverMesh.rotation.z -= Math.PI / 2; render(); break; // E
+    case 32: controls.reset(); break;   // Space
   }
   camera.position.add(vector);
 }
@@ -142,124 +133,128 @@ function onDocumentMouseDown(event) {
  * @param {THREE.Intersection} intersect 
  */
 function placeLego(intersect) {
+  let placementPossible = true;
   let loader = new THREE.STLLoader();
   let index = allModels.indexOf(currentObj);
   loader.load(allModels[index].directory, function (geometry) {
-    geometry.computeBoundingBox();
-    let placementPossible = true;
-    
-    let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
-    let voxel = new THREE.Mesh(geometry, material);
-    voxel.rotation.x = rollOverMesh.rotation.x;
-    voxel.rotation.y = rollOverMesh.rotation.y;
-    voxel.rotation.z = rollOverMesh.rotation.z;
-    voxel.scale.set(currentObj.scale,currentObj.scale,currentObj.scale);
-    scene.add(voxel);
-
-    let box = new THREE.Box3().setFromObject(voxel);
-    let size = new THREE.Vector3();
-    box.getSize(size);
+    // i wanted to break up this function so i needed to pass these variables by reference
+    let modelObj = {}, size = {};
+    generateObjFromModel(geometry, modelObj, size);
+    size = size.size;
+    modelObj = modelObj.mesh;
 
     if (intersect.object.name == 'plane') {
-      changeObjPosOnPlane(voxel, intersect, size);
-      voxel.position.y += determineModelYTranslation();
+      changeObjPosOnPlane(modelObj, intersect, size);
+      modelObj.position.y += determineModelYTranslation();
     }
     else {
-      /**
-       * This is when an object is placed on another
-       * Determines the face of the object then moves accordingly
-       */
-      console.log('object on object');
       let dim = intersect.face.normal;
       dim.normalize();
-      //console.log(intersect.object.position, rollOverMesh.position, intersect.point);
-      placementPossible = determineModelPosition(voxel, intersect, size, dim);
+      placementPossible = determineModelPosition(modelObj, intersect, size, dim);
     }
 
-    // If the piece can't be placed on another, I don't want it to create and add the voxel to the scene
+    // If the piece can't be placed on another, I don't want it to create and add the modelObj to the scene
     if (placementPossible) {
-      // Create the collision cube
-      let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
-      let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0; 
-      let geo = new THREE.BoxGeometry(size.x, size.y - yModifier, size.z - zModifier);
-      let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
-      let cube = new THREE.Mesh(geo, mat);
-      scene.add(cube);
-      cube.position.copy(voxel.position);
-      // some of these models are stupid and require special treatment ...
-      cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
-      collisionObjects.push(cube);
-
-      // TODO: Remove this when I finish these functions
-      let helper = new THREE.BoxHelper(cube, 0xff0000);
-      helper.update();
-      // visible bounding box
-      scene.add(helper);
-      
-      // add names to all of the objects for debugging purposes
-      voxel.name = 'obj' + objects.length;
-      cube.name = voxel.name + '.collisionObj';
-      helper.name = voxel.name + ".helper";
-      
-      cube.userData.dimensions = size;
-      cube.userData.obj = currentObj;
-      cube.userData.rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
-
-      cube.children.push(voxel);
-      cube.children.push(helper);
-      objects.push(voxel);
+      generateCollisionCube(modelObj, size);
     }
   });
+}
+
+function generateObjFromModel(geometry, modelObj, size) {
+  geometry.computeBoundingBox();    
+  let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
+  modelObj.mesh = new THREE.Mesh(geometry, material);
+  modelObj.mesh.rotation.x = rollOverMesh.rotation.x;
+  modelObj.mesh.rotation.y = rollOverMesh.rotation.y;
+  modelObj.mesh.rotation.z = rollOverMesh.rotation.z;
+  modelObj.mesh.scale.set(currentObj.scale,currentObj.scale,currentObj.scale);
+  scene.add(modelObj.mesh);
+  let box = new THREE.Box3().setFromObject(modelObj.mesh);
+  size.size = new THREE.Vector3();
+  box.getSize(size.size);
+}
+
+function generateCollisionCube(modelObj, size) {
+  // Create the collision cube
+  let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
+  let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0; 
+  let geo = new THREE.BoxGeometry(size.x, size.y - yModifier, size.z - zModifier);
+  let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
+  let cube = new THREE.Mesh(geo, mat);
+  scene.add(cube);
+  cube.position.copy(modelObj.position);
+  // some of these models are stupid and require special treatment ...
+  cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
+  collisionObjects.push(cube);
+
+  // TODO: Remove this when I finish these functions
+  let helper = new THREE.BoxHelper(cube, 0xff0000);
+  helper.update();
+  // visible bounding box
+  scene.add(helper);
+
+  // add names to all of the objects for debugging purposes
+  modelObj.name = 'obj' + objects.length;
+  cube.name = modelObj.name + '.collisionObj';
+  helper.name = modelObj.name + ".helper";
+
+  cube.userData.dimensions = size;
+  cube.userData.obj = currentObj;
+  cube.userData.rotation = (modelObj.rotation.z / (Math.PI / 2)) % 4;
+
+  cube.children.push(modelObj);
+  cube.children.push(helper);
+  objects.push(modelObj);
 }
 
 /**
  * Determines which face of the model the object is being placed on
  * and then adjusts the objects position in the scene accoridingly 
- * @param {THREE.Mesh} voxel 
+ * @param {THREE.Mesh} modelObj 
  * @param {THREE.Intersection} intersect 
  * @param {THREE.Vector3} size 
  * @param {THREE.Vector3} dim 
  */
-function determineModelPosition(voxel, intersect, size, dim) {
+function determineModelPosition(modelObj, intersect, size, dim) {
   let rollPos = rollOverMesh.position;
   let interPos = intersect.object.position;
   let collisionModel = intersect.object.userData.obj;
-  let rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
+  let rotation = (modelObj.rotation.z / (Math.PI / 2)) % 4;
 
   let rotationMatrix = determineRotationMatrix(intersect, rotation);
 
   if (dim.z == 1 && rotationMatrix[0] == 1) {
-    voxel.position.z = interPos.z + size.z;
-    voxel.position.y = rollPos.y;
-    voxel.position.x = rollPos.x;
+    modelObj.position.z = interPos.z + size.z;
+    modelObj.position.y = rollPos.y;
+    modelObj.position.x = rollPos.x;
   }
   else if (dim.x == 1 && rotationMatrix[1] == 1) {
-    voxel.position.x = interPos.x + size.x;
-    voxel.position.y = rollPos.y;
-    voxel.position.z = rollPos.z;
+    modelObj.position.x = interPos.x + size.x;
+    modelObj.position.y = rollPos.y;
+    modelObj.position.z = rollPos.z;
   }
   else if (dim.y == 1 && collisionModel.top == 1) {
-    voxel.position.y = currentObj.yTranslation ? rollPos.y : size.y + (size.y / 2) + interPos.y;
-    voxel.position.x = rollPos.x;
-    voxel.position.z = rollPos.z;
+    modelObj.position.y = currentObj.yTranslation ? rollPos.y : size.y + (size.y / 2) + interPos.y;
+    modelObj.position.x = rollPos.x;
+    modelObj.position.z = rollPos.z;
   }
   else if (dim.z == -1 && rotationMatrix[2] == 1) {
-    voxel.position.z = interPos.z - size.z;
-    voxel.position.y = rollPos.y;
-    voxel.position.x = rollPos.x;
+    modelObj.position.z = interPos.z - size.z;
+    modelObj.position.y = rollPos.y;
+    modelObj.position.x = rollPos.x;
   }
   else if (dim.x == -1 && rotationMatrix[3] == 1) {
-    voxel.position.x = interPos.x - size.x;
-    voxel.position.y = rollPos.y;
-    voxel.position.z = rollPos.z;
+    modelObj.position.x = interPos.x - size.x;
+    modelObj.position.y = rollPos.y;
+    modelObj.position.z = rollPos.z;
   }
   else if (dim.y == -1 && collisionModel.bottom == 1) {
-    voxel.position.y = interPos.y - (size.y / 2) - size.y;
-    voxel.position.x = rollPos.x;
-    voxel.position.z = rollPos.z;
+    modelObj.position.y = interPos.y - (size.y / 2) - size.y;
+    modelObj.position.x = rollPos.x;
+    modelObj.position.z = rollPos.z;
   }
   else {
-    scene.remove(voxel);
+    scene.remove(modelObj);
     return false;
   }
 
@@ -324,22 +319,3 @@ function changeObjPosOnPlane(obj, intersect, size) {
   obj.position.x = size.x / 2 + size.x * normalizedCoord.x;
   obj.position.z = size.z / 2 + size.z * normalizedCoord.z;
 }
-
-/**
- * ================================================================
- *                    HTML BUTTOM FUNCTIONS
- * ================================================================
- */
-
- function cycle() {
-  let index = allModels.indexOf(currentObj);
-  currentObj = ++index == allModels.length ? allModels[0] : allModels[index];
-  loadRollOverMesh();
- }
-
- function getModel(name) {
-   allModels.forEach((element) => {
-    if (element.name == name) currentObj = element;
-   });
-   loadRollOverMesh();
- }
