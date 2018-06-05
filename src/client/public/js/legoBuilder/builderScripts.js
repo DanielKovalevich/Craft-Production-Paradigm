@@ -146,6 +146,7 @@ function placeLego(intersect) {
   let index = allModels.indexOf(currentObj);
   loader.load(allModels[index].directory, function (geometry) {
     geometry.computeBoundingBox();
+    let placementPossible = true;
     
     let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
     let voxel = new THREE.Mesh(geometry, material);
@@ -172,40 +173,42 @@ function placeLego(intersect) {
       let dim = intersect.face.normal;
       dim.normalize();
       //console.log(intersect.object.position, rollOverMesh.position, intersect.point);
-      determineModelPosition(voxel, intersect, size, dim);
+      placementPossible = determineModelPosition(voxel, intersect, size, dim);
     }
 
-    // Create the collision cube
-    console.log(size.x, size.y, size.z);
-    let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
-    let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0; 
-    let geo = new THREE.BoxGeometry(size.x, size.y - yModifier, size.z - zModifier);
-    let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
-    let cube = new THREE.Mesh(geo, mat);
-    scene.add(cube);
-    cube.position.copy(voxel.position);
-    // some of these models are stupid and require special treatment ...
-    cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
-    collisionObjects.push(cube);
+    // If the piece can't be placed on another, I don't want it to create and add the voxel to the scene
+    if (placementPossible) {
+      // Create the collision cube
+      let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
+      let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0; 
+      let geo = new THREE.BoxGeometry(size.x, size.y - yModifier, size.z - zModifier);
+      let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
+      let cube = new THREE.Mesh(geo, mat);
+      scene.add(cube);
+      cube.position.copy(voxel.position);
+      // some of these models are stupid and require special treatment ...
+      cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
+      collisionObjects.push(cube);
 
-    // TODO: Remove this when I finish these functions
-    let helper = new THREE.BoxHelper(cube, 0xff0000);
-    helper.update();
-    // visible bounding box
-    scene.add(helper);
-    
-    // add names to all of the objects for debugging purposes
-    voxel.name = 'obj' + objects.length;
-    cube.name = voxel.name + '.collisionObj';
-    helper.name = voxel.name + ".helper";
-    
-    cube.userData.dimensions = size;
-    cube.userData.obj = currentObj;
-    cube.userData.rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
+      // TODO: Remove this when I finish these functions
+      let helper = new THREE.BoxHelper(cube, 0xff0000);
+      helper.update();
+      // visible bounding box
+      scene.add(helper);
+      
+      // add names to all of the objects for debugging purposes
+      voxel.name = 'obj' + objects.length;
+      cube.name = voxel.name + '.collisionObj';
+      helper.name = voxel.name + ".helper";
+      
+      cube.userData.dimensions = size;
+      cube.userData.obj = currentObj;
+      cube.userData.rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
 
-    cube.children.push(voxel);
-    cube.children.push(helper);
-    objects.push(voxel);    
+      cube.children.push(voxel);
+      cube.children.push(helper);
+      objects.push(voxel);
+    }
   });
 }
 
@@ -223,38 +226,44 @@ function determineModelPosition(voxel, intersect, size, dim) {
   let collisionModel = intersect.object.userData.obj;
   let rotation = (voxel.rotation.z / (Math.PI / 2)) % 4;
 
-  determineRotationMatrix(intersect, rotation);
+  let rotationMatrix = determineRotationMatrix(intersect, rotation);
 
-  if (dim.z == 1) {
+  if (dim.z == 1 && rotationMatrix[0] == 1) {
     voxel.position.z = interPos.z + size.z;
     voxel.position.y = rollPos.y;
     voxel.position.x = rollPos.x;
   }
-  else if (dim.x == 1) {
+  else if (dim.x == 1 && rotationMatrix[1] == 1) {
     voxel.position.x = interPos.x + size.x;
     voxel.position.y = rollPos.y;
     voxel.position.z = rollPos.z;
   }
-  else if (dim.y == 1) {
+  else if (dim.y == 1 && collisionModel.top == 1) {
     voxel.position.y = currentObj.yTranslation ? rollPos.y : size.y + (size.y / 2) + interPos.y;
     voxel.position.x = rollPos.x;
     voxel.position.z = rollPos.z;
   }
-  else if (dim.z == -1) {
+  else if (dim.z == -1 && rotationMatrix[2] == 1) {
     voxel.position.z = interPos.z - size.z;
     voxel.position.y = rollPos.y;
     voxel.position.x = rollPos.x;
   }
-  else if (dim.x == -1) {
+  else if (dim.x == -1 && rotationMatrix[3] == 1) {
     voxel.position.x = interPos.x - size.x;
     voxel.position.y = rollPos.y;
     voxel.position.z = rollPos.z;
   }
-  else {
+  else if (dim.y == -1 && collisionModel.bottom == 1) {
     voxel.position.y = interPos.y - (size.y / 2) - size.y;
     voxel.position.x = rollPos.x;
     voxel.position.z = rollPos.z;
   }
+  else {
+    scene.remove(voxel);
+    return false;
+  }
+
+  return true;
 }
 
 function determineRotationMatrix(intersect, rotation) {
@@ -265,9 +274,6 @@ function determineRotationMatrix(intersect, rotation) {
   possiblePlacement.forEach((elem, i) => {
     adjustedArray[mod(i + rotation, possiblePlacement.length)] = elem;
   });
-
-  console.log(possiblePlacement);
-  console.log(adjustedArray);
   
   return adjustedArray;
 }
