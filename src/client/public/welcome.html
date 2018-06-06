@@ -10,6 +10,7 @@
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="semantic/dist/semantic.min.js"></script>
+    <script src="js/welcome.js"></script>
     <link rel="stylesheet" type="text/css" href="css/startPage.css">
 	</head>
 	<body>
@@ -21,7 +22,8 @@
           </div>
           <div class="row twelve wide column">
             <h2 class="ui header">What is this?</h2>
-            <p class="sixteen wide column">Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            <p class="sixteen wide column">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
               Suspendisse quis arcu eleifend, efficitur dolor nec, condimentum diam. 
               Nunc tellus mauris, porttitor ac tristique eget, consectetur ac ipsum. 
               Phasellus placerat vel magna tristique semper. Nam at libero turpis. 
@@ -39,28 +41,29 @@
             </p>
           </div>
           <div class="row twelve wide column">
-              <h2 class="ui header">How does the game work?</h2>
-              <p class="sixteen wide column">Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                Suspendisse quis arcu eleifend, efficitur dolor nec, condimentum diam. 
-                Nunc tellus mauris, porttitor ac tristique eget, consectetur ac ipsum. 
-                Phasellus placerat vel magna tristique semper. Nam at libero turpis. 
-                Integer sagittis turpis id odio finibus, ut cursus tortor tincidunt. 
-                Suspendisse facilisis sem pretium metus elementum, eget eleifend nisl venenatis. 
-                Nulla facilisi. In ac odio luctus, cursus elit ut, tempus diam. 
-                Donec aliquet massa ac ex sagittis, quis interdum neque vehicula. 
-                Duis laoreet, eros a cursus accumsan, libero nulla maximus elit, 
-                ut sollicitudin sem ipsum laoreet ex. Morbi facilisis, 
-                lorem at interdum efficitur, sapien tortor porta orci, 
-                in faucibus tortor lorem at metus. Nulla quis hendrerit odio. 
-                Curabitur euismod convallis sem, eu semper eros. 
-                Aenean vulputate ante nec ultricies placerat. 
-                Donec auctor volutpat velit, et sagittis magna commodo eget.
-              </p>
-            </div>
+            <h2 class="ui header">How does the game work?</h2>
+            <p class="sixteen wide column">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+              Suspendisse quis arcu eleifend, efficitur dolor nec, condimentum diam. 
+              Nunc tellus mauris, porttitor ac tristique eget, consectetur ac ipsum. 
+              Phasellus placerat vel magna tristique semper. Nam at libero turpis. 
+              Integer sagittis turpis id odio finibus, ut cursus tortor tincidunt. 
+              Suspendisse facilisis sem pretium metus elementum, eget eleifend nisl venenatis. 
+              Nulla facilisi. In ac odio luctus, cursus elit ut, tempus diam. 
+              Donec aliquet massa ac ex sagittis, quis interdum neque vehicula. 
+              Duis laoreet, eros a cursus accumsan, libero nulla maximus elit, 
+              ut sollicitudin sem ipsum laoreet ex. Morbi facilisis, 
+              lorem at interdum efficitur, sapien tortor porta orci, 
+              in faucibus tortor lorem at metus. Nulla quis hendrerit odio. 
+              Curabitur euismod convallis sem, eu semper eros. 
+              Aenean vulputate ante nec ultricies placerat. 
+              Donec auctor volutpat velit, et sagittis magna commodo eget.
+            </p>
+          </div>
           <div class="row twelve wide column">
             <div class="eight wide center aligned column">
               <h3 class="ui center aligned header">Start a new game</h3>
-              <div class="ui big blue labeled icon button">
+              <div id="new-game" class="ui big blue labeled icon button">
                 <i class="signup icon"></i>
                 New Game
               </div>
@@ -70,7 +73,7 @@
               </div>
             <div class="eight wide center aligned column">
               <h3 class="ui center aligned header">Join a current game</h3>
-              <div class="ui big green labeled icon button">
+              <div id="join-game" class="ui big green labeled icon button">
                 <i class="signup icon"></i>
                 Join Game
               </div>
@@ -80,6 +83,22 @@
         </div>
       </div>
     </div>
-    
   </body>
+  <div id="new-game-modal" class="ui modal">
+    <div class="header">Header</div>
+    <div>
+      <p>
+        Testing
+      </p>
+    </div>
+  </div>
+  <div id="join-game-modal" class="ui modal">
+    <div class="header">Header</div>
+    <div>
+      <p>
+        Testing
+      </p>
+    </div>
+  </div>
+
 </html>
