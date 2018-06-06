@@ -160,6 +160,13 @@ function placeLego(intersect) {
   });
 }
 
+/**
+ * The STLloader gets the model and turns it into a THREE.Geometry.
+ * This function turns the geometry into a mesh and determines the size
+ * @param {THREE.Geometry} geometry 
+ * @param {THREE.MESH} modelObj 
+ * @param {THREE.Vector3} size 
+ */
 function generateObjFromModel(geometry, modelObj, size) {
   geometry.computeBoundingBox();    
   let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
@@ -174,6 +181,12 @@ function generateObjFromModel(geometry, modelObj, size) {
   box.getSize(size.size);
 }
 
+/**
+ * Generates the collision box around the mesh
+ * TODO: Fix the sizing of the collision boxes
+ * @param {THREE.Mesh} modelObj 
+ * @param {THREE.Vector3} size 
+ */
 function generateCollisionCube(modelObj, size) {
   // Create the collision cube
   let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
@@ -261,6 +274,13 @@ function determineModelPosition(modelObj, intersect, size, dim) {
   return true;
 }
 
+/**
+ * The models have the possiblePlacement attributes that are relative to the global orientation
+ * so when the objects get rotated, their placement attributes do not. 
+ * I rotate them so that the placement attributes match the objects orientation
+ * @param {THREE.Intersection} intersect 
+ * @param {Number} rotation 
+ */
 function determineRotationMatrix(intersect, rotation) {
   let userData = intersect.object.userData.obj;
   let possiblePlacement = [userData.front, userData.right, userData.back, userData.left];
@@ -275,8 +295,8 @@ function determineRotationMatrix(intersect, rotation) {
 
 /**
  * Apparently Javascript is super dumb and doesn't want to handle negative modulo operations
- * @param {Modulo} m
- * @param {Integer} n
+ * @param {Number} m
+ * @param {Number} n
  */
 function mod(n, m) {
   return (((n % m) + m) % m);
