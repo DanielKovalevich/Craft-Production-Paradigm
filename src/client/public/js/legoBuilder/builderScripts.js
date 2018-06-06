@@ -1,3 +1,5 @@
+'use strict'
+
 function loadRollOverMesh() {
   let loader = new THREE.STLLoader();
   let index = allModels.indexOf(currentObj);
