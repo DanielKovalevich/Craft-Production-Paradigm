@@ -84,20 +84,63 @@
       </div>
     </div>
   </body>
-  <div id="new-game-modal" class="ui modal">
-    <div class="header">Header</div>
-    <div>
-      <p>
-        Testing
-      </p>
+
+  <div id="new-game-modal" class="ui tiny modal">
+    <div class="header">Start A New Game</div>
+    <div id="new-game-form" class="ui centered grid">
+      <form class="ui form">
+        <div class="one field">
+          <div class="field">
+            <label>Game Info</label>
+            <input id="groupName" placeholder="Group Name" name="name" type="text">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui input left icon labeled">
+            <input id="numPlayers" placeholder="Players" type="number" min="2" max="6">
+            <i class="users icon"></i>
+          </div>
+        </div>
+        <div class="ui selection dropdown">
+          <input type="hidden" name="gender">
+          <i class="dropdown icon"></i>
+          <div class="default text">Position Type</div>
+          <div class="menu">
+            <div class="item" data-value="3">Crafter</div>
+            <div class="item" data-value="2">Distributor</div>            
+            <div class="item" data-value="1">Supplier</div>
+            <div class="item" data-value="0">Customer</div>
+          </div>
+        </div>
+        <div class="ui error message"></div>
+      </form>
+    </div>
+    <div class="actions">
+      <div class="ui black deny button">
+        Cancel
+      </div>
+      <div id="start-game-submit" class="ui positive right labeled icon button">
+        Get Started
+        <i class="checkmark icon"></i>
+      </div>
     </div>
   </div>
-  <div id="join-game-modal" class="ui modal">
-    <div class="header">Header</div>
-    <div>
-      <p>
-        Testing
-      </p>
+
+  <div id="join-game-modal" class="ui mini modal">
+    <div class="header">Join Game</div>
+    <div id="pin-grid" class="ui centered grid">
+      <div class="ui input labeled">
+        <input id="pin" placeholder="Pin" type="number">
+      </div>
+    </div>
+    <div class="actions">
+      <div class="ui black deny button">
+        Cancel
+      </div>
+      <div id="join-game-submit" class="ui positive right labeled icon button">
+        Get Started
+        <i class="checkmark icon"></i>
+      </div>
     </div>
   </div>
 
