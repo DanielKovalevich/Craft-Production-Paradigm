@@ -11,22 +11,20 @@ export class GameController {
     this.db = new DatabaseConnector();
   }
 
-  public addNewGame(req: Request, res: Response) {
+  public addNewGame(req: Request) {
     let requestGame = req.body;
-    console.log(this.generatePin());
     requestGame.pin = this.generatePin();
-    console.log('I am here');
     let game = new Game(requestGame);
     this.db.addToDatabase(game);
   }
 
-  private generatePin(): Number {
-    let originalPin: Boolean = false;
+  private generatePin(): Number {    
+    let notOriginal: Boolean = true;
     let pin: Number = 0;
 
-    while(!originalPin) {
+    while(notOriginal) {
       pin = Math.floor((Math.random() * 9999));
-      originalPin = this.db.checkIfPinExists(pin);
+      notOriginal = this.db.checkIfPinExists(pin);
     }
 
     return pin;
@@ -42,5 +40,14 @@ Testing POST
 	"maxPlayers": 2,
 	"activePlayers": 1,
 	"positions": []
+}
+*/
+
+/*
+THINK ABOUT USING THIS DUMBASS
+Number.prototype.pad = function(size) {
+    var s = String(this);
+    while (s.length < (size || 2)) {s = "0" + s;}
+    return s;
 }
 */
