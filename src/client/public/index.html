@@ -1,63 +1,147 @@
 <!DOCTYPE html>
 <html>
-	<head>
+  <head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<title>My first three.js app</title>
+		<title>Manufacturing Simulation</title>
     <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
-		<script src="semantic/dist/semantic.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/builder.css">
+    <script src="semantic/dist/semantic.min.js"></script>
+    <script src="js/welcome.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/startPage.css">
 	</head>
 	<body>
-    <div>
-      <div id="models" class="ui buttons">
-        <button class="ui button" onclick="getModel('oneByOne');">1x1</button>
-				<button class="ui button" onclick="getModel('twoByTwo');">2x2</button>
-				<button class="ui button" onclick="getModel('twoByThreeByTwo');">2x3x2</button>
-				<button class="ui button" onclick="getModel('oneByTwoPin');">1x2wPin</button>
-				<button class="ui button" onclick="getModel('twoByTwoPin');">2x2wPin</button>
-				<button class="ui button" onclick="getModel('twoByTwoByTwoPin');">2x2x2wPin</button>
-				<button class="ui button" onclick="getModel('twoByTwoDouble');">2x2 Double</button>
-				<button class="ui button" onclick="getModel('tire1');">Tire 1</button>
-				<button class="ui button" onclick="getModel('tire2');">Tire 2</button>
-				<button class="ui button" onclick="getModel('tire3');">Tire 3</button>
-        <button class="ui button" onclick="getModel('rim1');">Rim 1</button>
-				<button class="ui button" onclick="getModel('rim2');">Rim 2</button>
-				<button class="ui button" onclick="getModel('rim3');">Rim 3</button>
-				<button class="ui button" onclick="getModel('oneByTwo');">1x2</button>
-        <button class="ui button" onclick="getModel('oneByFour');">1x4</button>
-				<button class="ui button" onclick="getModel('oneByTwoPlate');">1x2P</button>
-				<button class="ui button" onclick="getModel('fourBySixPlate');">4x6P</button>
-				<button class="ui button" onclick="getModel('sixByEightPlate');">6x8P</button>
-				<button class="ui button" onclick="getModel('twoByTenPlate');">2x10P</button>
-				<button class="ui button" onclick="getModel('windshield');">Windshield</button>
-				<button class="ui button" onclick="getModel('steering');">Steering Wheel</button>
-        <button class="ui button" onclick="getModel('lego_man');">Man</button>				
-			</div>
-			<div id="header-info">
-					Powered by: <a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>
-					<br>
-					<strong>shift + click</strong>: add voxel, <strong>ctrl + click</strong>: remove voxel
-			</div>
-		</div>
-		<!-- All the libraries I need to run the three.js stuff properly -->
-		<script src="js/libs/three.min.js"></script>
-		<script src="js/libs/loader.js"></script>
-		<script src="js/renderers/Projector.js"></script>
-		<script src="js/renderers/CanvasRenderer.js"></script>
-		<script src="js/libs/stats.min.js"></script>
-		<script src="js/libs/Detector.js"></script>
-		<script src="js/controls/TrackballControls.js"></script>
-		<script src="js/controls/Orbit.js"></script>
+    <div class="top">
+      <div class="ui grid container">
+        <div class="ui centered vertically divided grid">
+          <div class="row twelve wide column">
+            <h1 class="ui header">Welcome To The Manufacturing Simulation</h1>
+          </div>
+          <div class="row twelve wide column">
+            <h2 class="ui header">What is this?</h2>
+            <p class="sixteen wide column">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+              Suspendisse quis arcu eleifend, efficitur dolor nec, condimentum diam. 
+              Nunc tellus mauris, porttitor ac tristique eget, consectetur ac ipsum. 
+              Phasellus placerat vel magna tristique semper. Nam at libero turpis. 
+              Integer sagittis turpis id odio finibus, ut cursus tortor tincidunt. 
+              Suspendisse facilisis sem pretium metus elementum, eget eleifend nisl venenatis. 
+              Nulla facilisi. In ac odio luctus, cursus elit ut, tempus diam. 
+              Donec aliquet massa ac ex sagittis, quis interdum neque vehicula. 
+              Duis laoreet, eros a cursus accumsan, libero nulla maximus elit, 
+              ut sollicitudin sem ipsum laoreet ex. Morbi facilisis, 
+              lorem at interdum efficitur, sapien tortor porta orci, 
+              in faucibus tortor lorem at metus. Nulla quis hendrerit odio. 
+              Curabitur euismod convallis sem, eu semper eros. 
+              Aenean vulputate ante nec ultricies placerat. 
+              Donec auctor volutpat velit, et sagittis magna commodo eget.
+            </p>
+          </div>
+          <div class="row twelve wide column">
+            <h2 class="ui header">How does the game work?</h2>
+            <p class="sixteen wide column">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+              Suspendisse quis arcu eleifend, efficitur dolor nec, condimentum diam. 
+              Nunc tellus mauris, porttitor ac tristique eget, consectetur ac ipsum. 
+              Phasellus placerat vel magna tristique semper. Nam at libero turpis. 
+              Integer sagittis turpis id odio finibus, ut cursus tortor tincidunt. 
+              Suspendisse facilisis sem pretium metus elementum, eget eleifend nisl venenatis. 
+              Nulla facilisi. In ac odio luctus, cursus elit ut, tempus diam. 
+              Donec aliquet massa ac ex sagittis, quis interdum neque vehicula. 
+              Duis laoreet, eros a cursus accumsan, libero nulla maximus elit, 
+              ut sollicitudin sem ipsum laoreet ex. Morbi facilisis, 
+              lorem at interdum efficitur, sapien tortor porta orci, 
+              in faucibus tortor lorem at metus. Nulla quis hendrerit odio. 
+              Curabitur euismod convallis sem, eu semper eros. 
+              Aenean vulputate ante nec ultricies placerat. 
+              Donec auctor volutpat velit, et sagittis magna commodo eget.
+            </p>
+          </div>
+          <div class="row twelve wide column">
+            <div class="eight wide center aligned column">
+              <h3 class="ui center aligned header">Start a new game</h3>
+              <div id="new-game" class="ui big blue labeled icon button">
+                <i class="signup icon"></i>
+                New Game
+              </div>
+            </div>
+            <div class="ui vertical divider">
+                Or
+              </div>
+            <div class="eight wide center aligned column">
+              <h3 class="ui center aligned header">Join a current game</h3>
+              <div id="join-game" class="ui big green labeled icon button">
+                <i class="signup icon"></i>
+                Join Game
+              </div>
+            </div>
+          </div>
+          <div class="row twelve wide column"></div>
+        </div>
+      </div>
+    </div>
+  </body>
 
-		<!-- My own javascript files -->
-		<script src="js/legoBuilder/modelProperties.js"></script>
-		<script src="js/legoBuilder/builderInitScripts.js"></script>
-		<script src="js/legoBuilder/builderScripts.js"></script>
-		<script src="js/legoBuilder/pageScripts.js"></script>
-	</body>
+  <div id="new-game-modal" class="ui tiny modal">
+    <div class="header">Start A New Game</div>
+    <div id="new-game-form" class="ui centered grid">
+      <form class="ui form">
+        <div class="one field">
+          <div class="field">
+            <label>Game Info</label>
+            <input id="groupName" placeholder="Group Name" name="name" type="text">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui input left icon labeled">
+            <input id="numPlayers" placeholder="Players" type="number" min="2" max="6">
+            <i class="users icon"></i>
+          </div>
+        </div>
+        <div class="ui selection dropdown">
+          <input type="hidden" name="gender">
+          <i class="dropdown icon"></i>
+          <div class="default text">Position Type</div>
+          <div class="menu">
+            <div class="item" data-value="3">Crafter</div>
+            <div class="item" data-value="2">Distributor</div>            
+            <div class="item" data-value="1">Supplier</div>
+            <div class="item" data-value="0">Customer</div>
+          </div>
+        </div>
+        <div class="ui error message"></div>
+      </form>
+    </div>
+    <div class="actions">
+      <div class="ui black deny button">
+        Cancel
+      </div>
+      <div id="start-game-submit" class="ui positive right labeled icon button">
+        Get Started
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <div id="join-game-modal" class="ui mini modal">
+    <div class="header">Join Game</div>
+    <div id="pin-grid" class="ui centered grid">
+      <div class="ui input labeled">
+        <input id="pin" placeholder="Pin" type="number">
+      </div>
+    </div>
+    <div class="actions">
+      <div class="ui black deny button">
+        Cancel
+      </div>
+      <div id="join-game-submit" class="ui positive right labeled icon button">
+        Get Started
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+  </div>
+
 </html>

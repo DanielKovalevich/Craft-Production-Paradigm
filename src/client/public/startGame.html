@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>Manufacturing Simulation</title>
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+    <script src="semantic/dist/semantic.min.js"></script>
+    <script src="js/startGame.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/startGame.css">
+  </head>
+  <body>
+    <div class="ui centered grid">
+      <div class="nine wide column">
+        <div class="ui centered celled grid">
+          <div class="sixteen wide centered column">
+            <h1 class="ui header">Group Name: </h1>
+          </div>
+          <div class="row">
+            <div class="eight wide centered column">
+                <div class="ui statistic">
+                  <div class="value">
+                    5555
+                  </div>
+                  <div class="label">
+                    Game Pin
+                  </div>
+                </div>
+            </div>
+            <div class="eight wide centered column">
+                <div class="ui statistic">
+                  <div class="value">
+                    1
+                  </div>
+                  <div class="label">
+                    Players Ready
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div id="progress-bar">
+              <div class="ui indicating progress" data-value="1" data-total=" 6" id="example4">
+                <div class="bar">
+                  <div class="progress"></div>
+                </div>
+                <div class="label">Getting Game Setup</div>
+              </div>
+              <div class="ui buttons">
+                <button id="exit" class="ui button">Exit</button>
+                <div class="or"></div>
+                <button id="start-game" class="ui positive button">Start Game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -5,12 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npm-run-all --parallel compile database dev",
-    "start-win": "npm-run-all --parallel compile database-win dev",
-    "database": "mongod --dbpath=./data --fork --logpath /dev/null",
-    "database-win": "mongod --dbpath=./data",
+    "database": "mongod --dbpath=./data",
     "compile": "tsc --watch --skipLibCheck",
     "dev": "nodemon dist/server.js --watch",
-    "stop": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
+    "stop": "mongo admin --eval 'db.shutdownServer()'",
     "pretest": "mongod --dbpath data --fork --logpath /dev/null",
     "test": "mocha test",
     "posttest": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
