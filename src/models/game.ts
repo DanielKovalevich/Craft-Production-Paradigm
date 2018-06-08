@@ -23,7 +23,6 @@ export const GameScheme = new Schema({
   pin: {type: Number, min: 0, max: 9999},
   groupName: {type: String},
   status: {type: String},
-  period: {type: Number, min: 1, max: 55},
   maxPlayers: {type: Number, min: 2, max: 6},
   activePlayers: {type: Number, min: 0, max: 6},
   positions: {type: Schema.Types.Mixed},

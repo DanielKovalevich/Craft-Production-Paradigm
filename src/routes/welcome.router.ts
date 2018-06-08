@@ -16,4 +16,4 @@ router.get('/:name', (req: Request, res: Response) => {
     res.send(`Hello, ${name}`);
 });
 
-export const WelcomeController: Router = router;
+export const WelcomeRouter: Router = router;

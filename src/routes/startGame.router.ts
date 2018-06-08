@@ -6,4 +6,4 @@ router.get('/', (req: Request, res: Response) => {
     res.send('Hello, World!');
 });
 
-export const StartGameController: Router = router;
+export const StartGameRouter: Router = router;

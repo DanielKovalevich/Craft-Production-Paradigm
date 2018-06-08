@@ -1,3 +1,3 @@
 /* app/routes/index.ts */
-export {WelcomeController} from './welcome.controller';
-export {StartGameController} from './startGame.controller';
+export {WelcomeRouter} from './welcome.router';
+export {StartGameRouter} from './startGame.router';
