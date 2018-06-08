@@ -13,9 +13,10 @@ export class GameController {
 
   public addNewGame(req: Request, res: Response) {
     let requestGame = req.body;
+    console.log(this.generatePin());
     requestGame.pin = this.generatePin();
+    console.log('I am here');
     let game = new Game(requestGame);
-
     this.db.addToDatabase(game);
   }
 
@@ -31,3 +32,15 @@ export class GameController {
     return pin;
   }
 }
+
+/*
+Testing POST
+{
+	"pin": 1,
+	"groupName": "BestTeamEver",
+	"status": "waiting",
+	"maxPlayers": 2,
+	"activePlayers": 1,
+	"positions": []
+}
+*/
