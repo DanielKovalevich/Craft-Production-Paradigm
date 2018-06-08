@@ -38,9 +38,14 @@ export class DatabaseConnector {
     this.gameCollection.insert(game);
   }
 
-  public checkIfPinExists(pin: Number): Boolean {
-    
+  public addToDatabase(game: mongoose.Model<any>) {
+    this.gameCollection.insert(game);
+  }
 
+  public checkIfPinExists(pin: Number): Boolean {
+    this.gameCollection.findOne({"pin": pin}, (err: any, results: any) => {
+      return results != null;
+    });
     return false;
   }
 

@@ -1,9 +1,8 @@
 import { Router, Request, Response } from 'express';
+import {GameController} from '../controllers/GameController'
 
 const router: Router = Router();
 
-router.get('/', (req: Request, res: Response) => {
-    res.send('Hello, World!');
-});
+router.get('/', new GameController().addNewGame);
 
 export const StartGameRouter: Router = router;

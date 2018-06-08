@@ -6,7 +6,8 @@ class App {
   public app: express.Application;
   constructor() {
     this.app = express();
-    this.config();        
+    this.config();
+    this.setRoutes();     
   }
 
   private config(): void {
@@ -15,7 +16,7 @@ class App {
   }
 
   private setRoutes(): void {
-    this.app.use('/welcome', WelcomeRouter);
+    //this.app.use('/welcome', WelcomeRouter);
     this.app.use('/startGame', StartGameRouter);
   }
 }
