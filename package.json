@@ -29,6 +29,7 @@
     "@types/mongoose": "^5.0.13",
     "@types/node": "^10.0.8",
     "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
     "eslint": "^4.19.1",
     "express": "^4.16.3",
     "mongodb": "^3.1.0-beta4",
@@ -37,6 +38,7 @@
     "typescript": "^2.8.3"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.4",
     "@types/three": "^0.91.14",
     "copyfiles": "^2.0.0",
     "nodemon": "^1.17.4",

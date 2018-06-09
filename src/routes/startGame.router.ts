@@ -1,13 +1,15 @@
 import { Router, Request, Response } from 'express';
 import {GameController} from '../controllers/GameController'
+import * as cors from 'cors';
 
 const router: Router = Router();
 
-router.post('/', (req: Request, res: Response) => {
+router.post('/', cors(), (req: Request, res: Response) => {
   let game = new GameController();
-  game.addNewGame(req);
-  // TODO: Make sure it actually does something
-  res.send('good');
+  let result = {"pin" : 0};
+  result.pin = game.addNewGame(req);
+  res.send(result);
+  
 });
 
 // if I create self-contained functions, I can write them this

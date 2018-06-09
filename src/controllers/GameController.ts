@@ -16,6 +16,7 @@ export class GameController {
     requestGame.pin = this.generatePin();
     let game = new Game(requestGame);
     this.db.addToDatabase(game);
+    return requestGame.pin;
   }
 
   private generatePin(): Number {    

@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
+import * as cors from 'cors';
 import {WelcomeRouter, StartGameRouter} from '../routes';
 
 class App {
@@ -11,6 +12,10 @@ class App {
   }
 
   private config(): void {
+    /*this.app.use((req, res, next) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }),*/
+    this.app.use(cors({origin: 'http://localhost:8080'}));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
   }
