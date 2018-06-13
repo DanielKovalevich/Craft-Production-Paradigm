@@ -3,18 +3,13 @@ $(document).ready(() => {
     e.preventDefault();
     $('#new-game-modal').modal({
       onApprove : function() {
-        // TODO: Validation and call to server
-        //... //Validate here, or pass validation to somewhere else
+        console.log('sending game info to server');
+        $('#start-game-submit').removeClass('right labeled icon').addClass('loading');
+        let postData = getPostData();
+        setTimeout(sendToServer, 2000, postData);
         return false; //Return false as to not close modal dialog
       }
     }).modal('show');
-  });
-
-  $('#start-game-submit').click((e) => {
-    console.log('sending game info to server');
-    $('#start-game-submit').removeClass('right labeled icon').addClass('loading');
-    let postData = getPostData();
-    setTimeout(sendToServer, 2000, postData);
   });
 
   $('#join-game').click((e) => {
@@ -52,7 +47,8 @@ function sendToServer(postData) {
 function getPostData() {
   let data = {'positions': []};
   data.pin = null; // this will be changed by the server anyway
-  data.groupName = $('#group-name').val();
+  let name = $('#group-name').val();
+  data.groupName = name == null || name == "" ? "Default" : name;
   data.activePlayers = 1;
   data.status = 'waiting';
   let position = $('#position-type').html();

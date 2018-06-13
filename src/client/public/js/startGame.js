@@ -1,4 +1,5 @@
 $(document).ready(() => {
+  getPin();
   $('#example4').progress({
     text: {
       active  : 'Getting game ready',
@@ -16,3 +17,7 @@ $(document).ready(() => {
   });
 
 });
+
+function getPin() {
+  return /(\d+)(?!.*\d)/g.exec(window.location.href)[0];
+}
