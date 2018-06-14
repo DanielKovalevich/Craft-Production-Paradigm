@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { GameScheme } from '../models/game';
 import { Request, Response } from 'express';
-import {DatabaseConnector} from '../models/database';
+import {DatabaseConnector} from '../controllers/database';
 
 const Game: mongoose.Model<any> = mongoose.model('Game', GameScheme);
 
@@ -17,6 +17,10 @@ export class GameController {
     let game = new Game(requestGame);
     this.db.addToDatabase(game);
     return requestGame.pin;
+  }
+
+  public getGameInfo(pin: Number): any {
+    return this.db.getGameObject(pin);
   }
 
   private generatePin(): Number {    
@@ -41,14 +45,5 @@ Testing POST
 	"maxPlayers": 2,
 	"activePlayers": 1,
 	"positions": []
-}
-*/
-
-/*
-THINK ABOUT USING THIS DUMBASS
-Number.prototype.pad = function(size) {
-    var s = String(this);
-    while (s.length < (size || 2)) {s = "0" + s;}
-    return s;
 }
 */

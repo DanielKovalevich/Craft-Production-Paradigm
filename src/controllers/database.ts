@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {GameScheme} from './game';
+import {GameScheme} from '../models/game';
 
 export class DatabaseConnector {
   private db: any;
@@ -38,10 +38,19 @@ export class DatabaseConnector {
     this.gameCollection.insert(game);
   }
 
+  /**
+   * This takes the passed in game object and adds it to the database
+   * @param game Scheme created earlier
+   */
   public addToDatabase(game: mongoose.Model<any>) {
     this.gameCollection.insert(game);
   }
 
+  /**
+   * Returns whether or not a pin already exists
+   * This is to avoid games from having the same pin
+   * @param pin Identifier
+   */
   public checkIfPinExists(pin: Number): Boolean {
     this.gameCollection.findOne({"pin": pin}, (err: any, results: any) => {
       return results != null;
@@ -49,7 +58,12 @@ export class DatabaseConnector {
     return false;
   }
 
-  public test(): void {
-    console.log('test');
+  public getGameObject(pin: Number): any {
+    this.gameCollection.findOne({"pin": pin}, (err: any, results: any) => {
+      if (err) console.log(err);
+      else return results;
+    });
+
+    return null;
   }
 }

@@ -5,14 +5,18 @@ import * as cors from 'cors';
 const router: Router = Router();
 
 router.post('/', cors(), (req: Request, res: Response) => {
-  let game = new GameController();
-  let result = {"pin" : 0};
+  let game: GameController = new GameController();
+  let result: any = {"pin" : 0};
   result.pin = game.addNewGame(req);
   res.send(result);
-  
 });
 
-// if I create self-contained functions, I can write them this
+router.get('/getGameInfo/:id', cors(), (req: Request, res: Response) => {
+  let game = new GameController();
+  res.send(game.getGameInfo(req.params.id));
+});
+
+// if I create self-contained functions, I can write them like this
 //router.post('/', new GameController().addNewGame);
 
 export const StartGameRouter: Router = router;
