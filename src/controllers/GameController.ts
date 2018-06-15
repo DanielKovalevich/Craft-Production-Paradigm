@@ -11,9 +11,9 @@ export class GameController {
     this.db = new DatabaseConnector();
   }
 
-  public addNewGame(req: Request) {
+  public async addNewGame(req: Request) {
     let requestGame = req.body;
-    requestGame.pin = this.generatePin();
+    requestGame.pin = await this.generatePin();
     let game = new Game(requestGame);
     this.db.addToDatabase(game);
     return requestGame.pin;
@@ -27,13 +27,13 @@ export class GameController {
     return await this.db.getGameObject(pin);
   }
 
-  private generatePin(): Number {    
+  private async generatePin(): Promise<Number> {    
     let notOriginal: Boolean = true;
     let pin: Number = 0;
 
     while(notOriginal) {
       pin = Math.floor((Math.random() * 9999));
-      notOriginal = this.db.checkIfPinExists(pin);
+      notOriginal = await this.db.checkIfPinExists(pin);
     }
 
     return pin;
