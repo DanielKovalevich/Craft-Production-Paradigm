@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
-import {WelcomeRouter, StartGameRouter} from '../routes';
+import {StartGameRouter} from '../routes';
 
 class App {
   public app: express.Application;
@@ -21,7 +21,6 @@ class App {
   }
 
   private setRoutes(): void {
-    //this.app.use('/welcome', WelcomeRouter);
     this.app.use('/startGame', StartGameRouter);
   }
 }

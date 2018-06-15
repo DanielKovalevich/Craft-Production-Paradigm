@@ -7,6 +7,12 @@ $(document).ready(() => {
   getGameInfo();
 });
 
+/*window.onbeforeunload = closingCode;
+function closingCode() {
+
+  return null;
+}*/
+
 function getPin() {
   return /(\d+)(?!.*\d)/g.exec(window.location.href)[0];
 }
@@ -30,7 +36,13 @@ function initProgressAndButtons() {
   });
 
   $('#exit').click((e) => {
-    window.location.href = '/';
+    $.ajax({
+      type: 'GET',
+      timeout: 5000,
+      url: 'http://localhost:3000/startGame/removeActivePlayer/' + pin,
+      success: (result) => window.location.href = '/',
+      error: (error) => console.log(error)
+    });
   });
 }
 
@@ -45,7 +57,7 @@ function getGameInfo() {
     error: (xhr,status,error) => {
       console.log(error);
     }
-  })
+  });
 }
 
 function applyGameInfo(result) {

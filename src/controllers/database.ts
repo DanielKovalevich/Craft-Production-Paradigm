@@ -51,8 +51,23 @@ export class DatabaseConnector {
    * This is to avoid games from having the same pin
    * @param pin Identifier
    */
-  public async checkIfPinExists(pin: Number): Promise<Boolean> {
-    return await this.gameCollection.findOne({"pin": pin}) != null;
+  public checkIfPinExists(pinNum: string, callback: Function) {
+    this.gameCollection.findOne({pin: parseInt(pinNum)}, (err: any, result: any) => {
+      if (err) throw err;
+      callback(result != null);
+    });
+  }
+
+  public addActivePlayer(pinNum: string): void {
+    this.gameCollection.update({pin: parseInt(pinNum)}, {$inc: {activePlayers: 1}});
+  }
+
+  public removeActivePlayer(pinNum: string): void {
+    let query = {pin: parseInt(pinNum)};
+    this.gameCollection.update(query, {$inc: {activePlayers: -1}});
+    this.gameCollection.findOne(query, (err: any, result: any) => {
+      if (result.activePlayers <= 0) this.gameCollection.deleteOne(query);
+    });
   }
 
   public async getGameObject(pinNum: string): Promise<any> {

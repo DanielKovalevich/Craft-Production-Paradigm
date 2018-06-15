@@ -16,8 +16,8 @@ $(document).ready(() => {
     e.preventDefault();
     $('#join-game-modal').modal({
       onApprove : function() {
-        // TODO: Validation and call to server
-        //... //Validate here, or pass validation to somewhere else
+        $('#join-game-submit').removeClass('right labeled icon').addClass('loading');
+          setTimeout(joinGame, 2000, $('#pin').val());
         return false; //Return false as to not close modal dialog
       }
     }).modal('show');    
@@ -56,4 +56,41 @@ function getPostData() {
   let players = $('#num-players').val();
   data.maxPlayers = players > 6 ? 6 : players < 2 ? 2 : players;
   return JSON.stringify(data);
+}
+
+function joinGame(pin) {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/startGame/getGameInfo/' + pin,
+    timeout: 5000,
+    success: (result) => {
+      if (result == null) {
+        $('#join-game-submit').removeClass('loading').addClass('right labeled icon');
+        console.log('That game does not exist');
+      }
+      else {
+        result = result[0];
+        if (result.maxPlayers == result.activePlayers) {
+          alert('Game is already full');
+        } 
+        else {
+          updateActivePlayers(pin);
+        }
+      }
+    },
+    error: (xhr,status,error) => {
+      console.log(error);
+      $('#join-game-submit').removeClass('loading').addClass('right labeled icon');
+    }
+  });
+}
+
+function updateActivePlayers(pin) {
+  $.ajax({
+    type: 'GET',
+    timeout: 5000,
+    url: 'http://localhost:3000/startGame/addActivePlayer/' + pin,
+    success: (result) => window.location.href = '/startGame/' + pin,
+    error: (error) => console.log(error)
+  });
 }
