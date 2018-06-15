@@ -13,7 +13,9 @@ router.post('/', cors(), (req: Request, res: Response) => {
 
 router.get('/getGameInfo/:id', cors(), (req: Request, res: Response) => {
   let game = new GameController();
-  res.send(game.getGameInfo(req.params.id));
+  game.getGameInfo(req.params.id, (result: any) => {
+    res.send(result);
+  });
 });
 
 // if I create self-contained functions, I can write them like this

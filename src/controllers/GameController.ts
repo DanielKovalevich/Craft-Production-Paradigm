@@ -19,8 +19,14 @@ export class GameController {
     return requestGame.pin;
   }
 
-  public getGameInfo(pin: Number): any {
-    return this.db.getGameObject(pin);
+  /**
+   * Gets all of the game info from database using the pin
+   * @param pin JavaScript decided for me that it will be a string
+   */
+  public getGameInfo(pin: string, callback: Function): any {
+    this.db.getGameObject(pin, (result: any) => {
+      callback(result);
+    });
   }
 
   private generatePin(): Number {    

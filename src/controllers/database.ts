@@ -58,12 +58,10 @@ export class DatabaseConnector {
     return false;
   }
 
-  public getGameObject(pin: Number): any {
-    this.gameCollection.findOne({"pin": pin}, (err: any, results: any) => {
-      if (err) console.log(err);
-      else return results;
+  public getGameObject(pinNum: string, callback: Function): any {
+    this.gameCollection.find({pin: parseInt(pinNum)}).toArray(function(err: any, result: any) {
+      if (err) throw err;
+      callback(result[0]);
     });
-
-    return null;
   }
 }

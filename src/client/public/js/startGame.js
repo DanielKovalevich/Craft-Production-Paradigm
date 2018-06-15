@@ -1,8 +1,9 @@
 let pin = -1;
+let maxPlayers = -1;
 
 $(document).ready(() => {
-  initProgressAndButtons();
   initPage();
+  initProgressAndButtons();
   getGameInfo();
 });
 
@@ -39,12 +40,21 @@ function getGameInfo() {
     url: 'http://localhost:3000/startGame/getGameInfo/' + pin,
     timeout: 5000,
     success: (result) => {
-      console.log(result);
+      applyGameInfo(result);
     },
     error: (xhr,status,error) => {
       console.log(error);
     }
   })
+}
+
+function applyGameInfo(result) {
+  let title = $('#name').html();
+  $('#name').html(title + result.groupName);
+  $('#players').html(result.activePlayers);
+  $('#example4').attr('data-total', result.maxPlayers);
+  $('#example4').progress('set total', result.maxPlayers);
+  $('#example4').progress('update progress', result.activePlayers);
 }
 
 // Create a pad function for the pin so that a pin like 12
