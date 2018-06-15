@@ -40,7 +40,7 @@ function getGameInfo() {
     url: 'http://localhost:3000/startGame/getGameInfo/' + pin,
     timeout: 5000,
     success: (result) => {
-      applyGameInfo(result);
+      applyGameInfo(result[0]);
     },
     error: (xhr,status,error) => {
       console.log(error);

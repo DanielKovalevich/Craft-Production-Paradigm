@@ -58,10 +58,7 @@ export class DatabaseConnector {
     return false;
   }
 
-  public getGameObject(pinNum: string, callback: Function): any {
-    this.gameCollection.find({pin: parseInt(pinNum)}).toArray(function(err: any, result: any) {
-      if (err) throw err;
-      callback(result[0]);
-    });
+  public async getGameObject(pinNum: string): Promise<any> {
+    return await this.gameCollection.find({pin: parseInt(pinNum)}).toArray();
   }
 }
