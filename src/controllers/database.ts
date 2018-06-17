@@ -18,26 +18,6 @@ export class DatabaseConnector {
     this.gameCollection = this.db.collection('gameFiles');
   }
 
-  public getConnection(): any {
-    return this.db;
-  }
-
-  // TODO: Delete once I test this
-  public addOneNewEntry(): void {
-    let test = {
-      pin: 0,
-      groupName: "test",
-      status: "waiting",
-      maxPlayers: 2,
-      activePlayers: 1,
-      positions: ["Crafter", "Distributer"]
-    }
-
-    let Game = mongoose.model('Game', GameScheme);
-    let game = new Game(test);
-    this.gameCollection.insert(game);
-  }
-
   /**
    * This takes the passed in game object and adds it to the database
    * @param game Scheme created earlier
@@ -58,10 +38,19 @@ export class DatabaseConnector {
     });
   }
 
+  /**
+   * Increments the active players by one whenever a new player joins the game
+   * @param pinNum 
+   */
   public addActivePlayer(pinNum: string): void {
     this.gameCollection.update({pin: parseInt(pinNum)}, {$inc: {activePlayers: 1}});
   }
 
+  /**
+   * When someone needs to exit the application, this handles removing the active player
+   * it will also delete the database entry, if there are no active players
+   * @param pinNum 
+   */
   public removeActivePlayer(pinNum: string): void {
     let query = {pin: parseInt(pinNum)};
     this.gameCollection.update(query, {$inc: {activePlayers: -1}});
@@ -70,6 +59,10 @@ export class DatabaseConnector {
     });
   }
 
+  /**
+   * Used for when looking up the game by pin
+   * @param pinNum 
+   */
   public async getGameObject(pinNum: string): Promise<any> {
     return await this.gameCollection.find({pin: parseInt(pinNum)}).toArray();
   }

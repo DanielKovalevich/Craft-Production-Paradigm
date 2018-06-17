@@ -11,6 +11,10 @@ export class GameController {
     this.db = new DatabaseConnector();
   }
 
+  /**
+   * Takes data sent and creates database entry
+   * @param req 
+   */
   public addNewGame(req: Request): Number {
     let requestGame = req.body;
     requestGame.pin = this.generatePin();
@@ -35,6 +39,9 @@ export class GameController {
     this.db.removeActivePlayer(pin);
   }
 
+  /**
+   * Generates a pin and makes sure the pin doesn't already exist in the db
+   */
   private generatePin(): Number {    
     let notOriginal: Boolean = true;
     let pin: string = Math.floor(Math.random() * 9999).toString();
