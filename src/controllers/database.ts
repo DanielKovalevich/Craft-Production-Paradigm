@@ -18,6 +18,10 @@ export class DatabaseConnector {
     this.gameCollection = this.db.collection('gameFiles');
   }
 
+  public close() {
+    this.db.close();
+  }
+
   /**
    * This takes the passed in game object and adds it to the database
    * @param game Scheme created earlier

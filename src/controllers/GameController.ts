@@ -39,6 +39,12 @@ export class GameController {
     this.db.removeActivePlayer(pin);
   }
 
+  public checkIfPinExists(pin: string, callback: Function) {
+    this.db.checkIfPinExists(pin, (result: any) => {
+      callback(result);
+    });
+  }
+
   /**
    * Generates a pin and makes sure the pin doesn't already exist in the db
    */

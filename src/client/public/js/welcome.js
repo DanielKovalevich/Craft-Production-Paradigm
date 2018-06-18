@@ -23,6 +23,7 @@ $(document).ready(() => {
     }).modal('show');    
   });
 
+  $('#pin').keypress((e) => setTimeout(checkIfPinIsValid, 1000));
   $('.ui.dropdown').dropdown();
 });
 
@@ -40,6 +41,31 @@ function sendToServer(postData) {
     error: function(xhr,status,error) {
       console.log(error);
       $('#start-game-submit').removeClass('loading').addClass('right labeled icon');
+    }
+  });
+}
+
+function checkIfPinIsValid() {
+  let pin = $('#pin').val();
+  console.log(pin);
+  $.ajax({
+    type: 'GET',
+    cache: false,
+    url: 'http://localhost:3000/startGame/checkIfPinExists/' + pin,
+    success: (result) => {
+      if (result) {
+        $('.invalid-pin').addClass('hidden');
+        $('#join-dropdown').removeClass('disabled');
+        console.log('hur');
+      }
+      else {
+        $('.invalid-pin').removeClass('hidden');
+      }
+    },
+    error: (xhr,status,error) => {
+      console.log(error);
+      console.log(pin);
+      $('.invalid-pin').removeClass('hidden');
     }
   });
 }
