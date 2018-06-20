@@ -5,9 +5,9 @@ import * as cors from 'cors';
 const router: Router = Router();
 const controller: GameController = new GameController();
 
-router.post('/', cors(), (req: Request, res: Response) => {
+router.post('/', cors(), async (req: Request, res: Response) => {
   let result: any = {"pin" : 0};
-  result.pin = controller.addNewGame(req);
+  result.pin = await controller.addNewGame(req);
   res.send(result);
 });
 
@@ -30,10 +30,8 @@ router.get('/removeActivePlayer/:id', cors(), (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-router.get('/checkIfPinExists/:id', cors(), (req: Request, res: Response) => {
-  controller.checkIfPinExists(req.params.id, (result:any) => {
-    res.send(result);
-  });
+router.get('/checkIfPinExists/:id', cors(), async (req: Request, res: Response) => {
+  res.send(await controller.checkIfPinExists(req.params.id));
 });
 
 router.get('/getPossiblePositions/:id', cors(), async (req: Request, res: Response) => {

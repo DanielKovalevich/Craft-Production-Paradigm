@@ -31,11 +31,9 @@ export class DatabaseConnector {
    * This is to avoid games from having the same pin
    * @param pin Identifier
    */
-  public checkIfPinExists(pinNum: string, callback: Function): void {
-    this.gameCollection.findOne({pin: parseInt(pinNum)}, (err: any, result: any) => {
-      if (err) throw err;
-      callback(result != null);
-    });
+  public async checkIfPinExists(pinNum: string): Promise<any> {
+    let result = await this.gameCollection.findOne({pin: parseInt(pinNum)})
+    return result != undefined && result != null;
   }
 
   /**
@@ -55,6 +53,7 @@ export class DatabaseConnector {
     let query = {pin: parseInt(pinNum)};
     this.gameCollection.update(query, {$inc: {activePlayers: -1}});
     this.gameCollection.findOne(query, (err: any, result: any) => {
+      if (err) throw err;
       if (result.activePlayers <= 0) this.gameCollection.deleteOne(query);
     });
   }

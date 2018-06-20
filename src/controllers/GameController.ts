@@ -15,9 +15,9 @@ export class GameController {
    * Takes data sent and creates database entry
    * @param req 
    */
-  public addNewGame(req: Request): Number {
+  public async addNewGame(req: Request): Promise<number> {
     let requestGame = req.body;
-    requestGame.pin = this.generatePin();
+    requestGame.pin = await this.generatePin();
     let game = new Game(requestGame);
     this.db.addToDatabase(game);
     return requestGame.pin;
@@ -43,10 +43,8 @@ export class GameController {
     this.db.removeActivePlayer(pin);
   }
 
-  public checkIfPinExists(pin: string, callback: Function) {
-    this.db.checkIfPinExists(pin, (result: any) => {
-      callback(result);
-    });
+  public async checkIfPinExists(pin: string) {
+    return await this.db.checkIfPinExists(pin);
   }
 
   public async getPossiblePositions(pin: string): Promise<any> {
@@ -56,15 +54,15 @@ export class GameController {
   /**
    * Generates a pin and makes sure the pin doesn't already exist in the db
    */
-  private generatePin(): Number {    
+  private async generatePin(): Promise<number> {    
     let notOriginal: Boolean = true;
     let pin: string = Math.floor(Math.random() * 9999).toString();
 
     while(notOriginal) {
-      this.db.checkIfPinExists(pin, (result: any) => {
-        notOriginal = result;
-        if (notOriginal) pin = Math.floor(Math.random() * 9999).toString();
-      });
+      let result = await this.db.checkIfPinExists(pin);
+      console.log(result);
+      notOriginal = result;
+      if (notOriginal) pin = Math.floor(Math.random() * 9999).toString();
     }
 
     return parseInt(pin);
