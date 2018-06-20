@@ -11,18 +11,23 @@ router.post('/', cors(), (req: Request, res: Response) => {
   res.send(result);
 });
 
+router.post('/joinGame/:id', (req: Request, res: Response) => {
+  controller.joinGame(req);
+  res.status(200).send('OK');
+});
+
 router.get('/getGameInfo/:id', cors(), async (req: Request, res: Response) => {
   res.send(await controller.getGameInfo(req.params.id));
 });
 
 router.get('/addActivePlayer/:id', cors(), (req: Request, res: Response) => {
   controller.addActivePlayer(req.params.id);
-  res.send(200);
+  res.sendStatus(200);
 });
 
 router.get('/removeActivePlayer/:id', cors(), (req: Request, res: Response) => {
   controller.removeActivePlayer(req.params.id);
-  res.send(200);
+  res.sendStatus(200);
 });
 
 router.get('/checkIfPinExists/:id', cors(), (req: Request, res: Response) => {
@@ -32,7 +37,7 @@ router.get('/checkIfPinExists/:id', cors(), (req: Request, res: Response) => {
 });
 
 router.get('/getPossiblePositions/:id', cors(), async (req: Request, res: Response) => {
-  console.log(await controller.getPossiblePositions(req.params.id));
+  res.send(await controller.getPossiblePositions(req.params.id));
 });
 
 // if I create self-contained functions, I can write them like this

@@ -23,6 +23,10 @@ export class GameController {
     return requestGame.pin;
   }
 
+  public joinGame(req: Request) {
+    this.db.joinGame(req.params.id, req.body.position);
+  }
+
   /**
    * Gets all of the game info from database using the pin
    * @param pin JavaScript decided for me that it will be a string
@@ -66,15 +70,3 @@ export class GameController {
     return parseInt(pin);
   }
 }
-
-/*
-Testing POST
-{
-	"pin": 1,
-	"groupName": "BestTeamEver",
-	"status": "waiting",
-	"maxPlayers": 2,
-	"activePlayers": 1,
-	"positions": []
-}
-*/

@@ -18,15 +18,11 @@ export class DatabaseConnector {
     this.gameCollection = this.db.collection('gameFiles');
   }
 
-  public close() {
-    this.db.close();
-  }
-
   /**
    * This takes the passed in game object and adds it to the database
    * @param game Scheme created earlier
    */
-  public addToDatabase(game: mongoose.Model<any>) {
+  public addToDatabase(game: mongoose.Model<any>): void {
     this.gameCollection.insert(game);
   }
 
@@ -35,7 +31,7 @@ export class DatabaseConnector {
    * This is to avoid games from having the same pin
    * @param pin Identifier
    */
-  public checkIfPinExists(pinNum: string, callback: Function) {
+  public checkIfPinExists(pinNum: string, callback: Function): void {
     this.gameCollection.findOne({pin: parseInt(pinNum)}, (err: any, result: any) => {
       if (err) throw err;
       callback(result != null);
@@ -80,5 +76,10 @@ export class DatabaseConnector {
         possiblePositions.splice(index, 1);
     });
     return possiblePositions;
+  }
+
+  public joinGame(pinNum: string, position: string): void {
+    if (position != null && position != "" && position != undefined)
+      this.gameCollection.update({pin: parseInt(pinNum)}, {$push: {positions: position}});
   }
 }

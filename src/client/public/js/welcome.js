@@ -17,7 +17,16 @@ $(document).ready(() => {
     $('#join-game-modal').modal({
       onApprove : function() {
         $('#join-game-submit').removeClass('right labeled icon').addClass('loading');
-          setTimeout(joinGame, 2000, $('#pin').val());
+        let joinPositionType = getJoinPosition();
+        if (joinPositionType != undefined) {
+          setTimeout(joinGame, 2000, $('#pin').val(), joinPositionType);
+          $('.invalid-pin').addClass('hidden');
+        }
+        else {
+          $('#join-game-submit').removeClass('loading').addClass('right labeled icon');
+          $('.invalid-pin').removeClass('hidden');
+          $('.invalid-pin').html('You must choose a position type!');
+        }
         return false; //Return false as to not close modal dialog
       }
     }).modal('show');    
@@ -58,13 +67,16 @@ function checkIfPinIsValid() {
         getPossiblePositions(pin);
       }
       else {
+        $('#join-dropdown').addClass('disabled');
         $('.invalid-pin').removeClass('hidden');
+        $('.invalid-pin').html('That is not a valid pin!');
       }
     },
     error: (xhr,status,error) => {
       console.log(error);
       console.log(pin);
       $('.invalid-pin').removeClass('hidden');
+      $('.invalid-pin').html('That is not a valid pin!');      
     }
   });
 }
@@ -75,7 +87,14 @@ function getPossiblePositions(pin) {
     cache: false,
     url: 'http://localhost:3000/startGame/getPossiblePositions/' + pin,
     success: (result) => {
-      console.log('we hur nibba');
+      if (result.length == 0) {
+        $('.invalid-pin').removeClass('hidden');
+        $('.invalid-pin').html('Sorry. That game is already full.');   
+      }
+      result.forEach(element => {
+        if ($('#join-menu').children().length < result.length)
+          $('#join-menu').append('<div class="item">' + element + '</div>');
+      });
     },
     error: (xhr, status, error) => {
       console.log(error);
@@ -91,31 +110,35 @@ function getPostData() {
   data.activePlayers = 1;
   data.status = 'waiting';
   let position = $('#position-type').html();
-  data.positions.push(position === "Position Type" ? "Crafter" : position);
+  data.positions.push(position === "Position Type" ? "Assembler" : position);
   let players = $('#num-players').val();
   data.maxPlayers = players > 3 ? 3 : players < 2 ? 2 : players;
   return JSON.stringify(data);
 }
 
-function joinGame(pin) {
+/**
+ * I have to get the choice manually because stupid stuff is happening
+ * when I try to just use $('#position-type').html()
+ */
+function getJoinPosition() {
+  let children = $('#join-menu').children().toArray();
+  let returnChild = null;
+  children.forEach(child => {
+    if ($(child).hasClass('active'))
+      returnChild = child;
+  });
+  return $(returnChild).html();
+}
+
+function joinGame(pin, position) {
+  let postData = {"position": position};
   $.ajax({
-    type: 'GET',
-    url: 'http://localhost:3000/startGame/getGameInfo/' + pin,
+    type: 'POST',
+    data: postData,
+    url: 'http://localhost:3000/startGame/joinGame/' + pin,
     timeout: 5000,
-    success: (result) => {
-      if (result == null) {
-        $('#join-game-submit').removeClass('loading').addClass('right labeled icon');
-        console.log('That game does not exist');
-      }
-      else {
-        result = result[0];
-        if (result.maxPlayers == result.activePlayers) {
-          alert('Game is already full');
-        } 
-        else {
-          updateActivePlayers(pin);
-        }
-      }
+    success: () => {
+      updateActivePlayers(pin);
     },
     error: (xhr,status,error) => {
       console.log(error);
