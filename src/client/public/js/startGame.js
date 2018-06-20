@@ -53,6 +53,9 @@ function getGameInfo() {
     timeout: 5000,
     success: (result) => {
       applyGameInfo(result[0]);
+      setTimeout(getGameInfo, 5000);
+      if (result[0].activePlayers == result[0].maxPlayers)
+        $('#start-game').removeClass('disabled');
     },
     error: (xhr,status,error) => {
       console.log(error);
@@ -61,7 +64,7 @@ function getGameInfo() {
 }
 
 function applyGameInfo(result) {
-  let title = $('#name').html();
+  let title = 'Group Name: ';
   $('#name').html(title + result.groupName);
   $('#players').html(result.activePlayers);
   $('#example4').attr('data-total', result.maxPlayers);
