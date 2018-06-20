@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
-import { GameScheme } from '../models/game';
-import { Request, Response } from 'express';
+import {GameScheme} from '../models/game';
+import {Request, Response} from 'express';
 import {DatabaseConnector} from '../controllers/database';
 
 const Game: mongoose.Model<any> = mongoose.model('Game', GameScheme);
@@ -43,6 +43,10 @@ export class GameController {
     this.db.checkIfPinExists(pin, (result: any) => {
       callback(result);
     });
+  }
+
+  public async getPossiblePositions(pin: string): Promise<any> {
+    return await this.db.getPossiblePositions(pin);
   }
 
   /**

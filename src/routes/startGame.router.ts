@@ -31,6 +31,10 @@ router.get('/checkIfPinExists/:id', cors(), (req: Request, res: Response) => {
   });
 });
 
+router.get('/getPossiblePositions/:id', cors(), async (req: Request, res: Response) => {
+  console.log(await controller.getPossiblePositions(req.params.id));
+});
+
 // if I create self-contained functions, I can write them like this
 //router.post('/', new GameController().addNewGame);
 

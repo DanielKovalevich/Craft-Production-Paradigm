@@ -47,7 +47,6 @@ function sendToServer(postData) {
 
 function checkIfPinIsValid() {
   let pin = $('#pin').val();
-  console.log(pin);
   $.ajax({
     type: 'GET',
     cache: false,
@@ -56,7 +55,7 @@ function checkIfPinIsValid() {
       if (result) {
         $('.invalid-pin').addClass('hidden');
         $('#join-dropdown').removeClass('disabled');
-        console.log('hur');
+        getPossiblePositions(pin);
       }
       else {
         $('.invalid-pin').removeClass('hidden');
@@ -66,6 +65,20 @@ function checkIfPinIsValid() {
       console.log(error);
       console.log(pin);
       $('.invalid-pin').removeClass('hidden');
+    }
+  });
+}
+
+function getPossiblePositions(pin) {
+  $.ajax({
+    type: 'GET',
+    cache: false,
+    url: 'http://localhost:3000/startGame/getPossiblePositions/' + pin,
+    success: (result) => {
+      console.log('we hur nibba');
+    },
+    error: (xhr, status, error) => {
+      console.log(error);
     }
   });
 }
@@ -80,7 +93,7 @@ function getPostData() {
   let position = $('#position-type').html();
   data.positions.push(position === "Position Type" ? "Crafter" : position);
   let players = $('#num-players').val();
-  data.maxPlayers = players > 6 ? 6 : players < 2 ? 2 : players;
+  data.maxPlayers = players > 3 ? 3 : players < 2 ? 2 : players;
   return JSON.stringify(data);
 }
 

@@ -70,4 +70,15 @@ export class DatabaseConnector {
   public async getGameObject(pinNum: string): Promise<any> {
     return await this.gameCollection.find({pin: parseInt(pinNum)}).toArray();
   }
+
+  public async getPossiblePositions(pinNum: string): Promise<any> {
+    let possiblePositions: string[] = ['Assembler', 'Supplier', 'Customer'];
+    let takenPositions = await this.gameCollection.find({pin: parseInt(pinNum)}, {positions: 1}).toArray();
+    takenPositions[0].positions.forEach((element: string) => {
+      let index = possiblePositions.indexOf(element);
+      if (index != -1) 
+        possiblePositions.splice(index, 1);
+    });
+    return possiblePositions;
+  }
 }
