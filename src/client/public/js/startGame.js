@@ -31,8 +31,14 @@ function initProgressAndButtons() {
   });
 
   $('#start-game').click((e) => {
-    $('#example4').progress('increment');
-    e.preventDefault();
+    let location = '/';
+    switch(sessionStorage.position) {
+      case 'Assembler': location = '/builder/' + pin; break;
+      case 'Customer': location = '/customer/' + pin; break;
+      case 'Supplier': location = '/supplier/' + pin; break;
+    }
+
+    window.location.href = location;
   });
 
   $('#exit').click((e) => {

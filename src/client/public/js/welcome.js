@@ -110,7 +110,9 @@ function getPostData() {
   data.activePlayers = 1;
   data.status = 'waiting';
   let position = $('#position-type').html();
-  data.positions.push(position === "Position Type" ? "Assembler" : position);
+  position = position === "Position Type" ? "Assembler" : position;
+  sessionStorage.position = position;
+  data.positions.push(position);
   let players = $('#num-players').val();
   data.maxPlayers = players > 3 ? 3 : players < 2 ? 2 : players;
   return JSON.stringify(data);
@@ -138,6 +140,7 @@ function joinGame(pin, position) {
     url: 'http://localhost:3000/startGame/joinGame/' + pin,
     timeout: 5000,
     success: () => {
+      sessionStorage.position = position;
       updateActivePlayers(pin);
     },
     error: (xhr,status,error) => {
