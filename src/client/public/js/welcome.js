@@ -1,41 +1,59 @@
+/**
+ * author: Daniel Kovalevich
+ * dateModified: Last time I felt like it
+ */
+
 $(document).ready(() => {
+  initButtons();
+});
+
+function initButtons() {
   $('#new-game').click((e) => {
     e.preventDefault();
-    $('#new-game-modal').modal({
-      onApprove : function() {
-        console.log('sending game info to server');
-        $('#start-game-submit').removeClass('right labeled icon').addClass('loading');
-        let postData = getPostData();
-        setTimeout(sendToServer, 2000, postData);
-        return false; //Return false as to not close modal dialog
-      }
-    }).modal('show');
+    $('#new-game-modal').modal({onApprove : onApproveNewGame}).modal('show');
   });
 
   $('#join-game').click((e) => {
     e.preventDefault();
-    $('#join-game-modal').modal({
-      onApprove : function() {
-        $('#join-game-submit').removeClass('right labeled icon').addClass('loading');
-        let joinPositionType = getJoinPosition();
-        if (joinPositionType != undefined) {
-          setTimeout(joinGame, 2000, $('#pin').val(), joinPositionType);
-          $('.invalid-pin').addClass('hidden');
-        }
-        else {
-          $('#join-game-submit').removeClass('loading').addClass('right labeled icon');
-          $('.invalid-pin').removeClass('hidden');
-          $('.invalid-pin').html('You must choose a position type!');
-        }
-        return false; //Return false as to not close modal dialog
-      }
-    }).modal('show');    
+    $('#join-game-modal').modal({onApprove : onApproveJoin}).modal('show');    
   });
 
   $('#pin').keypress((e) => setTimeout(checkIfPinIsValid, 1000));
   $('.ui.dropdown').dropdown();
-});
+}
 
+// Handles the modal approve
+// I wanted to separate the functions from the initalization itself
+function onApproveNewGame() {
+  console.log('sending game info to server');
+  $('#start-game-submit').removeClass('right labeled icon').addClass('loading');
+  let postData = getPostData();
+  setTimeout(sendToServer, 2000, postData);
+  return false; //Return false as to not close modal dialog
+}
+
+// Handles the modal approve
+// I wanted to separate the functions from the initalization itself
+function onApproveJoin() {
+  $('#join-game-submit').removeClass('right labeled icon').addClass('loading');
+  let joinPositionType = getJoinPosition();
+  // if the user doesn't choice a position type
+  if (joinPositionType != undefined) {
+    setTimeout(joinGame, 2000, $('#pin').val(), joinPositionType);
+    $('.invalid-pin').addClass('hidden');
+  }
+  else {
+    $('#join-game-submit').removeClass('loading').addClass('right labeled icon');
+    $('.invalid-pin').removeClass('hidden');
+    $('.invalid-pin').html('You must choose a position type!');
+  }
+  return false; //Return false as to not close modal dialog
+}
+
+/**
+ * Takes postData and sends to server to add to database
+ * @param {Object} postData 
+ */
 function sendToServer(postData) {
   $.ajax({
     type: 'POST',
@@ -54,6 +72,7 @@ function sendToServer(postData) {
   });
 }
 
+// Does what the name implies
 function checkIfPinIsValid() {
   let pin = $('#pin').val();
   $.ajax({
@@ -81,6 +100,11 @@ function checkIfPinIsValid() {
   });
 }
 
+/**
+ * Database holds currently taken positions
+ * Makes sure to return ones that aren't already taken
+ * @param {number} pin 
+ */
 function getPossiblePositions(pin) {
   $.ajax({
     type: 'GET',
@@ -102,15 +126,20 @@ function getPossiblePositions(pin) {
   });
 }
 
+/**
+ * Gets all of the field data for the post request
+ */
 function getPostData() {
   let data = {'positions': []};
   data.pin = null; // this will be changed by the server anyway
   let name = $('#group-name').val();
-  data.groupName = name == null || name == "" ? "Default" : name;
+  data.groupName = name == null || name == '' ? 'Default' : name;
   data.activePlayers = 1;
   data.status = 'waiting';
+  let gameType = $('#game-type').html();
+  data.gameType = gameType == 'Game Type' ? 'Craft Production' : gameType;
   let position = $('#position-type').html();
-  position = position === "Position Type" ? "Assembler" : position;
+  position = position === 'Position Type' ? 'Assembler' : position;
   sessionStorage.position = position;
   data.positions.push(position);
   let players = $('#num-players').val();
@@ -132,6 +161,11 @@ function getJoinPosition() {
   return $(returnChild).html();
 }
 
+/**
+ * Joins a game by pin and position (obviously)
+ * @param {number} pin 
+ * @param {string} position 
+ */
 function joinGame(pin, position) {
   let postData = {"position": position};
   $.ajax({
@@ -150,6 +184,10 @@ function joinGame(pin, position) {
   });
 }
 
+/**
+ * Just increments the activePlayers value in the database
+ * @param {number} pin 
+ */
 function updateActivePlayers(pin) {
   $.ajax({
     type: 'GET',

@@ -22,9 +22,10 @@ const Schema = mongoose.Schema;
 export const GameScheme = new Schema({
   pin: {type: Number, min: 0, max: 9999},
   groupName: {type: String},
+  gameType: {type: String},
   status: {type: String},
-  maxPlayers: {type: Number, min: 2, max: 6},
-  activePlayers: {type: Number, min: 0, max: 6},
+  maxPlayers: {type: Number, min: 2, max: 3},
+  activePlayers: {type: Number, min: 0, max: 3},
   positions: {type: Schema.Types.Mixed},
   createdDate: {
     type: Date,

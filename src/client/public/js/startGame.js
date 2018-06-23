@@ -70,12 +70,20 @@ function getGameInfo() {
 }
 
 function applyGameInfo(result) {
-  let title = 'Group Name: ';
-  $('#name').html(title + result.groupName);
-  $('#players').html(result.activePlayers);
-  $('#example4').attr('data-total', result.maxPlayers);
-  $('#example4').progress('set total', result.maxPlayers);
-  $('#example4').progress('update progress', result.activePlayers);
+  try {
+    let title = 'Group Name: ';
+    let gameType = 'Game Type: ';
+    $('#name').html(title + result.groupName);
+    $('#game-type').html(gameType + result.gameType);
+    $('#players').html(result.activePlayers);
+    $('#example4').attr('data-total', result.maxPlayers);
+    $('#example4').progress('set total', result.maxPlayers);
+    $('#example4').progress('update progress', result.activePlayers);
+  } catch (e) {
+    console.log('You may need to wait a second');
+    console.log(e);
+  }
+  
 }
 
 // Create a pad function for the pin so that a pin like 12
