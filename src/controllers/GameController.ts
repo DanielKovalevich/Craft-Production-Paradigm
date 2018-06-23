@@ -39,8 +39,8 @@ export class GameController {
     this.db.addActivePlayer(pin);
   }
 
-  public removeActivePlayer(pin: string): void {
-    this.db.removeActivePlayer(pin);
+  public removeActivePlayer(pin: string, position: string): void {
+    this.db.removeActivePlayer(pin, position);
   }
 
   public async checkIfPinExists(pin: string) {

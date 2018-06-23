@@ -7,12 +7,21 @@ $(document).ready(() => {
   getGameInfo();
 });
 
-/*window.onbeforeunload = closingCode;
+/* 
+// I can't seem to get this to work well
+// It is because is removes active players on refresh
+window.onbeforeunload = closingCode;
 function closingCode() {
-
-  return null;
+  $.ajax({
+    type: 'GET',
+    timeout: 5000,
+    url: 'http://localhost:3000/startGame/removeActivePlayer/' + pin,
+    error: (error) => console.log(error)
+  });
+  return "Are you sure you want to close?";
 }*/
 
+// gets the pin from the url
 function getPin() {
   return /(\d+)(?!.*\d)/g.exec(window.location.href)[0];
 }
@@ -37,7 +46,6 @@ function initProgressAndButtons() {
       case 'Customer': location = '/customer/' + pin; break;
       case 'Supplier': location = '/supplier/' + pin; break;
     }
-
     window.location.href = location;
   });
 
@@ -45,12 +53,13 @@ function initProgressAndButtons() {
     $.ajax({
       type: 'GET',
       timeout: 5000,
-      url: 'http://localhost:3000/startGame/removeActivePlayer/' + pin,
+      url: 'http://localhost:3000/startGame/removeActivePlayer/' + pin + '/' + sessionStorage.position,
       success: (result) => window.location.href = '/',
       error: (error) => console.log(error)
     });
   });
 }
+
 
 function getGameInfo() {
   $.ajax({
@@ -69,6 +78,10 @@ function getGameInfo() {
   });
 }
 
+/**
+ * Refreshes the game information on the page so that as people join
+ * the page will update with that information
+ */
 function applyGameInfo(result) {
   try {
     let title = 'Group Name: ';

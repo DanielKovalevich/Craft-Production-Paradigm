@@ -38,7 +38,7 @@ export class DatabaseConnector {
 
   /**
    * Increments the active players by one whenever a new player joins the game
-   * @param pinNum 
+   * @param pinNum string
    */
   public addActivePlayer(pinNum: string): void {
     this.gameCollection.update({pin: parseInt(pinNum)}, {$inc: {activePlayers: 1}});
@@ -47,25 +47,31 @@ export class DatabaseConnector {
   /**
    * When someone needs to exit the application, this handles removing the active player
    * it will also delete the database entry, if there are no active players
-   * @param pinNum 
+   * @param pinNum string
    */
-  public removeActivePlayer(pinNum: string): void {
+  public removeActivePlayer(pinNum: string, position: string): void {
     let query = {pin: parseInt(pinNum)};
-    this.gameCollection.update(query, {$inc: {activePlayers: -1}});
+    let change = {$inc: {activePlayers: -1}, $pull: {positions: position}}
+    this.gameCollection.update(query, change);
     this.gameCollection.findOne(query, (err: any, result: any) => {
-      if (err) throw err;
+      if (err) console.log(err);
       if (result.activePlayers <= 0) this.gameCollection.deleteOne(query);
     });
   }
 
   /**
    * Used for when looking up the game by pin
-   * @param pinNum 
+   * @param pinNum string
    */
   public async getGameObject(pinNum: string): Promise<any> {
     return await this.gameCollection.find({pin: parseInt(pinNum)}).toArray();
   }
 
+  /**
+   * Makes sure two users don't end up with the same positions
+   * If no positions are returned, the game is full
+   * @param pinNum string 
+   */
   public async getPossiblePositions(pinNum: string): Promise<any> {
     let possiblePositions: string[] = ['Assembler', 'Supplier', 'Customer'];
     let takenPositions = await this.gameCollection.find({pin: parseInt(pinNum)}, {positions: 1}).toArray();

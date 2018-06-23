@@ -25,8 +25,8 @@ router.get('/addActivePlayer/:id', cors(), (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-router.get('/removeActivePlayer/:id', cors(), (req: Request, res: Response) => {
-  controller.removeActivePlayer(req.params.id);
+router.get('/removeActivePlayer/:id/:position', cors(), (req: Request, res: Response) => {
+  controller.removeActivePlayer(req.params.id, req.params.position);
   res.sendStatus(200);
 });
 
