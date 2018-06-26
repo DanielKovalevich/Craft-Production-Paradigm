@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
-import {StartGameRouter} from '../routes';
+import {StartGameRouter, GameLogicRouter} from '../routes';
 
 class App {
   public app: express.Application;
@@ -22,6 +22,7 @@ class App {
 
   private setRoutes(): void {
     this.app.use('/startGame', StartGameRouter);
+    this.app.use('/gameLogic', GameLogicRouter);
   }
 }
 

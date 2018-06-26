@@ -1,3 +1,7 @@
+/**
+ * This controller handles the game and setup
+ */
+
 import * as mongoose from 'mongoose';
 import {GameScheme} from '../models/game';
 import {Request, Response} from 'express';
