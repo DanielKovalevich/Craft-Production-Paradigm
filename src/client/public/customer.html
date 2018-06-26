@@ -10,8 +10,72 @@
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="/../semantic/dist/semantic.min.js"></script>
+    <script src="/../js/customer.js"></script>
   </head>
   <body>
-    <h1 class="ui header">Customer</h1>
+    <div class="ui centered grid">
+      <div class="nine wide column">
+        <div class="ui centered grid">
+          <div class="row">
+            <h1 class="ui header">
+              <i class="credit card outline icon"></i>
+              Customer
+            </h1>
+          </div>
+          <div class="row">
+            <h3 class="ui header">Pick a model to order</h3>
+          </div>
+          <div class="ui celled grid">
+            <div class="row">
+              <div class="eight wide column">
+                <img id="1" src="/../images/race.jpg"/>
+              </div>
+              <div class="eight wide column">
+                <img id="2" src="/../images/lego_car.jpg"/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="eight wide column">
+                <img id="3" src="/../images/rc.jpg"/>
+              </div>
+              <div class="eight wide column">
+                <img id="4" src="/../images/yellow_car.jpg"/>
+              </div>
+            </div>
+          </div>
+          <div id="message" class="ui hidden positive message">
+            <i class="close icon"></i>
+            <div class="header">
+              You are eligible for a reward
+            </div>
+            <p>Go to your <b>special offers</b> page to see now.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui basic modal">
+      <div class="ui icon header">
+        <i class="cart arrow down icon"></i>
+        Send Order to Supplier
+      </div>
+      <div class="ui centered grid">
+        <div class="content">
+          <p>Would you like to send your order of the <span id="car-type"></span> car to the supplier to be built?</p>
+        </div>
+        <div class="row">
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              No
+            </div>
+            <div class="ui green ok inverted button">
+              <i class="checkmark icon"></i>
+              Yes
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
