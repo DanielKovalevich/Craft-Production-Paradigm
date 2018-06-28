@@ -5,6 +5,7 @@
 
 import {Request, Response} from 'express';
 import {DatabaseConnector} from '../controllers/database';
+import Order from '../models/order'
 
 export class GameLogicController {
   private db: DatabaseConnector;
@@ -13,6 +14,8 @@ export class GameLogicController {
   }
 
   public placeOrder(pinNum: number, modelType: number): void {
-
+    let order = new Order();
+    order.setModelType(modelType);
+    
   }
 }

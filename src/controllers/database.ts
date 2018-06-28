@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose';
-import {GameScheme} from '../models/game';
 
 export class DatabaseConnector {
   private db: any;
