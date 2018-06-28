@@ -4,18 +4,18 @@
  */
 
 import {Request, Response} from 'express';
-import {DatabaseConnector} from '../controllers/database';
+import {GameLogicDatabaseConnector} from '../controllers/GameLogicDatabaseConnector';
 import Order from '../models/order'
 
 export class GameLogicController {
-  private db: DatabaseConnector;
+  private db: GameLogicDatabaseConnector;
   constructor() {
-    this.db = new DatabaseConnector();
+    this.db = new GameLogicDatabaseConnector();
   }
 
-  public placeOrder(pinNum: number, modelType: number): void {
+  public placeOrder(pinNum: string, modelType: number): void {
     let order = new Order();
     order.setModelType(modelType);
-    
+    this.db.addOrder(pinNum, order.toJSON());
   }
 }

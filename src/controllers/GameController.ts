@@ -5,14 +5,14 @@
 import * as mongoose from 'mongoose';
 import {GameScheme} from '../models/game';
 import {Request, Response} from 'express';
-import {DatabaseConnector} from '../controllers/database';
+import {GameDatabaseConnector} from '../controllers/GameDatabaseConnector';
 
 const Game: mongoose.Model<any> = mongoose.model('Game', GameScheme);
 
 export class GameController {
-  private db: DatabaseConnector;
+  private db: GameDatabaseConnector;
   constructor() {
-    this.db = new DatabaseConnector();
+    this.db = new GameDatabaseConnector();
   }
 
   /**
