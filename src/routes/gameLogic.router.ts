@@ -10,4 +10,8 @@ router.post('/sendOrder', (req: Request, res: Response) => {
   res.status(200).send('OK');
 });
 
+router.get('/getOrders/:id', async (req: Request, res: Response) => {
+  res.send(await controller.getOrders(req.params.id));
+});
+
 export const GameLogicRouter: Router = router;

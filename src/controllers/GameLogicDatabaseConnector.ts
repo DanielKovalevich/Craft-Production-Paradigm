@@ -17,4 +17,8 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   public addOrder(pinNum: string, order: object): void {
     this.gameCollection.update({pin: parseInt(pinNum)}, {$push: {orders: order}})
   }
+
+  public async getOrders(pinNum: string): Promise<Array<object>> {
+    return await this.gameCollection.findOne({pin: parseInt(pinNum)}, {orders: 1});
+  }
 }
