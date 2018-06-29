@@ -9,6 +9,11 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     super();
   }
 
+  /**
+   * This will add the order to the game object's array
+   * @param pinNum 
+   * @param order JSON Object that holds all the order details
+   */
   public addOrder(pinNum: string, order: object): void {
     this.gameCollection.update({pin: parseInt(pinNum)}, {$push: {orders: order}})
   }

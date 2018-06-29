@@ -1,4 +1,5 @@
 export default class Order {
+  private id: string;
   private createDate: Number;
   private lastModified: Number;
   // 3 Possible statuses
@@ -11,6 +12,7 @@ export default class Order {
   private stage: String;
   private modelType: Number;
   constructor() {
+    this.id = this.generateId();
     this.createDate = new Date().getTime();
     this.status = "In Progress";
     this.stage = "Customer";
@@ -21,6 +23,13 @@ export default class Order {
   private setLastModified(): void {
     this.lastModified = new Date().getTime();
   }
+
+  private generateId(): string {
+    // Math.random should be unique because of its seeding algorithm.
+    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return '_' + Math.random().toString(36).substr(2, 9);
+  };
 
   public setStatus(status: string): void {
     this.setLastModified();
