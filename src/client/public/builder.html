@@ -14,6 +14,15 @@
 	</head>
 	<body>
     <div>
+			<div class="ui centered grid">
+				<div class="five wide column">
+					<div class="ui buttons">
+						<button class="ui massive yellow button" id="order">Order From Customer</button>
+						<button class="ui massive green button">Available Pieces</button>
+					</div>
+				</div>
+			</div>
+			<!-- THIS IS ONLY HERE FOR TESTING. WILL BE REMOVED LATER
       <div id="models" class="ui buttons">
         <button class="ui button" onclick="getModel('oneByOne');">1x1</button>
 				<button class="ui button" onclick="getModel('twoByTwo');">2x2</button>
@@ -38,6 +47,7 @@
 				<button class="ui button" onclick="getModel('steering');">Steering Wheel</button>
         <button class="ui button" onclick="getModel('lego_man');">Man</button>				
 			</div>
+			-->
 			<div id="header-info">
 					Powered by: <a href="http://threejs.org" target="_blank" rel="noopener">three.js</a>
 					<br>
@@ -59,5 +69,47 @@
 		<script src="/../js/legoBuilder/builderInitScripts.js"></script>
 		<script src="/../js/legoBuilder/builderScripts.js"></script>
 		<script src="/../js/legoBuilder/pageScripts.js"></script>
+
+		<!-- Modals for the different shit -->
+		<div class="ui basic modal" id="no-orders">
+			<div class="ui icon header">
+				<i class="clipboard outline icon"></i>
+				No Orders Currently Placed
+			</div>
+			<div class="ui centered grid">
+				<div class="actions">
+					<div class="ui green ok inverted button">
+						<i class="checkmark icon"></i>
+						Okay
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ui modal" id="ready-order">
+			<div class="header">
+				Profile Picture
+			</div>
+			<div class="image content">
+				<div class="ui medium image">
+					<img src="/images/avatar/large/chris.jpg">
+				</div>
+				<div class="description">
+					<div class="ui header">We've auto-chosen a profile image for you.</div>
+					<p>We've grabbed the following image from the <a href="https://www.gravatar.com" target="_blank">gravatar</a> image associated with your registered e-mail address.</p>
+					<p>Is it okay to use this photo?</p>
+				</div>
+			</div>
+			<div class="actions">
+				<div class="ui black deny button">
+					Nope
+				</div>
+				<div class="ui positive right labeled icon button">
+					Yep, that's me
+					<i class="checkmark icon"></i>
+				</div>
+			</div>
+		</div>
+	</div>
 	</body>
 </html>
