@@ -20,6 +20,15 @@ function initImages() {
     changeCarType(4);
     $('.ui.basic.modal').modal('show');
   });
+
+  $('.ok.button').click((e) => {
+    sendOrder();
+  });
+}
+
+// gets the pin from the url
+function getPin() {
+  return /(\d+)(?!.*\d)/g.exec(window.location.href)[0];
 }
 
 function changeCarType(number) {
@@ -30,4 +39,24 @@ function changeCarType(number) {
     case 3: dom.html('RC');     break;
     case 4: dom.html('yellow'); break;
   }
+}
+
+function sendOrder() {
+  let pin = getPin();
+  let type = $('#car-type').html();
+  let postData = {"pin": pin, "model": type};
+  $.ajax({
+    type: 'POST',
+    data: postData,
+    timeout: 5000,
+    url: 'http://localhost:3000/gameLogic/sendOrder',
+    success: function(result) {
+      //window.location.href = '/startGame/' + result.pin;
+      console.log('order placed');
+      console.log(result);
+    },
+    error: function(xhr,status,error) {
+      console.log(error);
+    } 
+  });
 }

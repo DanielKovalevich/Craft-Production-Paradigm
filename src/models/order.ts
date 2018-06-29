@@ -1,5 +1,5 @@
 export default class Order {
-  private id: string;
+  private _id: string;
   private createDate: Number;
   private lastModified: Number;
   // 3 Possible statuses
@@ -12,7 +12,7 @@ export default class Order {
   private stage: String;
   private modelType: Number;
   constructor() {
-    this.id = this.generateId();
+    this._id = this.generateId();
     this.createDate = new Date().getTime();
     this.status = "In Progress";
     this.stage = "Customer";
@@ -24,6 +24,11 @@ export default class Order {
     this.lastModified = new Date().getTime();
   }
 
+  /**
+   * This should generally be random enough to handle a couple order ids
+   * This isn't a permenant solution; it works well enough for me
+   * Found on Github: https://gist.github.com/gordonbrander/2230317
+   */
   private generateId(): string {
     // Math.random should be unique because of its seeding algorithm.
     // Convert it to base 36 (numbers + letters), and grab the first 9 characters
@@ -48,6 +53,7 @@ export default class Order {
 
   public toJSON(): object {
     let jsonObj = {
+      "_id": this._id,
       "createDate": this.createDate,
       "status": this.status,
       "stage": this.stage,
