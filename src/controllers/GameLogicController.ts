@@ -13,15 +13,15 @@ export class GameLogicController {
     this.db = new GameLogicDatabaseConnector();
   }
 
-  public placeOrder(pinNum: string, modelType: number): void {
+  public placeOrder(pin: string, modelType: number): void {
     let order = new Order();
     order.setModelType(modelType);
     //TODO: Get rid of this line when I add supplier
     order.setStage('Assembler');
-    this.db.addOrder(pinNum, order.toJSON());
+    this.db.addOrder(pin, order.toJSON());
   }
 
-  public async getOrders(pinNum: string): Promise<Array<object>> {
-    return await this.db.getOrders(pinNum);
+  public async getOrders(pin: string): Promise<object> {
+    return await this.db.getOrders(pin);
   }
 }
