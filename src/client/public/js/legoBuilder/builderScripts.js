@@ -35,7 +35,7 @@ function loadRollOverMesh() {
 
 function onDocumentMouseMove(event) {
   event.preventDefault();
-  mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .1))) * 2 + 1);
+  mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .15))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
   if (intersects.length > 0) {
@@ -103,7 +103,7 @@ function onDocumentKeyUp(event) {
 
 function onDocumentMouseDown(event) {
   event.preventDefault();
-  mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .1))) * 2 + 1);
+  mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .15))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
   var objIntersect = raycaster.intersectObjects(objects);
