@@ -64,3 +64,6 @@ typings/
 data
 dist
 src/client/public/semantic
+
+#vscode
+.vscode
