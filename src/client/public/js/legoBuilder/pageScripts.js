@@ -1,9 +1,11 @@
 orderInformation = {};
+currentOrder = {};
 
 $(document).ready(() => {
   $('#order').click(e => {
     openModal();
   });
+  initCycleButtons();
   checkOrders();
 });
 
@@ -16,6 +18,19 @@ function cycle() {
   let index = allModels.indexOf(currentObj);
   currentObj = ++index == allModels.length ? allModels[0] : allModels[index];
   loadRollOverMesh();
+}
+
+function initCycleButtons() {
+  $('#left').click(e => {
+    let index = orderInformation.indexOf(currentOrder);
+    currentOrder = --index < 0 ? orderInformation[orderInformation.length - 1] : orderInformation[index];
+    updateOrder();
+  });
+  $('#right').click(e => {
+    let index = orderInformation.indexOf(currentOrder);
+    currentOrder = ++index == orderInformation.length ? orderInformation[0] : orderInformation[index];
+    updateOrder();
+  });
 }
 
 function getModel(name) {
@@ -35,19 +50,16 @@ function openModal() {
 }
 
 function updateOrder() {
-  // Need to find the oldest order that hasn't been finished or canceled
-  let i = 0;
-  while(orderInformation[i].status != 'In Progress') i++;
-  switch(orderInformation[i].modelType) {
+  switch(currentOrder.modelType) {
     case 'super': $('#order-image').attr('src', '/../images/race.jpg');        break;
     case 'race': $('#order-image').attr('src', '/../images/lego_car.jpg');     break;
     case 'RC': $('#order-image').attr('src', '/../images/rc.jpg');             break;
     case 'yellow': $('#order-image').attr('src', '/../images/yellow_car.jpg'); break;
   }
-  console.log(orderInformation[i]);
-  let html = '<p>Date Ordered: ' + new Date(orderInformation[i].createDate).toString() + '</p>';
-  html += '<p>Model Type: ' + orderInformation[i].modelType + '</p>';
-  html += '<p>Status: ' + orderInformation[i].status + '</p><br>';
+  console.log(currentOrder);
+  let html = '<p>Date Ordered: ' + new Date(currentOrder.createDate).toString() + '</p>';
+  html += '<p>Model Type: ' + currentOrder.modelType + '</p>';
+  html += '<p>Status: ' + currentOrder.status + '</p><br>';
   $('#order-info').html(html);
 }
 
@@ -59,6 +71,10 @@ function checkOrders() {
     success: (data) => {
       if (orderInformation.length != data.length) {
         orderInformation = data;
+        // Need to find the oldest order that hasn't been finished or canceled
+        let i = 0;
+        while(orderInformation[i].status != 'In Progress') i++;
+        currentOrder = orderInformation[i];
         updateOrder();
       }
     },

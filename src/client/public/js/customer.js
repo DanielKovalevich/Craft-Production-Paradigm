@@ -1,6 +1,5 @@
 $(document).ready(() => {
   initImages();
-  //$('#message').transition('fade');
 });
 
 function initImages() {
@@ -53,7 +52,7 @@ function sendOrder() {
     success: function(result) {
       //window.location.href = '/startGame/' + result.pin;
       console.log('order placed');
-      console.log(result);
+      $('#message').transition('fade');
     },
     error: function(xhr,status,error) {
       console.log(error);
