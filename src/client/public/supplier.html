@@ -10,8 +10,70 @@
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="/../semantic/dist/semantic.min.js"></script>
+    <script src="/../js/supplier.js"></script>
   </head>
   <body>
-    <h1 class="ui header">Supplier</h1>
+    <div class="ui centered grid">
+      <div class="nine wide column">
+        <div class="ui centered grid">
+          <div class="row">
+            <h1 class="ui header">
+              <i class="truck icon"></i>
+              Supplier
+            </h1>
+          </div>
+          <button class="ui massive yellow button" id="order">Orders From Customer</button>
+          <div id="supply-grid" class="ui celled grid">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui basic modal" id="no-orders">
+			<div class="ui icon header">
+				<i class="clipboard outline icon"></i>
+				No Orders Currently Placed
+			</div>
+			<div class="ui centered grid">
+				<div class="actions">
+					<div class="ui green ok inverted button">
+						<i class="checkmark icon"></i>
+						Okay
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ui modal" id="ready-order">
+			<div class="header">
+				Order Information
+			</div>
+			<div class="image content">
+				<div class="ui medium image">
+					<img id="order-image" src="">
+				</div>
+				<div class="description">
+					<div class="ui header">Order Sent From the Customer</div>
+					<span id="order-info"></span>
+					<p>I hope you know how to build it.</p>
+					<p>Good luck.</p>
+				</div>
+			</div>
+			<div class="actions">
+				<div id="left" class="ui red button">
+					<i class="angle double left icon"></i>
+				</div>
+				<div id="right" class="ui red button">
+					<i class="angle double right icon"></i>
+				</div>
+				<div class="ui black deny button">
+					Close Window
+				</div>
+				<div class="ui positive right labeled icon button">
+					Send Model To Customer
+					<i class="checkmark icon"></i>
+				</div>
+			</div>
+		</div>
   </body>
 </html>
