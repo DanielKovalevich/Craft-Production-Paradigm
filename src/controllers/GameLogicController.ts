@@ -21,7 +21,11 @@ export class GameLogicController {
     this.db.addOrder(order.toJSON());
   }
 
-  public async getOrders(pin: string): Promise<object> {
+  public async getOrders(pin: string): Promise<Array<object>> {
     return await this.db.getOrders(pin);
+  }
+
+  public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
+    this.db.addSupplyOrder(pin, orderId, order);
   }
 }

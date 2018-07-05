@@ -12,6 +12,7 @@ export default class Order {
   // Customer -> Supplier -> Builder -> Customer
   private stage: String;
   private modelType: Number;
+  private supplyOrders: Array<Number>;
   constructor(pin: number) {
     this.pin = pin;
     this._id = this.generateId();
@@ -20,6 +21,7 @@ export default class Order {
     this.stage = "Customer";
     this.modelType = 1;
     this.lastModified = this.createDate;
+    this.supplyOrders = new Array<Number>();
   }
 
   private setLastModified(): void {
@@ -61,7 +63,8 @@ export default class Order {
       "lastModified": this.lastModified,
       "status": this.status,
       "stage": this.stage,
-      "modelType": this.modelType
+      "modelType": this.modelType,
+      "supplyOrders": this.supplyOrders
     };
 
     return jsonObj;

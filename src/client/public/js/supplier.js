@@ -42,15 +42,40 @@ function initButtons() {
       console.log(pieceOrders);
     });
   }
+
   $('#left').click(e => {
     let index = orderInformation.indexOf(currentOrder);
     currentOrder = --index < 0 ? orderInformation[orderInformation.length - 1] : orderInformation[index];
     updateOrder();
   });
+
   $('#right').click(e => {
     let index = orderInformation.indexOf(currentOrder);
     currentOrder = ++index == orderInformation.length ? orderInformation[0] : orderInformation[index];
     updateOrder();
+  });
+
+  $('#send-supply-order').click(e => {
+    sendSupplyOrder();
+  });
+}
+
+function sendSupplyOrder() {
+  let postData = {
+    "id": currentOrder._id,
+    "order": pieceOrders
+  }
+
+  $.ajax({
+    type: 'POST',
+    data: postData,
+    url: 'http://localhost:3000/gameLogic/sendSupplyOrder/' + getPin(),
+    success: () => {
+      console.log('Order sent!');
+    },
+    error: (xhr, status, error) => {
+      console.log(error);
+    }
   });
 }
 
@@ -70,20 +95,22 @@ function updateOrder() {
     case 'RC': $('#order-image').attr('src', '/../images/rc.jpg');             break;
     case 'yellow': $('#order-image').attr('src', '/../images/yellow_car.jpg'); break;
   }
-  console.log(currentOrder);
   let html = '<p>Date Ordered: ' + new Date(currentOrder.createDate).toString() + '</p>';
   html += '<p>Model Type: ' + currentOrder.modelType + '</p>';
   html += '<p>Status: ' + currentOrder.status + '</p><br>';
   $('#order-info').html(html);
 }
 
+/**
+ * Function that runs constantly to update the orders
+ */
 function checkOrders() {
   $.ajax({
     type: 'GET',
     url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
     timeout: 5000,
     success: (data) => {
-      if (orderInformation.length != data.length) {
+      if (orderInformation.length != data.length && orderInformation.length != 0) {
         orderInformation = data;
         // Need to find the oldest order that hasn't been finished or canceled
         let i = 0;
