@@ -14,4 +14,8 @@ router.get('/getOrders/:id', async (req: Request, res: Response) => {
   res.send(await controller.getOrders(req.params.id));
 });
 
+router.post('/sendSupplyOrder/:id', (req: Request, res: Response) => {
+
+});
+
 export const GameLogicRouter: Router = router;

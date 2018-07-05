@@ -1,8 +1,9 @@
 import * as mongoose from 'mongoose';
 
 export default class DatabaseConnector {
-  protected db: any;
-  protected gameCollection: any;
+  protected db: mongoose.Connection;
+  protected gameCollection: mongoose.Collection;
+  protected orderCollection: mongoose.Collection;
   protected url: string;
   constructor() {
     this.url = 'mongodb://localhost/local';
@@ -15,5 +16,6 @@ export default class DatabaseConnector {
     });
 
     this.gameCollection = this.db.collection('gameFiles');
+    this.orderCollection = this.db.collection('orders');
   }
 }

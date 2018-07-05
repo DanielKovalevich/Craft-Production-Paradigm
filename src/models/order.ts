@@ -1,5 +1,6 @@
 export default class Order {
   private _id: string;
+  private pin: Number;
   private createDate: Number;
   private lastModified: Number;
   // 3 Possible statuses
@@ -11,7 +12,8 @@ export default class Order {
   // Customer -> Supplier -> Builder -> Customer
   private stage: String;
   private modelType: Number;
-  constructor() {
+  constructor(pin: number) {
+    this.pin = pin;
     this._id = this.generateId();
     this.createDate = new Date().getTime();
     this.status = "In Progress";
@@ -54,11 +56,12 @@ export default class Order {
   public toJSON(): object {
     let jsonObj = {
       "_id": this._id,
+      "pin": this.pin,
       "createDate": this.createDate,
+      "lastModified": this.lastModified,
       "status": this.status,
       "stage": this.stage,
-      "modelType": this.modelType,
-      "lastModified": this.lastModified
+      "modelType": this.modelType
     };
 
     return jsonObj;

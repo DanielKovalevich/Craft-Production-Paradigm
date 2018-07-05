@@ -14,11 +14,11 @@ export class GameLogicController {
   }
 
   public placeOrder(pin: string, modelType: number): void {
-    let order = new Order();
+    let order = new Order(parseInt(pin));
     order.setModelType(modelType);
     //TODO: Get rid of this line when I add supplier
     order.setStage('Assembler');
-    this.db.addOrder(pin, order.toJSON());
+    this.db.addOrder(order.toJSON());
   }
 
   public async getOrders(pin: string): Promise<object> {

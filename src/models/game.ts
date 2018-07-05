@@ -9,7 +9,6 @@ export const GameScheme = new Schema({
   maxPlayers: {type: Number, min: 2, max: 3},
   activePlayers: {type: Number, min: 0, max: 3},
   positions: {type: Schema.Types.Mixed},
-  orders: {type: Schema.Types.Mixed},
   createdDate: {
     type: Date,
     default: Date.now
