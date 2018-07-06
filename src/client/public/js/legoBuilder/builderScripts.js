@@ -306,7 +306,7 @@ function mod(n, m) {
 
 /**
  * A lot of the models have different center points
- * so I need to make sure all they link correctly with the plane and other modles
+ * so I need to make sure all they link correctly with the plane and other models
  */
 function determineModelYTranslation() {
   // whoever made these retarded models needs to learn about consistency

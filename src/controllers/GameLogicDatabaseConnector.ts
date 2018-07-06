@@ -1,5 +1,5 @@
 /**
- * This class handles any actual 
+ * This class handles any actual game logic
  */
 
 import DatabaseConnector from './database';
@@ -29,5 +29,10 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
 
   public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
     this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: order}});
+  }
+
+  public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
+    let orders = await this.orderCollection.findOne({pin: parseInt(pin), _id: orderId}, {fields: {supplyOrders: 1, _id: 0}});
+    return orders.supplyOrders;
   }
 }

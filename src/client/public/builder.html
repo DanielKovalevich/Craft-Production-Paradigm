@@ -18,7 +18,7 @@
 				<div class="five wide column">
 					<div class="ui buttons">
 						<button class="ui massive yellow button" id="order">Order From Customer</button>
-						<button class="ui massive green button">Available Pieces</button>
+						<button class="ui massive green button" id="pieces">Available Pieces</button>
 					</div>
 				</div>
 			</div>
@@ -114,6 +114,27 @@
 				<div class="ui positive right labeled icon button">
 					Send Model To Customer
 					<i class="checkmark icon"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="ui modal" id="pieces-modal">
+			<div class="header">
+				Available Pieces
+			</div>
+			<div class="image content">
+				<div class="ui medium image">
+					<img id="order-image" src="">
+				</div>
+				<div class="description">
+					<div class="ui header">Order Sent From the Customer</div>
+					<span id="order-info"></span>
+					<p>I hope you know which pieces are needed.</p>
+				</div>
+			</div>
+			<div class="actions">
+				<div class="ui black deny button">
+					Close Window
 				</div>
 			</div>
 		</div>

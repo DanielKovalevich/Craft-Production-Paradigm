@@ -28,4 +28,8 @@ export class GameLogicController {
   public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
     this.db.addSupplyOrder(pin, orderId, order);
   }
+
+  public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
+    return await this.db.getSupplyOrder(pin, orderId);
+  }
 }

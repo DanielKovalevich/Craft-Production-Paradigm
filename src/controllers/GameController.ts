@@ -52,7 +52,14 @@ export class GameController {
   }
 
   public async getPossiblePositions(pin: string): Promise<any> {
-    return await this.db.getPossiblePositions(pin);
+    let possiblePositions: string[] = ['Assembler', 'Supplier', 'Customer'];
+    let takenPositions = await this.db.getPossiblePositions(pin);
+    takenPositions.positions.forEach((element: string) => {
+      let index = possiblePositions.indexOf(element);
+      if (index != -1) 
+        possiblePositions.splice(index, 1);
+    });
+    return possiblePositions;
   }
 
   /**

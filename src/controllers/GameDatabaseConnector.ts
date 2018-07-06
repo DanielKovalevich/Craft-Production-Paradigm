@@ -66,14 +66,7 @@ export class GameDatabaseConnector extends Database {
    * @param pinNum string 
    */
   public async getPossiblePositions(pinNum: string): Promise<any> {
-    let possiblePositions: string[] = ['Assembler', 'Supplier', 'Customer'];
-    let takenPositions = await this.gameCollection.find({pin: parseInt(pinNum)}, {fields: {positions: 1}}).toArray();
-    takenPositions[0].positions.forEach((element: string) => {
-      let index = possiblePositions.indexOf(element);
-      if (index != -1) 
-        possiblePositions.splice(index, 1);
-    });
-    return possiblePositions;
+    return await this.gameCollection.findOne({pin: parseInt(pinNum)}, {fields: {positions: 1}});
   }
 
   public joinGame(pinNum: string, position: string): void {

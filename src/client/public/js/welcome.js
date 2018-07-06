@@ -28,7 +28,7 @@ function onApproveNewGame() {
   console.log('sending game info to server');
   $('#start-game-submit').removeClass('right labeled icon').addClass('loading');
   let postData = getPostData();
-  //setTimeout(sendToServer, 2000, postData);
+  setTimeout(sendToServer, 2000, postData);
   return false; //Return false as to not close modal dialog
 }
 

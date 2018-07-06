@@ -49,7 +49,8 @@ function init() {
 
 // Initializes the camera -- Allows to use mouse wheel to zoom
 function initCamera() {
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / (window.innerHeight + (window.innerHeight * .1)), 1, 10000);
+  //camera = new THREE.PerspectiveCamera(60, window.innerWidth / (window.innerHeight + (window.innerHeight * .1)), 1, 10000);
+  camera = new THREE.PerspectiveCamera(60, $('canvas').attr('width') / $('canvas').attr('height'), 1, 10000);
   camera.position.set(0, 500, 800);
   camera.lookAt(new THREE.Vector3());
   controls = new THREE.OrbitControls(camera, renderer.domElement);
