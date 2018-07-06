@@ -28,7 +28,7 @@ function onApproveNewGame() {
   console.log('sending game info to server');
   $('#start-game-submit').removeClass('right labeled icon').addClass('loading');
   let postData = getPostData();
-  setTimeout(sendToServer, 2000, postData);
+  //setTimeout(sendToServer, 2000, postData);
   return false; //Return false as to not close modal dialog
 }
 
@@ -138,8 +138,8 @@ function getPostData() {
   data.status = 'waiting';
   let gameType = $('#game-type').html();
   data.gameType = gameType == 'Game Type' ? 'Craft Production' : gameType;
-  let position = $('#position-type').html();
-  position = position === 'Position Type' ? 'Assembler' : position;
+  let position = $("#position-dropdown").dropdown('get value');
+  position = position === '' ? 'Assembler' : position;
   sessionStorage.position = position;
   data.positions.push(position);
   let players = $('#num-players').val();
