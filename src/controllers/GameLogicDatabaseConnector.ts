@@ -32,7 +32,19 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   }
 
   public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
-    let orders = await this.orderCollection.findOne({pin: parseInt(pin), _id: orderId}, {fields: {supplyOrders: 1, _id: 0}});
-    return orders.supplyOrders;
+    try {
+      let orders = await this.orderCollection.findOne({pin: parseInt(pin), _id: orderId}, {fields: {supplyOrders: 1, _id: 0}});
+      return orders.supplyOrders;
+    } catch(e) {
+      return new Array<number>();
+    }
+  }
+
+  public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
+    if (pieces != null && pieces != undefined) {
+      console.log(this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: pieces}}));
+      return 200;
+    }
+    return 400;
   }
 }

@@ -4,7 +4,8 @@ const names = ["1x1", "2x2", "2x3x2", "1x2 Pin",
               "Rim 3", "1x2", "1x4", "1x2 Plate",
               "4x6 Plate", "6x8 Plate", "2x10 Plate", "Windshield",
               "Steering Wheel", "Lego Man"];
-let pieces = [];
+let pieces = null;
+let pieceIndex = -1; // used to modify the supply of the piece type
 let orderInformation = {};
 let currentOrder = {};
 
@@ -32,13 +33,8 @@ function initButtons() {
     updateOrder();
   });
 
-  $('#order').click(e => {
-    openModal();
-  });
-
-  $('#pieces').click(e => {
-    $('#pieces-modal').modal('show');
-  });
+  $('#order').click(e => {openModal()});
+  $('#pieces').click(e => {openSupplyModal()});
 }
 
 function cycle() {
@@ -49,18 +45,16 @@ function cycle() {
 
 function getModel(name) {
   allModels.forEach((element) => {
-  if (element.name == name) currentObj = element;
+    if (element.name == name) currentObj = element;
   });
   loadRollOverMesh();
 }
 
 function openModal() {
-  if (jQuery.isEmptyObject(orderInformation)) {
+  if (jQuery.isEmptyObject(orderInformation))
     $('#no-orders').modal('show');
-  }
-  else {
+  else
     $('#ready-order').modal('show');
-  }
 }
 
 function updateOrder() {
@@ -105,10 +99,81 @@ function checkPieces() {
     url: 'http://localhost:3000/gameLogic/getSupplyOrder/' + getPin() + '/' + currentOrder._id,
     timeout: 5000,
     success: (data) => {
-      console.log(data);
+      if (data != null && data != undefined && data != "") {
+        if (getNumOfPieceTypes(data) != 0 && !samePieces(data, pieces)) {
+          pieces = data;
+          generatePiecesGrid();
+        }
+      }
     },
     error: (xhr, status, error) => {
       console.log(error);
     }
   });
+
+  setTimeout(checkPieces, 3000);
+}
+
+function openSupplyModal() {
+  updatePieces();
+  if (pieces == null)
+    $('#no-pieces').modal('show');
+  else
+    $('#pieces-modal').modal('show');
+}
+
+// finds how many actual types of pieces there are
+function getNumOfPieceTypes(pieceArray) {
+  let num = 0;
+  pieceArray.forEach(elem => {num += elem == 0 ? 0 : 1});
+  return num;
+}
+
+function samePieces(array1, array2) {
+  if (array1 == null || array2 == null) return false
+  if (array1.length != array2.length) return false;
+  for (let i = 0; i < array1.length; i++) {
+    if (array1[i] != array2[i]) return false;
+  }
+  return true;
+}
+
+function updatePieces() {
+  let postData = {'pieces': pieces};
+  if (pieces != [] && pieces != null && pieces != undefined) {
+    $.ajax({
+      type: 'POST',
+      data: postData,
+      url: 'http://localhost:3000/gameLogic/updatePieces/' + getPin() + '/' + currentOrder._id,
+      success: (data) => {
+        //console.log(data);
+      },
+      error: (xhr, status, error) => {
+        console.log(error);
+      }
+    });
+  }
+}
+
+function generatePiecesGrid() {
+  let html = "";
+  let i = 0;
+  let num = getNumOfPieceTypes(pieces);
+  for (let row = 0; row < num / 4; row++) {
+    html = '<div class="row">';
+    for (let col = 0; col < 4; col++) {
+      while(pieces[i] == 0 && i < pieces.length) i++;
+      if (row * 4 + col < num) {
+        html += '<div class="four wide column">';
+        html += '<p>' + names[i] + '</p>';
+        html += '<div class="row"><div class="ui statistic"><div id="' + i + '-value';
+        html += '"class="value">' + pieces[i] + '</div></div></div></div>';
+        i++;
+      }
+    }
+    // I want there to be vertical lines between each cube so I need to add a blank space 
+    if (num % 4 != 0) html += '<div class="five wide column"></div>';
+    html += '</div>';
+    $('#supply-grid').append(html);
+  }
 }

@@ -32,4 +32,8 @@ export class GameLogicController {
   public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
     return await this.db.getSupplyOrder(pin, orderId);
   }
+
+  public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
+    return this.db.updatePieces(pin, orderId, pieces);
+  }
 }
