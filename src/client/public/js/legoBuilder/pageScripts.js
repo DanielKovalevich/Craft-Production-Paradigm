@@ -12,7 +12,7 @@ let currentOrder = {};
 $(document).ready(() => {
   initButtons();
   checkOrders();
-  setTimeout(checkPieces, 3000);
+  setTimeout(checkPieces, 2000);
 });
 
 // gets the pin from the url
@@ -76,7 +76,7 @@ function checkOrders() {
     url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
     timeout: 5000,
     success: (data) => {
-      if (orderInformation.length != data.length) {
+      if (orderInformation.length != data.length && data != undefined) {
         orderInformation = data;
         // Need to find the oldest order that hasn't been finished or canceled
         let i = 0;
@@ -164,15 +164,24 @@ function generatePiecesGrid() {
     for (let col = 0; col < 4; col++) {
       while(pieces[i] == 0 && i < pieces.length) i++;
       if (row * 4 + col < num) {
-        html += '<div class="four wide column">';
-        html += '<p>' + names[i] + '</p>';
+        html += '<div class="four wide text-center column">';
+        html += '<p id=' + row * 4 + col + '-name">' + names[i] + '</p>';
         html += '<div class="row"><div class="ui statistic"><div id="' + i + '-value';
-        html += '"class="value">' + pieces[i] + '</div></div></div></div>';
+        html += '"class="value">' + pieces[i] + '</div></div></div>';
+        html += '<button class="ui button" id="' + row * 4 + col + '-value">Place</button></div>';
         i++;
       }
     }
     // I want there to be vertical lines between each cube so I need to add a blank space 
-    if (num % 4 != 0) html += '<div class="five wide column"></div>';
+    if (num % 4 != 0 && row + 1 > num / 4) {
+      let size = "";
+      switch(row % 4) {
+        case 1: size = 'twelve'; break;
+        case 2: size = 'eight'; break;
+        case 3: size = 'four'; break;
+      }
+      html += '<div class="' + size + ' wide column"></div>'
+    };
     html += '</div>';
     $('#supply-grid').append(html);
   }

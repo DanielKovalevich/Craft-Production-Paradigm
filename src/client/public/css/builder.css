@@ -17,3 +17,9 @@ canvas {
   text-align: center;
   background-color: #f0f0f0;
 }
+
+.text-center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}

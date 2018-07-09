@@ -72,6 +72,7 @@ function sendSupplyOrder() {
     url: 'http://localhost:3000/gameLogic/sendSupplyOrder/' + getPin(),
     success: () => {
       console.log('Order sent!');
+      generateSupplyGrid();
     },
     error: (xhr, status, error) => {
       console.log(error);
