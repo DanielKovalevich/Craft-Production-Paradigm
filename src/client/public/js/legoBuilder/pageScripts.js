@@ -44,11 +44,18 @@ function cycle() {
 }
 
 function getModel(name) {
-  allModels.forEach((element) => {
-    if (element.name == name) currentObj = element;
+  allModels.forEach((element, i) => {
+    if (element.name == name) {
+      currentObj = element;
+      pieceIndex = i;
+    }
   });
   loadRollOverMesh();
 }
+
+//======================================================================================================
+//                                    Order Functions
+//======================================================================================================
 
 function openModal() {
   if (jQuery.isEmptyObject(orderInformation))
@@ -93,9 +100,14 @@ function checkOrders() {
   setTimeout(checkOrders, 3000);
 }
 
+//======================================================================================================
+//                                    Supply Grid Stuff
+//======================================================================================================
+
 function checkPieces() {
   $.ajax({
     type: 'GET',
+    cache: 'false',
     url: 'http://localhost:3000/gameLogic/getSupplyOrder/' + getPin() + '/' + currentOrder._id,
     timeout: 5000,
     success: (data) => {
@@ -103,6 +115,7 @@ function checkPieces() {
         if (getNumOfPieceTypes(data) != 0 && !samePieces(data, pieces)) {
           pieces = data;
           generatePiecesGrid();
+          initSupplyButtons();
         }
       }
     },
@@ -110,8 +123,6 @@ function checkPieces() {
       console.log(error);
     }
   });
-
-  setTimeout(checkPieces, 3000);
 }
 
 function openSupplyModal() {
@@ -147,6 +158,8 @@ function updatePieces() {
       url: 'http://localhost:3000/gameLogic/updatePieces/' + getPin() + '/' + currentOrder._id,
       success: (data) => {
         //console.log(data);
+        checkPieces();
+        generatePiecesGrid();
       },
       error: (xhr, status, error) => {
         console.log(error);
@@ -155,20 +168,34 @@ function updatePieces() {
   }
 }
 
+function initSupplyButtons() {
+  for (let i = 0; i < getNumOfPieceTypes(pieces); i++) {
+    let num = '#' + i;
+    $(num + '-button').click(e => {
+      let modelName = $(num + '-name').html();
+      $('#pieces-modal').modal('toggle');
+      getModel(modelName);
+    });
+  }
+}
+
 function generatePiecesGrid() {
   let html = "";
+  // this is to ensure that I'm not appended to previous information
+  $('#supply-grid').html(html);
   let i = 0;
   let num = getNumOfPieceTypes(pieces);
+  console.log(pieces);
   for (let row = 0; row < num / 4; row++) {
     html = '<div class="row">';
     for (let col = 0; col < 4; col++) {
       while(pieces[i] == 0 && i < pieces.length) i++;
       if (row * 4 + col < num) {
         html += '<div class="four wide text-center column">';
-        html += '<p id=' + row * 4 + col + '-name">' + names[i] + '</p>';
+        html += '<p id="' + (row * 4 + col) + '-name">' + names[i] + '</p>';
         html += '<div class="row"><div class="ui statistic"><div id="' + i + '-value';
         html += '"class="value">' + pieces[i] + '</div></div></div>';
-        html += '<button class="ui button" id="' + row * 4 + col + '-value">Place</button></div>';
+        html += '<button class="ui button" id="' + (row * 4 + col) + '-button">Place</button></div>';
         i++;
       }
     }
@@ -185,4 +212,6 @@ function generatePiecesGrid() {
     html += '</div>';
     $('#supply-grid').append(html);
   }
+
+  initSupplyButtons();
 }

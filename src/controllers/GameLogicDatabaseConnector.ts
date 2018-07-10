@@ -42,7 +42,7 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
 
   public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
     if (pieces != null && pieces != undefined) {
-      console.log(this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: pieces}}));
+      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: pieces}});
       return 200;
     }
     return 400;

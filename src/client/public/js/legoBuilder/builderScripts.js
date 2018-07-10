@@ -1,4 +1,5 @@
 'use strict'
+let currentRollOverModel = "";
 
 function loadRollOverMesh() {
   let loader = new THREE.STLLoader();
@@ -20,7 +21,9 @@ function loadRollOverMesh() {
     let size = new THREE.Vector3();
     box.getSize(size);
 
+    currentRollOverModel = allModels[index].name;
     rollOverMesh.userData.dimensions = size;
+    rollOverMesh.userData.modelType = currentRollOverModel;
     rollOverMesh.name = 'rollOverMesh';
 
     rollOverMesh.position.y += determineModelYTranslation();
@@ -38,7 +41,8 @@ function onDocumentMouseMove(event) {
   mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .15))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
-  if (intersects.length > 0) {
+  clearPreviousRollOverObject();
+  if (intersects.length > 0 && currentRollOverModel != "") {
     // Need to load the rollOverMesh once the user enters the plane one again
     // this is to avoid lingering rollOverMeshes when you cycle through different pieces
     if (scene.children.indexOf(rollOverMesh) == -1) scene.add(rollOverMesh);
@@ -110,9 +114,9 @@ function onDocumentMouseDown(event) {
   if (intersects.length > 0 || objIntersect.length > 0) {
     var intersect = intersects[0];
     var objIntersect = objIntersect[0];
+    pieceIndex = names.indexOf(currentRollOverModel);
     // delete cube
     if (isCtrlDown) {
-      // FIXME: Bug that doesn't delete object if collision object has been already deleted
       if (intersect.object != plane) {
         if (intersect) {
           if (intersect.object.children[1]) scene.remove(intersect.object.children[1]);
@@ -120,14 +124,31 @@ function onDocumentMouseDown(event) {
           scene.remove(intersect.object.children[0]);
           objects.splice(objects.indexOf(intersect.object.children[0]), 1);
           collisionObjects.splice(collisionObjects.indexOf(intersect.object), 1);
+          // I get this kind of shit when I forget to actually design some parts
+          // It's also because some parts of JS can be "interesting"
+          let index = names.indexOf(intersect.object.children[0].userData.modelType);
+          pieces[index] = pieces[index] + 1;
+          updatePieces();
         }
       }
     }
-    else if (isShiftDown) {
+    else if (isShiftDown && pieces[pieceIndex] > 0) {
       placeLego(intersect);
+      pieces[pieceIndex] = pieces[pieceIndex] - 1;
+      updatePieces();
     }
     render();
   }
+}
+
+/**
+ * There is a bug when changing rollOverMeshes where there will be more than one on the scene at the same time
+ */
+function clearPreviousRollOverObject() {
+  scene.children.forEach(elem => {
+    if (elem.name == 'rollOverMesh' && elem.userData.modelType != currentRollOverModel)
+      scene.remove(elem);
+  });
 }
 
 /**
@@ -144,6 +165,7 @@ function placeLego(intersect) {
     generateObjFromModel(geometry, modelObj, size);
     size = size.size;
     modelObj = modelObj.mesh;
+    modelObj.userData.modelType = currentRollOverModel;
 
     if (intersect.object.name == 'plane') {
       changeObjPosOnPlane(modelObj, intersect, size);
@@ -310,7 +332,7 @@ function mod(n, m) {
  */
 function determineModelYTranslation() {
   // whoever made these retarded models needs to learn about consistency
-  if (currentObj.name == 'steering') {
+  if (currentObj.name == 'Steering Wheel') {
     return rollOverMesh.userData.dimensions.y / 2 - 9;
   }
   switch(currentObj.yTranslation) {
