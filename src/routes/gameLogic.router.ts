@@ -26,4 +26,8 @@ router.post('/updatePieces/:id/:orderId', (req: Request, res: Response) => {
   res.send(controller.updatePieces(req.params.id, req.params.orderId, req.body['pieces[]']));
 });
 
+router.post('/sendAssembledModel/:id/:orderId', (req: Request, res: Response) => {
+  res.send(controller.updateAssembledModel(req.params.id, req.params.orderId, req.body.model));
+});
+
 export const GameLogicRouter: Router = router;

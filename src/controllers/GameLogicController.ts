@@ -36,4 +36,8 @@ export class GameLogicController {
   public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
     return this.db.updatePieces(pin, orderId, pieces);
   }
+
+  public updateAssembledModel(pin: string, orderId: string, model: object): number {
+    return this.db.updateAssembledModel(pin, orderId, model);
+  }
 }

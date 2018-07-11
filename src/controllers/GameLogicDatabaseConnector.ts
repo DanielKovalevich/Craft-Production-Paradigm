@@ -47,4 +47,12 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     }
     return 400;
   }
+
+  public updateAssembledModel(pin: string, orderId: string, model: object): number {
+    if (model != null && model != undefined) {
+      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {assembledModel: model}});
+      return 200;
+    }
+    return 400;
+  }
 }
