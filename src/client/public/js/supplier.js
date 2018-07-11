@@ -39,7 +39,6 @@ function initButtons() {
       let currentNum = parseInt($(num + '-value').html());
       $(num + '-value').html(currentNum == 0 ? 0 : --currentNum);
       pieceOrders[i] = currentNum;
-      console.log(pieceOrders);
     });
   }
 
@@ -109,16 +108,17 @@ function checkOrders() {
   $.ajax({
     type: 'GET',
     url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
+    cache: false,
     timeout: 5000,
     success: (data) => {
-      if (orderInformation.length != data.length && orderInformation.length != 0) {
-        orderInformation = data;
-        // Need to find the oldest order that hasn't been finished or canceled
-        let i = 0;
+      orderInformation = data;
+      // Need to find the oldest order that hasn't been finished or canceled
+      let i = 0;
+      if (orderInformation.length != 0) {
         while(orderInformation[i].status != 'In Progress') i++;
         currentOrder = orderInformation[i];
-        updateOrder();
       }
+      updateOrder();
     },
     error: (xhr, status, error) => {
       console.log('Error: ' + error);

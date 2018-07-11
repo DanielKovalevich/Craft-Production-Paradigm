@@ -35,6 +35,10 @@ function initButtons() {
 
   $('#order').click(e => {openModal()});
   $('#pieces').click(e => {openSupplyModal()});
+
+  $('#test').click(e => {
+    scene.add(group);
+  });
 }
 
 function cycle() {
@@ -83,14 +87,14 @@ function checkOrders() {
     url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
     timeout: 5000,
     success: (data) => {
-      if (orderInformation.length != data.length && data != undefined) {
-        orderInformation = data;
-        // Need to find the oldest order that hasn't been finished or canceled
-        let i = 0;
+      orderInformation = data;
+      // Need to find the oldest order that hasn't been finished or canceled
+      let i = 0;
+      if (orderInformation.length != 0) {
         while(orderInformation[i].status != 'In Progress') i++;
         currentOrder = orderInformation[i];
-        updateOrder();
       }
+      updateOrder();
     },
     error: (xhr, status, error) => {
       console.log('Error: ' + error);
@@ -185,7 +189,6 @@ function generatePiecesGrid() {
   $('#supply-grid').html(html);
   let i = 0;
   let num = getNumOfPieceTypes(pieces);
-  console.log(pieces);
   for (let row = 0; row < num / 4; row++) {
     html = '<div class="row">';
     for (let col = 0; col < 4; col++) {
