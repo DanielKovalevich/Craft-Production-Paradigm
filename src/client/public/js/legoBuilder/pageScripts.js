@@ -36,8 +36,10 @@ function initButtons() {
   $('#order').click(e => {openModal()});
   $('#pieces').click(e => {openSupplyModal()});
 
-  $('#test').click(e => {
-    scene.add(group);
+  $('#send-model').click(e => {
+    if (!$.isEmptyObject(group)) {
+      sendGroup();
+    }
   });
 }
 
@@ -101,11 +103,25 @@ function checkOrders() {
     }
   });
 
-  setTimeout(checkOrders, 3000);
+  setTimeout(checkOrders, 10000);
 }
 
 function sendGroup() {
-  
+  let postData = {'model': group};
+  console.log(postData);
+  postData = JSON.stringify(postData);
+  $.ajax({
+    type: 'POST',
+    data: postData,
+    url: 'http://localhost:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
+    timeout: 5000,
+    success: (data) => {
+      console.log(data);
+    },
+    error: (xhr, status, error) => {
+      console.log(error);
+    }
+  });
 }
 
 //======================================================================================================
@@ -134,6 +150,7 @@ function checkPieces() {
 }
 
 function openSupplyModal() {
+  checkPieces();
   updatePieces();
   if (pieces == null)
     $('#no-pieces').modal('show');
@@ -159,7 +176,7 @@ function samePieces(array1, array2) {
 
 function updatePieces() {
   let postData = {'pieces': pieces};
-  if (pieces != [] && pieces != null && pieces != undefined) {
+  if (pieces != null && pieces != undefined) {
     $.ajax({
       type: 'POST',
       data: postData,

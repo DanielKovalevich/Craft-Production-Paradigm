@@ -10,5 +10,5 @@ If you actually want to try it out, you need to start up both the frontend and b
 npm start
 npm run client
 ```
-In order to actually play the game, you will need to have three windows open of the game itself. 
-This is because to play the game, you need a customer, a supplier, and an assembler.
+In order to play the game, you will need to have three windows open of the game itself. 
+This is because, to play the game, you need a customer, a supplier, and an assembler.

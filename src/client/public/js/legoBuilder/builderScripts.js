@@ -41,38 +41,40 @@ function onDocumentMouseMove(event) {
   mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .15))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
-  if (pieces[pieceIndex] == 0) {
-    currentRollOverModel = "";
-    scene.remove(rollOverMesh);
-  }
-  clearPreviousRollOverObject();
-  if (intersects.length > 0 && currentRollOverModel != "") {
-    // Need to load the rollOverMesh once the user enters the plane one again
-    // this is to avoid lingering rollOverMeshes when you cycle through different pieces
-    if (scene.children.indexOf(rollOverMesh) == -1) scene.add(rollOverMesh);
-    else {
-      let dim = rollOverMesh.userData.dimensions;
-      var intersect = intersects[0];
-      if (intersect.object.name == 'plane')  {
-        changeObjPosOnPlane(rollOverMesh, intersect, dim);
-        rollOverMesh.position.y = determineModelYTranslation();
-      }
+  if (pieceIndex != -1) {
+    if (pieces[pieceIndex] == 0) {
+      currentRollOverModel = "";
+      scene.remove(rollOverMesh);
+    }
+    clearPreviousRollOverObject();
+    if (intersects.length > 0 && currentRollOverModel != "") {
+      // Need to load the rollOverMesh once the user enters the plane one again
+      // this is to avoid lingering rollOverMeshes when you cycle through different pieces
+      if (scene.children.indexOf(rollOverMesh) == -1) scene.add(rollOverMesh);
       else {
-        rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
-        // If I want to do snapping to grid, I need to figure out these numbers
-        //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
-        let intersectY = intersect.object.userData.dimensions.y;
-        rollOverMesh.position.y = intersectY + (intersect.point.y - intersectY) + determineModelYTranslation();
+        let dim = rollOverMesh.userData.dimensions;
+        var intersect = intersects[0];
+        if (intersect.object.name == 'plane')  {
+          changeObjPosOnPlane(rollOverMesh, intersect, dim);
+          rollOverMesh.position.y = determineModelYTranslation();
+        }
+        else {
+          rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
+          // If I want to do snapping to grid, I need to figure out these numbers
+          //rollOverMesh.position.divideScalar(dim.x).floor().multiplyScalar(dim.x).addScalar(dim.y / 2);
+          let intersectY = intersect.object.userData.dimensions.y;
+          rollOverMesh.position.y = intersectY + (intersect.point.y - intersectY) + determineModelYTranslation();
+        }
       }
     }
-  }
-  else {
-    // solves issue that if you rapidly click the cylce button
-    // it would place unremovable rollOverMeshes on the scene
-    scene.children.forEach(element => {
-      if (element.name == 'rollOverMesh')
-        scene.remove(element);
-    });
+    else {
+      // solves issue that if you rapidly click the cylce button
+      // it would place unremovable rollOverMeshes on the scene
+      scene.children.forEach(element => {
+        if (element.name == 'rollOverMesh')
+          scene.remove(element);
+      });
+    }
   }
   render(); 
 }
@@ -133,7 +135,7 @@ function onDocumentMouseDown(event) {
           let index = names.indexOf(intersect.object.children[0].userData.modelType);
           pieces[index] = pieces[index] + 1;
           // It's about as stupid as it looks
-          // this is because the intersection object is the collision objects
+          // this is because the intersection object is the collision object
           group.remove(intersect.object.children[0]);
           updatePieces();
         }
