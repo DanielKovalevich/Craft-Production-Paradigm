@@ -21,6 +21,7 @@ var rollOverMesh, material, collisionBox;
 var planeDimensions = 1000;
 var objects = [], collisionObjects = [];
 var currentObj = twoByTwo;
+var group = new THREE.Group();
 
 // Kicks off the program
 $(function() {

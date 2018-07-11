@@ -96,12 +96,16 @@ function checkOrders() {
       }
       updateOrder();
     },
-    error: (xhr, status, error) => {
+    error: (xhr, status, error) => { 
       console.log('Error: ' + error);
     }
   });
 
   setTimeout(checkOrders, 3000);
+}
+
+function sendGroup() {
+  
 }
 
 //======================================================================================================
@@ -206,7 +210,7 @@ function generatePiecesGrid() {
     if (num % 4 != 0 && row + 1 > num / 4) {
       let size = "";
       switch(row % 4) {
-        case 1: size = 'twelve'; break;
+        case 1: size = 'eight'; break;
         case 2: size = 'eight'; break;
         case 3: size = 'four'; break;
       }

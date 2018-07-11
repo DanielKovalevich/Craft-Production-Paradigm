@@ -41,6 +41,10 @@ function onDocumentMouseMove(event) {
   mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .15))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
+  if (pieces[pieceIndex] == 0) {
+    currentRollOverModel = "";
+    scene.remove(rollOverMesh);
+  }
   clearPreviousRollOverObject();
   if (intersects.length > 0 && currentRollOverModel != "") {
     // Need to load the rollOverMesh once the user enters the plane one again
@@ -128,6 +132,9 @@ function onDocumentMouseDown(event) {
           // It's also because some parts of JS can be "interesting"
           let index = names.indexOf(intersect.object.children[0].userData.modelType);
           pieces[index] = pieces[index] + 1;
+          // It's about as stupid as it looks
+          // this is because the intersection object is the collision objects
+          group.remove(intersect.object.children[0]);
           updatePieces();
         }
       }
@@ -200,6 +207,7 @@ function generateObjFromModel(geometry, modelObj, size) {
   modelObj.mesh.rotation.z = rollOverMesh.rotation.z;
   modelObj.mesh.scale.set(currentObj.scale,currentObj.scale,currentObj.scale);
   scene.add(modelObj.mesh);
+  group.add(modelObj.mesh);
   let box = new THREE.Box3().setFromObject(modelObj.mesh);
   size.size = new THREE.Vector3();
   box.getSize(size.size);
