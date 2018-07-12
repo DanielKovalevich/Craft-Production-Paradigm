@@ -15,7 +15,7 @@ router.get('/getOrders/:id', async (req: Request, res: Response) => {
 });
 
 router.post('/sendSupplyOrder/:id', (req: Request, res: Response) => {
-  controller.addSupplyOrder(req.params.id, req.body.id, req.body['order[]']);
+  controller.addSupplyOrder(req.params.id, req.body.id, req.body.order);
 });
 
 router.get('/getSupplyOrder/:id/:orderId', async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ router.get('/getSupplyOrder/:id/:orderId', async (req: Request, res: Response) =
 });
 
 router.post('/updatePieces/:id/:orderId', (req: Request, res: Response) => {
-  res.send(controller.updatePieces(req.params.id, req.params.orderId, req.body['pieces[]']));
+  res.send(controller.updatePieces(req.params.id, req.params.orderId, req.body.pieces));
 });
 
 router.post('/sendAssembledModel/:id/:orderId', (req: Request, res: Response) => {
