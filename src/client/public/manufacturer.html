@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>Manufacturer - Manufacturing Simulation</title>
+		<link rel="stylesheet" type="text/css" href="/../semantic/dist/semantic.min.css">
+		<link rel="stylesheet" type="text/css" href="/../css/supplier.css">
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+    <script src="/../semantic/dist/semantic.min.js"></script>
+    <script src="/../js/manufacturer.js"></script>
+  </head>
+  <body>
+    <div class="ui centered grid">
+      <div class="nine wide column">
+        <div class="ui centered grid">
+          <div class="row">
+            <h1 id="header" class="ui header">
+              <i class="truck icon"></i>
+              Manufacturer
+            </h1>
+          </div>
+					<button class="ui massive yellow button" id="order">Orders From Customer</button>
+          <div id="supply-grid" class="ui celled grid">
+					</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui basic modal" id="no-orders">
+			<div class="ui icon header">
+				<i class="clipboard outline icon"></i>
+				No Orders Currently Placed
+			</div>
+			<div class="ui centered grid">
+				<div class="actions">
+					<div class="ui green ok inverted button">
+						<i class="checkmark icon"></i>
+						Okay
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="ui modal" id="ready-order">
+			<div class="header">
+				Order Information
+			</div>
+			<div class="image content">
+				<div class="ui medium image">
+					<img id="order-image" src="">
+				</div>
+				<div class="description">
+					<div class="ui header">Order Sent From the Customer</div>
+					<span id="order-info"></span>
+					<p>I hope you know which pieces are needed.</p>
+				</div>
+			</div>
+			<div class="actions">
+				<div id="left" class="ui red button">
+					<i class="angle double left icon"></i>
+				</div>
+				<div id="right" class="ui red button">
+					<i class="angle double right icon"></i>
+				</div>
+				<div class="ui black deny button">
+					Close Window
+				</div>
+				<div id="send-supply-order" class="ui positive right labeled icon button">
+					Send Pieces To Assembler
+					<i class="checkmark icon"></i>
+				</div>
+			</div>
+		</div>
+  </body>
+</html>

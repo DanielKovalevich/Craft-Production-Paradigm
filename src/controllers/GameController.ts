@@ -52,7 +52,7 @@ export class GameController {
   }
 
   public async getPossiblePositions(pin: string): Promise<any> {
-    let possiblePositions: string[] = ['Assembler', 'Supplier', 'Customer'];
+    let possiblePositions: string[] = ['Assembler', 'Supplier', 'Customer', 'Manufacturer'];
     let takenPositions = await this.db.getPossiblePositions(pin);
     takenPositions.positions.forEach((element: string) => {
       let index = possiblePositions.indexOf(element);
