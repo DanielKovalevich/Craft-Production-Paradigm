@@ -93,8 +93,12 @@ function checkOrders() {
       // Need to find the oldest order that hasn't been finished or canceled
       let i = 0;
       if (orderInformation.length != 0) {
-        while(orderInformation[i].status != 'In Progress') i++;
-        currentOrder = orderInformation[i];
+        while(orderInformation[i].status != 'In Progress') {
+          i++;
+          if (i >= orderInformation.length) break;
+        }
+        // if all the orders are complete, i just set the current as the first order
+        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
       }
       updateOrder();
     },
@@ -107,9 +111,7 @@ function checkOrders() {
 }
 
 function sendGroup() {
-  let postData = {'model': group};
-  console.log(postData);
-  postData = JSON.stringify(postData);
+  let postData = {'model': group.toJSON()};
   $.ajax({
     type: 'POST',
     data: postData,

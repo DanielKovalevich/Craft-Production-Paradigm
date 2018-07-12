@@ -115,8 +115,11 @@ function checkOrders() {
       // Need to find the oldest order that hasn't been finished or canceled
       let i = 0;
       if (orderInformation.length != 0) {
-        while(orderInformation[i].status != 'In Progress') i++;
-        currentOrder = orderInformation[i];
+        while(orderInformation[i].status != 'In Progress') {
+          i++;
+          if (i >= orderInformation.length) break;
+        } 
+        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
       }
       updateOrder();
     },
