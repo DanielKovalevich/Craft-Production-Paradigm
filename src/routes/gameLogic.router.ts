@@ -27,6 +27,8 @@ router.post('/updatePieces/:id/:orderId', (req: Request, res: Response) => {
 });
 
 router.post('/sendAssembledModel/:id/:orderId', (req: Request, res: Response) => {
+  console.log(req.params.id, req.params.orderId);
+  console.log('Assembled model has been sent');
   res.send(controller.updateAssembledModel(req.params.id, req.params.orderId, req.body.model));
 });
 

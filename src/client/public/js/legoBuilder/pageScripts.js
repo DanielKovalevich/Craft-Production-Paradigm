@@ -53,7 +53,7 @@ function getModel(name) {
   allModels.forEach((element, i) => {
     if (element.name == name) {
       currentObj = element;
-      pieceIndex = i;
+      pieceIndex = names.indexOf(currentObj);
     }
   });
   loadRollOverMesh();
@@ -112,11 +112,11 @@ function checkOrders() {
 
 function sendGroup() {
   let postData = {'model': group.toJSON()};
+  console.log(postData);
   $.ajax({
     type: 'POST',
     data: postData,
     url: 'http://localhost:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
-    timeout: 5000,
     success: (data) => {
       console.log(data);
     },
@@ -225,13 +225,14 @@ function generatePiecesGrid() {
         i++;
       }
     }
-    // I want there to be vertical lines between each cube so I need to add a blank space 
+    // I want there to be vertical lines between each cube so I need to add a blank space
     if (num % 4 != 0 && row + 1 > num / 4) {
       let size = "";
-      switch(row % 4) {
-        case 1: size = 'eight'; break;
+      console.log(num, num % 4);
+      switch(5 % 4) {
+        case 1: size = 'four'; break;
         case 2: size = 'eight'; break;
-        case 3: size = 'four'; break;
+        case 3: size = 'twelve'; break;
       }
       html += '<div class="' + size + ' wide column"></div>'
     };

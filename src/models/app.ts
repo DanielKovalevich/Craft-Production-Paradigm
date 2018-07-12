@@ -17,7 +17,7 @@ class App {
     }),*/
     this.app.use(cors({origin: 'http://localhost:8080'}));
     this.app.use(bodyParser.json({limit: '50mb'}));
-    this.app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+    this.app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:1000000}));
   }
 
   private setRoutes(): void {
