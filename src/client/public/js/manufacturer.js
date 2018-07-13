@@ -4,7 +4,7 @@ const names = ["1x1", "2x2", "2x3x2", "1x2 Pin",
               "Rim 3", "1x2", "1x4", "1x2 Plate",
               "4x6 Plate", "6x8 Plate", "2x10 Plate", "Windshield",
               "Steering Wheel", "Lego Man"];
-let pieceOrders = [];
+let pieceOrder = [];
 orderInformation = {};
 currentOrder = {};
 
@@ -59,11 +59,52 @@ function initButtons() {
   });
 }
 
+/**
+ * Function that runs constantly to update the orders
+ */
+function checkOrders() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
+    cache: false,
+    timeout: 5000,
+    success: (data) => {
+      orderInformation = data;
+      // Need to find the oldest order that hasn't been finished or canceled
+      let i = 0;
+      if (orderInformation.length != 0) {
+        while(orderInformation[i].status != 'In Progress') {
+          i++;
+          if (i >= orderInformation.length) break;
+        } 
+        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
+      }
+      updateOrder();
+    },
+    error: (xhr, status, error) => {
+      console.log('Error: ' + error);
+    }
+  });
+
+  setTimeout(checkOrders, 3000);
+}
+
 function sendPiecesOrder() {
-  
+  let postData = {'request': pieceOrder};
+  $.ajax({
+    type: 'POST',
+    data: postData,
+    url: 'http://localhost:3000/updateManufacturerRequest/' + getPin() + '/' + + currentOrder._id,
+    success: (data) => {
+      console.log(data);
+    },
+    error: (xhr, status, error) => {
+      console.log(error);
+    }
+  });
 }
 
 /**
  * Because including other functions in es5 is shit,
- * I moved 4 functions to supplyGrid since the supplier.js also requires the same functions
+ * I moved 3 functions to supplyGrid since the supplier.js also requires the same functions
  */

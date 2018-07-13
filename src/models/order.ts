@@ -21,7 +21,7 @@ export default class Order {
     this._id = this.generateId();
     this.createDate = new Date().getTime();
     this.status = "In Progress";
-    this.stage = "Customer";
+    this.stage = "Manufacturer";
     this.modelType = 1;
     this.lastModified = this.createDate;
     this.finishedTime = -1;

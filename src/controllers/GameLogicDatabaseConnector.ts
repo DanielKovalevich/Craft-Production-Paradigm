@@ -26,9 +26,12 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     }
   }
 
+  // This happens at the supplier stage
+  // I don't know why I have two functions that essentially do the same thing (idgaf at this point)
   public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
     let time = new Date().getTime();
-    this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: order, lastModified: time}});
+    let update = {$set: {supplyOrders: order, lastModified: time, stage: 'Assembler'}};
+    this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
   }
 
   public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
@@ -40,6 +43,8 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     }
   }
 
+  // this is used in the assembler stage
+  // this function basically does the same thing as addSupplyOrder
   public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
     if (pieces != null && pieces != undefined) {
       let time = new Date().getTime();
@@ -53,7 +58,7 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   public updateAssembledModel(pin: string, orderId: string, model: object): number {
     if (model != null && model != undefined) {
       let time = new Date().getTime();
-      let update = {$set: {assembledModel: model, status: "Completed", finishedTime: time}};
+      let update = {$set: {assembledModel: model, status: 'Completed', finishedTime: time}};
       this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }
@@ -72,7 +77,7 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   public updateManufacturerRequest(pin: string, orderId: string, request: Array<number>): number {
     if (request != null && request != undefined) {
       let time: number = new Date().getTime();
-      let update = {$set: {manufacturerReq: request, stage: "Supplier", lastModified: time}};
+      let update = {$set: {manufacturerReq: request, stage: 'Supplier', lastModified: time}};
       this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }

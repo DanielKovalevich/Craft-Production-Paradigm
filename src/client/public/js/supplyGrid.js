@@ -15,39 +15,12 @@ function updateOrder() {
     case 'yellow': $('#order-image').attr('src', '/../images/yellow_car.jpg'); break;
   }
   let html = '<p>Date Ordered: ' + new Date(currentOrder.createDate).toString() + '</p>';
+  html += '<p>Last Modified: ' + new Date(currentOrder.lastModified).toString() + '</p>';
+  if (currentOrder.status === 'Completed')
+    html += '<p>Finished: ' + new Date(currentOrder.finishedTime).toString() + '</p>';
   html += '<p>Model Type: ' + currentOrder.modelType + '</p>';
   html += '<p>Status: ' + currentOrder.status + '</p><br>';
   $('#order-info').html(html);
-}
-
-/**
- * Function that runs constantly to update the orders
- */
-function checkOrders() {
-  $.ajax({
-    type: 'GET',
-    url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
-    cache: false,
-    timeout: 5000,
-    success: (data) => {
-      orderInformation = data;
-      // Need to find the oldest order that hasn't been finished or canceled
-      let i = 0;
-      if (orderInformation.length != 0) {
-        while(orderInformation[i].status != 'In Progress') {
-          i++;
-          if (i >= orderInformation.length) break;
-        } 
-        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
-      }
-      updateOrder();
-    },
-    error: (xhr, status, error) => {
-      console.log('Error: ' + error);
-    }
-  });
-
-  setTimeout(checkOrders, 3000);
 }
 
 /**

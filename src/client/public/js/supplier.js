@@ -5,6 +5,7 @@ const names = ["1x1", "2x2", "2x3x2", "1x2 Pin",
               "4x6 Plate", "6x8 Plate", "2x10 Plate", "Windshield",
               "Steering Wheel", "Lego Man"];
 let pieceOrders = [];
+let manufacturingPieces = [];
 orderInformation = {};
 currentOrder = {};
 
@@ -12,9 +13,8 @@ $(document).ready(() => {
   generateSupplyGrid();
   initArray();
   initButtons();
-  $('#order').click(e => {
-    openModal();
-  });
+  $('#order').click(e => openModal());
+  $('#request').click(e => openManufacturingModal());
   checkOrders();
 });
 
@@ -80,6 +80,53 @@ function sendSupplyOrder() {
 }
 
 /**
- * Because including other functions in es5 is shit,
- * I moved 4 functions to supplyGrid since the manufacturer.js also requires the same functions
+ * Function that runs constantly to update the orders
  */
+function checkOrders() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
+    cache: false,
+    timeout: 5000,
+    success: (data) => {
+      orderInformation = data;
+      removeOrdersAtManuf(orderInformation);
+      // Need to find the oldest order that hasn't been finished or canceled
+      let i = 0;
+      if (orderInformation.length != 0) {
+        while(orderInformation[i].status != 'In Progress') {
+          i++;
+          if (i >= orderInformation.length) break;
+        } 
+        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
+      }
+      updateOrder();
+    },
+    error: (xhr, status, error) => {
+      console.log('Error: ' + error);
+    }
+  });
+
+  setTimeout(checkOrders, 3000);
+}
+
+function removeOrdersAtManuf(orders) {
+  orders.forEach((elem, i) => {
+    // don't want other stages to see orders when it is at manufacturer
+    if (elem.stage == "Manufacturer")
+      orders.splice(i, 1);
+  });
+  return orders;
+}
+
+/**
+ * Because including other functions in es5 is shit,
+ * I moved 3 functions to supplyGrid since the manufacturer.js also requires the same functions
+ */
+
+ function openManufacturingModal() {
+  if (manufacturingPieces.length == 0) 
+    $('#no-request').modal('toggle');
+  else 
+    $('#ready-request').modal('toggle');
+ }

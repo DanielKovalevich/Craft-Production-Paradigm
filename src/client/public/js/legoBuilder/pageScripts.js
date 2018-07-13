@@ -78,6 +78,9 @@ function updateOrder() {
     case 'yellow': $('#order-image').attr('src', '/../images/yellow_car.jpg'); break;
   }
   let html = '<p>Date Ordered: ' + new Date(currentOrder.createDate).toString() + '</p>';
+  html += '<p>Last Modified: ' + new Date(currentOrder.lastModified).toString() + '</p>';
+  if (currentOrder.status === 'Completed')
+    html += '<p>Finished: ' + new Date(currentOrder.finishedTime).toString() + '</p>';
   html += '<p>Model Type: ' + currentOrder.modelType + '</p>';
   html += '<p>Status: ' + currentOrder.status + '</p><br>';
   $('#order-info').html(html);
@@ -91,6 +94,7 @@ function checkOrders() {
     success: (data) => {
       orderInformation = data;
       // Need to find the oldest order that hasn't been finished or canceled
+      removeOrdersAtManuf(orderInformation);
       let i = 0;
       if (orderInformation.length != 0) {
         while(orderInformation[i].status != 'In Progress') {
@@ -108,6 +112,16 @@ function checkOrders() {
   });
 
   setTimeout(checkOrders, 10000);
+}
+
+
+function removeOrdersAtManuf(orders) {
+  orders.forEach((elem, i) => {
+    // don't want other stages to see orders when it is at manufacturer
+    if (elem.stage == "Manufacturer")
+      orders.splice(i, 1);
+  });
+  return orders;
 }
 
 function sendGroup() {
