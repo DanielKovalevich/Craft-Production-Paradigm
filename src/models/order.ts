@@ -1,18 +1,20 @@
 export default class Order {
   private _id: string;
-  private pin: Number;
-  private createDate: Number;
-  private lastModified: Number;
+  private pin: number;
+  private createDate: number;
+  private lastModified: number;
+  private finishedTime: number;
   // 3 Possible statuses
   // In Progress -> Order is being worked on
   // Completed -> As the name implies
   // Canceled -> Feature to be added later
-  private status: String;
-  // 3 Stages of Production
-  // Customer -> Supplier -> Builder -> Customer
-  private stage: String;
-  private modelType: Number;
-  private supplyOrders: Array<Number>;
+  private status: string;
+  // 4 Stages of Production
+  // Customer -> Manufacturer -> Supplier -> Assembler -> Customer
+  private stage: string;
+  private modelType: number;
+  private manufacturerReq: Array<number>;
+  private supplyOrders: Array<number>;
   private assembledModel: object;
   constructor(pin: number) {
     this.pin = pin;
@@ -22,12 +24,18 @@ export default class Order {
     this.stage = "Customer";
     this.modelType = 1;
     this.lastModified = this.createDate;
-    this.supplyOrders = new Array<Number>();
+    this.finishedTime = -1;
+    this.manufacturerReq = new Array<number>();
+    this.supplyOrders = new Array<number>();
     this.assembledModel = {};
   }
 
   private setLastModified(): void {
     this.lastModified = new Date().getTime();
+  }
+
+  private setFinished(): void {
+    this.finishedTime = new Date().getTime();
   }
 
   /**
@@ -57,15 +65,18 @@ export default class Order {
     this.modelType = type;
   }
 
+  // Allows me to easily convert the object and store it into the mongoDB database
   public toJSON(): object {
     let jsonObj = {
       "_id": this._id,
       "pin": this.pin,
       "createDate": this.createDate,
       "lastModified": this.lastModified,
+      "finishedTime": this.finishedTime,
       "status": this.status,
       "stage": this.stage,
       "modelType": this.modelType,
+      "manufacturerReq": this.manufacturerReq,
       "supplyOrders": this.supplyOrders,
       "assembledModel": this.assembledModel
     };

@@ -16,8 +16,7 @@ export class GameLogicController {
   public placeOrder(pin: string, modelType: number): void {
     let order = new Order(parseInt(pin));
     order.setModelType(modelType);
-    //TODO: Get rid of this line when I add supplier
-    order.setStage('Assembler');
+    order.setStage('Manufacturer');
     this.db.addOrder(order.toJSON());
   }
 
@@ -39,5 +38,13 @@ export class GameLogicController {
 
   public updateAssembledModel(pin: string, orderId: string, model: object): number {
     return this.db.updateAssembledModel(pin, orderId, model);
+  }
+
+  public async getManufacturerRequest(pin: string, orderId: string): Promise<Array<number>> {
+    return await this.db.getManufacturerRequest(pin, orderId);
+  }
+
+  public updateManufacturerRequest(pin: string, orderId: string, request: Array<number>): number {
+    return this.db.updateManufacturerRequest(pin, orderId, request);
   }
 }

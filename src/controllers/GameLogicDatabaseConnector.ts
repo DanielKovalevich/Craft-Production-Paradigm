@@ -16,7 +16,6 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
    */
   public addOrder(order: object): void {
     this.orderCollection.insert(order);
-    //this.gameCollection.update({pin: parseInt(pin)}, {$push: {orders: order}})
   }
 
   public async getOrders(pin: string): Promise<Array<object>> {
@@ -28,7 +27,8 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   }
 
   public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
-    this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: order}});
+    let time = new Date().getTime();
+    this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: order, lastModified: time}});
   }
 
   public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
@@ -42,7 +42,9 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
 
   public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
     if (pieces != null && pieces != undefined) {
-      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {supplyOrders: pieces}});
+      let time = new Date().getTime();
+      let update = {$set: {supplyOrders: pieces, lastModified: time}};
+      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }
     return 400;
@@ -50,7 +52,28 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
 
   public updateAssembledModel(pin: string, orderId: string, model: object): number {
     if (model != null && model != undefined) {
-      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, {$set: {assembledModel: model, status: "Completed"}});
+      let time = new Date().getTime();
+      let update = {$set: {assembledModel: model, status: "Completed", finishedTime: time}};
+      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
+      return 200;
+    }
+    return 400;
+  }
+
+  public async getManufacturerRequest(pin: string, orderId: string): Promise<Array<number>> {
+    try {
+      let request = await this.orderCollection.findOne({pin: parseInt(pin), _id: orderId}, {fields: {manufacturerReq: 1, _id: 0}});
+      return request.manufacturerReq;
+    } catch(e) {
+      return new Array<number>();
+    }
+  }
+
+  public updateManufacturerRequest(pin: string, orderId: string, request: Array<number>): number {
+    if (request != null && request != undefined) {
+      let time: number = new Date().getTime();
+      let update = {$set: {manufacturerReq: request, stage: "Supplier", lastModified: time}};
+      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }
     return 400;
