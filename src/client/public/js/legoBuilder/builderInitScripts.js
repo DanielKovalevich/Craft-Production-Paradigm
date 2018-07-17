@@ -54,6 +54,7 @@ function initCamera() {
   camera.position.set(0, 500, 800);
   camera.lookAt(new THREE.Vector3());
   controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.addEventListener( 'change', render );
   controls.rotateSpeed = 1.0;
   controls.zoomSpeed = 1;
   controls.panSpeed = 0.8;
