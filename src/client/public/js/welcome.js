@@ -143,7 +143,7 @@ function getPostData() {
   sessionStorage.position = position;
   data.positions.push(position);
   let players = $('#num-players').val();
-  data.maxPlayers = players > 3 ? 3 : players < 2 ? 2 : players;
+  data.maxPlayers = players > 4 ? 4 : players < 2 ? 2 : players;
   return JSON.stringify(data);
 }
 

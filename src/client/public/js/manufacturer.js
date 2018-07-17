@@ -24,7 +24,7 @@ function getPin() {
 }
 
 function initArray() {
-  for (let i = 0; i < names.length; i++) pieceOrders[i] = 0;
+  for (let i = 0; i < names.length; i++) pieceOrder[i] = 0;
 }
 
 function initButtons() {
@@ -33,12 +33,12 @@ function initButtons() {
     $(num + '-plus').click(e => {
       let currentNum = parseInt($(num + '-value').html());
       $(num + '-value').html(currentNum < 10 ? ++currentNum : 10);
-      pieceOrders[i] = currentNum;
+      pieceOrder[i] = currentNum;
     });
     $(num + '-minus').click(e => {
       let currentNum = parseInt($(num + '-value').html());
       $(num + '-value').html(currentNum == 0 ? 0 : --currentNum);
-      pieceOrders[i] = currentNum;
+      pieceOrder[i] = currentNum;
     });
   }
 
@@ -94,7 +94,7 @@ function sendPiecesOrder() {
   $.ajax({
     type: 'POST',
     data: postData,
-    url: 'http://localhost:3000/updateManufacturerRequest/' + getPin() + '/' + + currentOrder._id,
+    url: 'http://localhost:3000/gameLogic/updateManufacturerRequest/' + getPin() + '/' + currentOrder._id,
     success: (data) => {
       console.log(data);
     },

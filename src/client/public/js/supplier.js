@@ -16,6 +16,7 @@ $(document).ready(() => {
   $('#order').click(e => openModal());
   $('#request').click(e => openManufacturingModal());
   checkOrders();
+  checkRequestedPieces();
 });
 
 // gets the pin from the url
@@ -129,4 +130,32 @@ function removeOrdersAtManuf(orders) {
     $('#no-request').modal('toggle');
   else 
     $('#ready-request').modal('toggle');
+ }
+
+ function checkRequestedPieces() {
+   $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/gameLogic/getManufacturerRequest/' + getPin() + '/' + currentOrder._id,
+    success: (data) => {
+      if (data.length != 0) {
+        manufacturingPieces = data;
+        populateRequestData(manufacturingPieces);
+      }
+    },
+    error: (xhr, status, error) => {
+      console.log(error);
+    }
+   });
+
+   setTimeout(checkRequestedPieces, 5000);
+ }
+
+ function populateRequestData(data) {
+  let html = "";
+  data.forEach((elem, i) => {
+    if (elem != 0) {
+      html += '<div class="item">' + elem + ' ' + names[i] + '</div>';
+    }
+  });
+  $('#requested-pieces').html(html);
  }

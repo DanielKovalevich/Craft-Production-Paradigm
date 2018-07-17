@@ -37,6 +37,7 @@ router.get('/getManufacturerRequest/:id/:orderId', async (req: Request, res: Res
 });
 
 router.post('/updateManufacturerRequest/:id/:orderId', (req: Request, res: Response) => {
+  console.log('test');
   res.send(controller.updateManufacturerRequest(req.params.id, req.params.orderId, req.body.request));
 });
 

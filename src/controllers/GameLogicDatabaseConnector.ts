@@ -73,7 +73,7 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
       return new Array<number>();
     }
   }
-
+  
   public updateManufacturerRequest(pin: string, orderId: string, request: Array<number>): number {
     if (request != null && request != undefined) {
       let time: number = new Date().getTime();

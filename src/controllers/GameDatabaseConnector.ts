@@ -56,8 +56,12 @@ export class GameDatabaseConnector extends Database {
    * Used for when looking up the game by pin
    * @param pinNum string
    */
-  public async getGameObject(pinNum: string): Promise<any> {
-    return await this.gameCollection.find({pin: parseInt(pinNum)}).toArray();
+  public async getGameObject(pinNum: string): Promise<any> { 
+    try {
+      return await this.gameCollection.find({pin: parseInt(pinNum)}).toArray();
+    } catch(e) {
+      return null;
+    }
   }
 
   /**

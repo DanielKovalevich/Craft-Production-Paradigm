@@ -42,9 +42,10 @@ function initProgressAndButtons() {
   $('#start-game').click((e) => {
     let location = '/';
     switch(sessionStorage.position) {
-      case 'Assembler': location = '/builder/' + pin; break;
-      case 'Customer': location = '/customer/' + pin; break;
-      case 'Supplier': location = '/supplier/' + pin; break;
+      case 'Assembler':    location = '/builder/' + pin;      break;
+      case 'Customer':     location = '/customer/' + pin;     break;
+      case 'Supplier':     location = '/supplier/' + pin;     break;
+      case 'Manufacturer': location = '/manufacturer/' + pin; break;
     }
     window.location.href = location;
   });
