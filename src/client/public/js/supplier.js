@@ -154,7 +154,7 @@ function removeOrdersAtManuf(orders) {
   let html = "";
   data.forEach((elem, i) => {
     if (elem != 0) {
-      html += '<div class="item">' + elem + ' ' + names[i] + '</div>';
+      html += '<div class="item">' + elem + ' - ' + names[i] + '</div>';
     }
   });
   $('#requested-pieces').html(html);
