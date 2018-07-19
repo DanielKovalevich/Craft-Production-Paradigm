@@ -40,6 +40,10 @@ export class GameLogicController {
     return this.db.updateAssembledModel(pin, orderId, model);
   }
 
+  public async getAssembledModel(pin: string, orderId: string): Promise<object> {
+    return await this.db.getAssembledModel(pin, orderId);
+  }
+
   public async getManufacturerRequest(pin: string, orderId: string): Promise<Array<number>> {
     return await this.db.getManufacturerRequest(pin, orderId);
   }

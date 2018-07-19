@@ -32,6 +32,10 @@ router.post('/sendAssembledModel/:id/:orderId', (req: Request, res: Response) =>
   res.send(controller.updateAssembledModel(req.params.id, req.params.orderId, req.body.model));
 });
 
+router.get('/getAssembledModel/:id/:orderId', async (req: Request, res: Response) => {
+  res.send(await controller.getAssembledModel(req.params.id, req.params.orderId));
+});
+
 router.get('/getManufacturerRequest/:id/:orderId', async (req: Request, res: Response) => {
   res.send(await controller.getManufacturerRequest(req.params.id, req.params.orderId));
 });

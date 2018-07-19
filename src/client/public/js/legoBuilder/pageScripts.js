@@ -242,11 +242,10 @@ function generatePiecesGrid() {
     // I want there to be vertical lines between each cube so I need to add a blank space
     if (num % 4 != 0 && row + 1 > num / 4) {
       let size = "";
-      console.log(num, num % 4);
-      switch(5 % 4) {
-        case 1: size = 'four'; break;
+      switch(num % 4) {
+        case 1: size = 'twelve'; break;
         case 2: size = 'eight'; break;
-        case 3: size = 'twelve'; break;
+        case 3: size = 'four'; break;
       }
       html += '<div class="' + size + ' wide column"></div>'
     };

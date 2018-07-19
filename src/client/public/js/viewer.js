@@ -17,10 +17,11 @@ var planeDimensions = 1000;
 var group = new THREE.Group();
 
 // Kicks off the program
-$(function() {
+$(() => {
   init();
   animate();
   render();
+  getAssembledModel();
 });
 
 function init() {
@@ -116,3 +117,32 @@ function onDocumentMouseDown(event) {
  *          SCRIPTS FROM BRINGING IN THE MODEl
  * ================================================================
  */
+
+ // gets the pin from the url
+function getPin() {
+  let split = window.location.href.split('/');
+  return split[4];
+}
+
+function getOrderId() {
+  return /(\w+)(?!.*\w)/g.exec(window.location.href)[0];
+}
+
+function getAssembledModel() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/gameLogic/getAssembledModel/' + getPin() + '/' + getOrderId(),
+    success: (data) => {
+      loadModel(data.assembledModel);
+    },
+    error: (xhr, status, error) => {
+      console.log(error);
+    }
+  });
+}
+
+function loadModel(modelData) {
+  var loader = new THREE.ObjectLoader();
+  scene.add(loader.parse(modelData));
+  render();
+}

@@ -29,8 +29,8 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   // This happens at the supplier stage
   // I don't know why I have two functions that essentially do the same thing (idgaf at this point)
   public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
-    let time = new Date().getTime();
-    let update = {$set: {supplyOrders: order, lastModified: time, stage: 'Assembler'}};
+    let time: number = new Date().getTime();
+    let update: Object = {$set: {supplyOrders: order, lastModified: time, stage: 'Assembler'}};
     this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
   }
 
@@ -47,8 +47,8 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   // this function basically does the same thing as addSupplyOrder
   public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {
     if (pieces != null && pieces != undefined) {
-      let time = new Date().getTime();
-      let update = {$set: {supplyOrders: pieces, lastModified: time}};
+      let time: number = new Date().getTime();
+      let update: Object = {$set: {supplyOrders: pieces, lastModified: time}};
       this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }
@@ -57,12 +57,23 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
 
   public updateAssembledModel(pin: string, orderId: string, model: object): number {
     if (model != null && model != undefined) {
-      let time = new Date().getTime();
-      let update = {$set: {assembledModel: model, status: 'Completed', finishedTime: time}};
+      let time: number = new Date().getTime();
+      let update: Object = {$set: {assembledModel: model, status: 'Completed', finishedTime: time}};
       this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }
     return 400;
+  }
+  
+  public async getAssembledModel(pin: string, orderId: string): Promise<object> {
+    try {
+      let query: Object = {pin: parseInt(pin), _id: orderId.toString()};
+      let projection: Object = {fields: {assembledModel: 1, _id: 0}}
+      return await this.orderCollection.findOne(query, projection);
+    } catch(e) {
+      console.log(e);
+      return new Object();
+    }
   }
 
   public async getManufacturerRequest(pin: string, orderId: string): Promise<Array<number>> {
@@ -77,7 +88,7 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
   public updateManufacturerRequest(pin: string, orderId: string, request: Array<number>): number {
     if (request != null && request != undefined) {
       let time: number = new Date().getTime();
-      let update = {$set: {manufacturerReq: request, stage: 'Supplier', lastModified: time}};
+      let update: Object = {$set: {manufacturerReq: request, stage: 'Supplier', lastModified: time}};
       this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
       return 200;
     }
