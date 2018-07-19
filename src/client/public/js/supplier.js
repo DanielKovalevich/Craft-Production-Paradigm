@@ -6,8 +6,8 @@ const names = ["1x1", "2x2", "2x3x2", "1x2 Pin",
               "Steering Wheel", "Lego Man"];
 let pieceOrders = [];
 let manufacturingPieces = [];
-orderInformation = {};
-currentOrder = {};
+let orderInformation = {};
+let currentOrder = {};
 
 $(document).ready(() => {
   generateSupplyGrid();

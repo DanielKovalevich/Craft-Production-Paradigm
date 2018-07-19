@@ -1,4 +1,8 @@
+let orderInformation = {};
+let currentOrder = {};
+
 $(document).ready(() => {
+  checkOrders();
   initImages();
 });
 
@@ -51,11 +55,45 @@ function sendOrder() {
     url: 'http://localhost:3000/gameLogic/sendOrder',
     success: function(result) {
       //window.location.href = '/startGame/' + result.pin;
-      console.log('order placed');
-      $('#message').transition('fade');
+      if ($('#order').hasClass('disabled')) {
+        $('#order').removeClass('disabled');
+      }
     },
     error: function(xhr,status,error) {
       console.log(error);
     } 
   });
+}
+
+/**
+ * Function that runs constantly to update the orders
+ */
+function checkOrders() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
+    cache: false,
+    timeout: 5000,
+    success: (data) => {
+      orderInformation = data;
+      // Need to find the oldest order that hasn't been finished or canceled
+      let i = 0;
+      if (orderInformation.length != 0) {
+        while(orderInformation[i].status != 'In Progress') {
+          i++;
+          if (i >= orderInformation.length) break;
+        } 
+        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
+      }
+    },
+    error: (xhr, status, error) => {
+      console.log('Error: ' + error);
+    }
+  });
+
+  if ($('#order').hasClass('disabled') && orderInformation.length != 0) {
+    $('#order').removeClass('disabled');
+  }
+
+  setTimeout(checkOrders, 3000);
 }
