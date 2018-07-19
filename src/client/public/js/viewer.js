@@ -12,12 +12,11 @@ var container;
 var camera, scene, renderer, controls;
 var plane, cube;
 var mouse, raycaster, isCtrlDown = false, isShiftDown = false;
-var rollOverMesh, material, collisionBox;
 var planeDimensions = 1000;
-var group = new THREE.Group();
 
 // Kicks off the program
 $(() => {
+  $('.ui.basic.modal').modal({closable: false}).modal('show');
   init();
   animate();
   render();
@@ -27,18 +26,13 @@ $(() => {
 function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf0f0f0);
-  createGridAndPlane();
+  //createGridAndPlane();
   //objects.push(plane);
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
   addSceneLights();
   initCamera();
   // Event listeners
-  /*
-  document.addEventListener('mousemove', onDocumentMouseMove, false);
-  document.addEventListener('mousedown', onDocumentMouseDown, false);
-  document.addEventListener('keydown', onDocumentKeyDown, false);
-  document.addEventListener('keyup', onDocumentKeyUp, false);*/
   window.addEventListener('resize', onWindowResize, false);
 }
 
@@ -75,6 +69,7 @@ function addSceneLights() {
   container.appendChild(renderer.domElement);
 }
 
+/*
 function createGridAndPlane() {
   var gridHelper = new THREE.GridHelper(1000, 40);
   scene.add(gridHelper);
@@ -83,7 +78,7 @@ function createGridAndPlane() {
   plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({visible: false}));
   plane.name = 'plane';
   scene.add(plane);
-}
+}*/
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -145,4 +140,7 @@ function loadModel(modelData) {
   var loader = new THREE.ObjectLoader();
   scene.add(loader.parse(modelData));
   render();
+  setTimeout(() => {
+    $('.ui.basic.modal').modal('toggle');
+  }, 2000);
 }
