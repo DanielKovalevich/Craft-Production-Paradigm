@@ -4,6 +4,7 @@ let currentOrder = {};
 $(document).ready(() => {
   checkOrders();
   initImages();
+  initButtons();
 });
 
 function initImages() {
@@ -23,9 +24,32 @@ function initImages() {
     changeCarType(4);
     $('.ui.basic.modal').modal('show');
   });
+}
+
+function initButtons() {
+  $('#view-model').click((e) => {
+    if (!$('#view-model').hasClass('disabled'))
+      window.location.href = '/viewer/' + getPin() + '/' + currentOrder._id;
+  });
 
   $('.ok.button').click((e) => {
     sendOrder();
+  });
+
+  $('#order').click((e) => {
+    $('#ready-order').modal('toggle');
+  });
+
+  $('#left').click(e => {
+    let index = orderInformation.indexOf(currentOrder);
+    currentOrder = --index < 0 ? orderInformation[orderInformation.length - 1] : orderInformation[index];
+    updateOrder();
+  });
+
+  $('#right').click(e => {
+    let index = orderInformation.indexOf(currentOrder);
+    currentOrder = ++index == orderInformation.length ? orderInformation[0] : orderInformation[index];
+    updateOrder();
   });
 }
 
@@ -76,14 +100,10 @@ function checkOrders() {
     timeout: 5000,
     success: (data) => {
       orderInformation = data;
-      // Need to find the oldest order that hasn't been finished or canceled
-      let i = 0;
       if (orderInformation.length != 0) {
-        while(orderInformation[i].status != 'In Progress') {
-          i++;
-          if (i >= orderInformation.length) break;
-        } 
-        currentOrder = orderInformation[i] === undefined ? orderInformation[0] : orderInformation[i];
+        currentOrder = orderInformation[0];
+        updateOrder();
+        $('#order').removeClass('disabled');
       }
     },
     error: (xhr, status, error) => {
@@ -91,9 +111,29 @@ function checkOrders() {
     }
   });
 
-  if ($('#order').hasClass('disabled') && orderInformation.length != 0) {
-    $('#order').removeClass('disabled');
-  }
+  
 
   setTimeout(checkOrders, 3000);
+}
+
+function updateOrder() {
+  switch(currentOrder.modelType) {
+    case 'super': $('#order-image').attr('src', '/../images/race.jpg');        break;
+    case 'race': $('#order-image').attr('src', '/../images/lego_car.jpg');     break;
+    case 'RC': $('#order-image').attr('src', '/../images/rc.jpg');             break;
+    case 'yellow': $('#order-image').attr('src', '/../images/yellow_car.jpg'); break;
+  }
+  let html = '<p>Date Ordered: ' + new Date(currentOrder.createDate).toString() + '</p>';
+  html += '<p>Last Modified: ' + new Date(currentOrder.lastModified).toString() + '</p>';
+  if (currentOrder.status === 'Completed') {
+    html += '<p>Finished: ' + new Date(currentOrder.finishedTime).toString() + '</p>';
+    $('#view-model').removeClass('disabled');
+  }
+  else {
+    $('#view-model').addClass('disabled');
+  }
+  html += '<p>Model Type: ' + currentOrder.modelType + '</p>';
+  html += '<p>Stage: ' + currentOrder.stage + '</p>';
+  html += '<p>Status: ' + currentOrder.status + '</p><br>';
+  $('#order-info').html(html);
 }
