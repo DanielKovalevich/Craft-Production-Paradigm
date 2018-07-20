@@ -16,11 +16,12 @@ var planeDimensions = 1000;
 
 // Kicks off the program
 $(() => {
-  $('.ui.basic.modal').modal({closable: false}).modal('show');
+  $('#loading').modal({closable: false}).modal('show');
   init();
   animate();
   render();
   getAssembledModel();
+  initButtons();
 });
 
 function init() {
@@ -141,6 +142,25 @@ function loadModel(modelData) {
   scene.add(loader.parse(modelData));
   render();
   setTimeout(() => {
-    $('.ui.basic.modal').modal('toggle');
+    $('#loading').modal('toggle');
   }, 2000);
+}
+
+function initButtons() {
+  $('#complete').click(e => {
+    e.preventDefault();
+    window.location.href = '/customer/' + getPin();
+  });
+
+  $('#reject').click(e => {
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:3000/gameLogic/rejectOrder/' + getPin() + '/' + getOrderId(),
+      success: (data) => {window.location.href = '/customer/' + getPin();}
+    })
+  });
+
+  $('#accept').click(e => {
+    $('#finish').modal('toggle');
+  });
 }

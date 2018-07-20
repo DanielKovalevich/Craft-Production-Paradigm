@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>Viewer - Manufacturing Simulation</title>
     <link rel="stylesheet" type="text/css" href="/../semantic/dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/../css/viewer.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
@@ -24,9 +25,33 @@
     
     <script src="/../js/viewer.js"></script>
 
-    <div class="ui basic modal">
+    <div class="ui centered grid" id="buttons">
+      <div class="row">
+        <h2 class="ui header">Is this model satisfactory?</h2>
+      </div>
+      <div class="row">
+        <button class="ui massive red button" id="reject">Reject</button>
+		    <button class="ui massive green button" id="accept">Accept</button>
+      </div>
+    </div>
+
+    <div class="ui basic modal" id="loading">
       <div class="ui header">
         <div class="ui text loader">Loading Model and Scene</div>
+      </div>
+    </div>
+
+    <div class="ui basic modal" id="finish">
+      <div class="ui centered header">
+        The Craft Production Cycle has been completed. Good job!
+      </div>
+      <div class="ui centered grid">
+        <div class="actions">
+          <div class="ui green inverted button" id="complete">
+            <i class="checkmark icon"></i>
+            Okay
+          </div>
+        </div>
       </div>
     </div>
   </body>

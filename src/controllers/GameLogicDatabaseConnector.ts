@@ -94,4 +94,15 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     }
     return 400;
   }
+
+  public rejectOrder(pin: string, orderId: string): number {
+    try {
+      let time: number = new Date().getTime();
+      let update: Object = {$set: {status: 'In Progress', stage: 'Supplier', lastModified: time, assembledModel: null, finishedTime: -1}};
+      this.orderCollection.update({pin: parseInt(pin), _id: orderId}, update);
+      return 200;
+    } catch(e) {
+      return 400;
+    }
+  }
 }
