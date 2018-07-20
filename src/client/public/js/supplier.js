@@ -56,8 +56,22 @@ function initButtons() {
   });
 
   $('#send-supply-order').click(e => {
-    sendSupplyOrder();
+    if (checkSupplyMatchesManufacturer()) {
+      $('#error-message').addClass('hidden');
+      sendSupplyOrder();
+    }
+    else {
+      $('#error-message').removeClass('hidden');
+    }
   });
+}
+
+// the supply order needs to match (it can have more pieces) the manufacturer order
+function checkSupplyMatchesManufacturer() {
+  for (let i = 0; i < manufacturingPieces.length; i++) {
+    if (pieceOrders[i] < manufacturingPieces[i]) return false;
+  }
+  return true;
 }
 
 function sendSupplyOrder() {
