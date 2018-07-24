@@ -3,7 +3,8 @@ require('dotenv').config();
 import app from "./models/app";
 
 const port: number = Number(process.env.PORT) || 3000;
+app.set('port', port);
 
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/`);
+app.listen(app.get('port'), () => {
+  console.log(`Listening at http://host:${port}/`);
 });
