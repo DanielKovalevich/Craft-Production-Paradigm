@@ -18,6 +18,10 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     this.orderCollection.insert(order);
   }
 
+  /**
+   * Gets all of the orders that are part of the same session
+   * @param pin 
+   */
   public async getOrders(pin: string): Promise<Array<object>> {
     try {
       return await this.orderCollection.find({pin: parseInt(pin)}).toArray();
@@ -55,6 +59,14 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     return 400;
   }
 
+  /**
+   * Updates the assembled model in the database
+   * Also assumed that the process has been finishes so status is changed
+   * and time completed is recorded
+   * @param pin 
+   * @param orderId 
+   * @param model 
+   */
   public updateAssembledModel(pin: string, orderId: string, model: object): number {
     if (model != null && model != undefined) {
       let time: number = new Date().getTime();
@@ -85,6 +97,12 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     }
   }
   
+  /**
+   * Once the manufacturer request is sent, the time modified is updated and the game goes to the supplier stage
+   * @param pin 
+   * @param orderId 
+   * @param request 
+   */
   public updateManufacturerRequest(pin: string, orderId: string, request: Array<number>): number {
     if (request != null && request != undefined) {
       let time: number = new Date().getTime();
@@ -95,6 +113,11 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
     return 400;
   }
 
+  /**
+   * If the user doesn't approve the model, the game will turn back to the supplier stage
+   * @param pin 
+   * @param orderId 
+   */
   public rejectOrder(pin: string, orderId: string): number {
     try {
       let time: number = new Date().getTime();
