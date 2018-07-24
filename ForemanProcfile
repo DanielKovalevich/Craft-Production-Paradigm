@@ -1,2 +1,0 @@
-api: node dist/server.js
-client: node src/client/server.js
