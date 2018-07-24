@@ -1,1 +1,1 @@
-web: ./node_modules/foreman/nf.js --procfile ForemanProcfile start -b 0.0.0.0:1337
+web: ./node_modules/foreman/nf.js -procfile ForemanProcfile start
