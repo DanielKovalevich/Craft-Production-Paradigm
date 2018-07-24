@@ -2,7 +2,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
-const port = 8080;
+const port = Number(process.env.PORT) || 8080;
 
 let startGameRouter = require('./routes/startGame.router');
 let builderRouter = require('./routes/builder.router');
@@ -19,5 +19,5 @@ app.use('/manufacturer', manufacturerRouter);
 app.use('/viewer', viewerRouter);
 
 app.listen(port, () => {
-  console.log(`Listening at http://clienthost:${port}/`);
+    console.log(`Listening at http://localhost:${port}/`);
 });
