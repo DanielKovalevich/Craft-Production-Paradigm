@@ -16,7 +16,6 @@ $(document).ready(() => {
   $('#order').click(e => openModal());
   $('#request').click(e => openManufacturingModal());
   checkOrders();
-  checkRequestedPieces();
 });
 
 // gets the pin from the url
@@ -84,8 +83,9 @@ function sendSupplyOrder() {
     type: 'POST',
     data: postData,
     url: 'http://localhost:3000/gameLogic/sendSupplyOrder/' + getPin(),
-    success: () => {
+    success: (data) => {
       console.log('Order sent!');
+      $('#ready-order').modal('toggle');
       generateSupplyGrid();
     },
     error: (xhr, status, error) => {
@@ -122,6 +122,7 @@ function checkOrders() {
     }
   });
 
+  checkRequestedPieces();
   setTimeout(checkOrders, 3000);
 }
 
@@ -160,8 +161,6 @@ function removeOrdersAtManuf(orders) {
       console.log(error);
     }
    });
-
-   setTimeout(checkRequestedPieces, 5000);
  }
 
  function populateRequestData(data) {
