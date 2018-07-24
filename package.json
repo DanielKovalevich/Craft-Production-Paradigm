@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "npm-run-all --parallel compile database dev",
+    "start": "npm-run-all --parallel compile client dev",
     "client": "nodemon src/client/server.js",
     "database": "mongod --dbpath=./data",
     "compile": "tsc --watch --skipLibCheck",
