@@ -8,6 +8,7 @@ export default class DatabaseConnector {
   constructor() {
     //this.url = 'mongodb://localhost/local';
     this.url = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_HOST;
+    console.log(this.url);
     mongoose.connect(this.url).catch((e) => {
       console.log(e);
     });
