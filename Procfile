@@ -1,1 +1,1 @@
-web: nf -f ForemanProcfile start
+web: ./node_modules/foreman/nf.js -procfile ForemanProcfile start
