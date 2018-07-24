@@ -71,7 +71,6 @@ export class GameController {
 
     while(notOriginal) {
       let result = await this.db.checkIfPinExists(pin);
-      console.log(result);
       notOriginal = result;
       if (notOriginal) pin = Math.floor(Math.random() * 9999).toString();
     }
