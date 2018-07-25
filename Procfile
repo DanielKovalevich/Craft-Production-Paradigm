@@ -1,2 +1,1 @@
-web: node dist/server.js
-api: npm run client
+web: node src/client/server.js
