@@ -127,7 +127,7 @@ function getOrderId() {
 function getAssembledModel() {
   $.ajax({
     type: 'GET',
-    url: 'http://localhost:3000/gameLogic/getAssembledModel/' + getPin() + '/' + getOrderId(),
+    url: 'https://psu-research-api.herokuapp.com/gameLogic/getAssembledModel/' + getPin() + '/' + getOrderId(),
     success: (data) => {
       loadModel(data.assembledModel);
     },
@@ -155,7 +155,7 @@ function initButtons() {
   $('#reject').click(e => {
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:3000/gameLogic/rejectOrder/' + getPin() + '/' + getOrderId(),
+      url: 'https://psu-research-api.herokuapp.com/gameLogic/rejectOrder/' + getPin() + '/' + getOrderId(),
       success: (data) => {window.location.href = '/customer/' + getPin();}
     })
   });
