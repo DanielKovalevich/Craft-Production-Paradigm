@@ -1,2 +1,2 @@
-api: npm start
-web: npm run client
+web: node dist/server.js
+api: npm run client
