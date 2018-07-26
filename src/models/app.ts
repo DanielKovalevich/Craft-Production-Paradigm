@@ -14,7 +14,6 @@ class App {
 
   private config(): void {
     this.app.use(cors({origin: 'http://psu-research.herokuapp.com'}));
-    this.app.use(cors({origin: 'https://psu-research.herokuapp.com'}));
     this.app.use((req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
