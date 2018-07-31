@@ -12,7 +12,7 @@ let currentOrder = {};
 $(document).ready(() => {
   initButtons();
   checkOrders();
-  setTimeout(checkPieces, 2000);
+  setTimeout(checkPieces, 1000);
 });
 
 // gets the pin from the url

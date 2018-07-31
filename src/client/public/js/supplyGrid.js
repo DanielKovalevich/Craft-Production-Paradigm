@@ -46,6 +46,6 @@ function generateSupplyGrid() {
     // I want there to be vertical lines between each cube so I need to add a blank space 
     if (i + 1 >= names.length / 4) html += '<div class="five wide column"></div>';
     html += '</div>';
-    $('#supply-grid').append(html);
+    $('#supply-grid').html(html);
   }
 }

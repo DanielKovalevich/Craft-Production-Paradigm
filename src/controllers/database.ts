@@ -6,8 +6,10 @@ export default class DatabaseConnector {
   protected orderCollection: mongoose.Collection;
   protected url: string;
   constructor() {
-    //this.url = 'mongodb://localhost/local';
-    this.url = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_HOST;
+    if (process.env.NODE_ENV == 'production')
+      this.url = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_HOST;
+    else 
+      this.url = 'mongodb://localhost/local';
     console.log(this.url);
     mongoose.connect(this.url).catch((e) => {
       console.log(e);
