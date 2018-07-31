@@ -101,7 +101,8 @@ function checkOrders() {
     success: (data) => {
       orderInformation = data;
       if (orderInformation.length != 0) {
-        currentOrder = orderInformation[0];
+        if (currentOrder == null || jQuery.isEmptyObject(currentOrder))
+          currentOrder = orderInformation[0];
         updateOrder();
         $('#order').removeClass('disabled');
       }
