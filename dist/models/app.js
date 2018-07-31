@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const routes_1 = require("../routes");
 class App {
     constructor() {
@@ -13,7 +14,7 @@ class App {
         /*this.app.use((req, res, next) => {
           res.setHeader('Access-Control-Allow-Origin', '*');
         }),*/
-        //this.app.use(cors({origin: 'http://localhost:8080'}));
+        this.app.use(cors({ origin: 'http://localhost:8080' }));
         this.app.use((req, res, next) => {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');

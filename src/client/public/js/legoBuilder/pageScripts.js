@@ -89,7 +89,7 @@ function updateOrder() {
 function checkOrders() {
   $.ajax({
     type: 'GET',
-    url: 'https://psu-research-api.herokuapp.com/gameLogic/getOrders/' + getPin(),
+    url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
     timeout: 5000,
     success: (data) => {
       orderInformation = data;
@@ -130,7 +130,7 @@ function sendGroup() {
   $.ajax({
     type: 'POST',
     data: postData,
-    url: 'https://psu-research-api.herokuapp.com/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
+    url: 'http://localhost:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
     success: (data) => {
       console.log(data);
     },
@@ -148,7 +148,7 @@ function checkPieces() {
   $.ajax({
     type: 'GET',
     cache: 'false',
-    url: 'https://psu-research-api.herokuapp.com/gameLogic/getSupplyOrder/' + getPin() + '/' + currentOrder._id,
+    url: 'http://localhost:3000/gameLogic/getSupplyOrder/' + getPin() + '/' + currentOrder._id,
     timeout: 5000,
     success: (data) => {
       if (data != null && data != undefined && data != "") {
@@ -196,7 +196,7 @@ function updatePieces() {
     $.ajax({
       type: 'POST',
       data: postData,
-      url: 'https://psu-research-api.herokuapp.com/gameLogic/updatePieces/' + getPin() + '/' + currentOrder._id,
+      url: 'http://localhost:3000/gameLogic/updatePieces/' + getPin() + '/' + currentOrder._id,
       success: (data) => {
         //console.log(data);
         checkPieces();
