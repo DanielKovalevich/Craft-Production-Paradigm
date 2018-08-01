@@ -97,6 +97,7 @@ function sendPiecesOrder() {
     url: 'http://localhost:3000/gameLogic/updateManufacturerRequest/' + getPin() + '/' + currentOrder._id,
     success: (data) => {
       console.log(data);
+      generateSupplyGrid();
     },
     error: (xhr, status, error) => {
       console.log(error);

@@ -30,7 +30,7 @@ function updateOrder() {
 function generateSupplyGrid() {
   let html = "";
   for (let i = 0; i < names.length / 4; i++) {
-    html = '<div class="row">';
+    html += '<div class="row">';
     for (let j = 0; j < 4; j++) {
       if (i * 4 + j < names.length) {
         html += '<div class="four wide column">';
@@ -46,6 +46,7 @@ function generateSupplyGrid() {
     // I want there to be vertical lines between each cube so I need to add a blank space 
     if (i + 1 >= names.length / 4) html += '<div class="five wide column"></div>';
     html += '</div>';
-    $('#supply-grid').html(html);
   }
+
+  $('#supply-grid').html(html);
 }
