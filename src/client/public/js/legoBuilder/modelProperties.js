@@ -35,12 +35,12 @@ function Model(name, directory, scale, yTranslation, top, bottom, front, back, l
 
 const oneByOne = new Model('1x1', '../objects/1x1.stl', 3, 1, 1, 1, 0, 0, 0, 0, 0, 5, 0);
 const twoByTwo = new Model('2x2', '../objects/2x2.stl', 3, 1, 1, 1, 0, 0, 0, 0, 0, 5, 0);
-const twoByThreeByTwo = new Model('2x3x2', '../objects/2x3x2.stl', 1.5, 1, 1, 1, 0, 0, 0, 0, 0, 5, 0);
+const twoByThreeByTwo = new Model('2x3x2', '../objects/2x3x2.stl', 1.5, 1, 1, 1, 0, 0, 0, 0, 12, 6, 0);
 const oneByTwo = new Model('1x2', '../objects/1x2.stl', 3, 1, 1, 1, 0, 0, 0, 0);
 const oneByFour = new Model('1x4', '../objects/1x4.stl', 3, 1, 1, 1, 0, 0, 0, 0);
-const oneByTwoPin = new Model('1x2 Pin', '../objects/1x2wPin.stl', 3, 1, 1, 1, 1, 0, 0, 0);
-const twoByTwoPin = new Model('2x2 Pin', '../objects/2x2wPin.stl', 3, 1, 1, 1, 1, 0, 0, 0);
-const twoByTwoByTwoPin = new Model('2x2x2 Pin', '../objects/2x2x2wPin.stl', 3, 1, 1, 1, 1, 0, 0, 0);
+const oneByTwoPin = new Model('1x2 Pin', '../objects/1x2wPin.stl', 3, 1, 1, 1, 1, 0, 0, 0, 0, 5, 0);
+const twoByTwoPin = new Model('2x2 Pin', '../objects/2x2wPin.stl', 3, 1, 1, 1, 1, 0, 0, 0, 0, 5, 0);
+const twoByTwoByTwoPin = new Model('2x2x2 Pin', '../objects/2x2x2wPin.stl', 3, 1, 1, 1, 1, 0, 0, 0, 0, 5, 0);
 const twoByTwoDouble = new Model('2x2 Double', '../objects/2x2Double.stl', 3, 1, 1, 1, 1, 0, 0, 0);
 const tire1 = new Model('Tire 1', '../objects/tire1.stl', 1.5, 0, 0, 0, 1, 1, 0, 0);
 const tire2 = new Model('Tire 2', '../objects/tire2.stl', 3, 0, 0, 0, 1, 1, 0, 0);

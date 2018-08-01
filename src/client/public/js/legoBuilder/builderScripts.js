@@ -41,6 +41,7 @@ function onDocumentMouseMove(event) {
   mouse.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / (window.innerHeight + (window.innerHeight * .15))) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(collisionObjects);
+  pieceIndex = names.indexOf(currentRollOverModel);
   if (pieceIndex != -1) {
     if (pieces[pieceIndex] == 0) {
       currentRollOverModel = "";
@@ -55,7 +56,8 @@ function onDocumentMouseMove(event) {
         let dim = rollOverMesh.userData.dimensions;
         var intersect = intersects[0];
         if (intersect.object.name == 'plane')  {
-          changeObjPosOnPlane(rollOverMesh, intersect, dim);
+          //changeObjPosOnPlane(rollOverMesh, intersect, dim);
+          rollOverMesh.position.copy(intersect.point).add(intersect.face.normal);
           rollOverMesh.position.y = determineModelYTranslation();
         }
         else {
@@ -177,12 +179,14 @@ function placeLego(intersect) {
     modelObj.userData.modelType = currentRollOverModel;
 
     if (intersect.object.name == 'plane') {
-      changeObjPosOnPlane(modelObj, intersect, size);
+      //changeObjPosOnPlane(modelObj, intersect, size);
+      modelObj.position.copy(intersect.point).add(intersect.face.normal);
       modelObj.position.y += determineModelYTranslation();
     }
     else {
       let dim = intersect.face.normal;
       dim.normalize();
+      // TODO: THERE SEEMS TO BE A PROBLEM WITH A SLIGHTLY LOWER PLACEMENT THAN IT SHOULD BE
       placementPossible = determineModelPosition(modelObj, intersect, size, dim);
     }
 
@@ -201,7 +205,7 @@ function placeLego(intersect) {
  * @param {THREE.Vector3} size 
  */
 function generateObjFromModel(geometry, modelObj, size) {
-  geometry.computeBoundingBox();    
+  geometry.computeBoundingBox();
   let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
   modelObj.mesh = new THREE.Mesh(geometry, material);
   modelObj.mesh.rotation.x = rollOverMesh.rotation.x;
@@ -222,16 +226,18 @@ function generateObjFromModel(geometry, modelObj, size) {
  * @param {THREE.Vector3} size 
  */
 function generateCollisionCube(modelObj, size) {
-  // Create the collision cube
+  // turns out these aren't 0 by default and caused me so much trouble until i did this
   let yModifier = currentObj.collisionY ? currentObj.collisionY : 0;
-  let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0; 
+  let zModifier = currentObj.collisionZ ? currentObj.collisionZ : 0;
+  let xModifier = currentObj.collisionX ? currentObj.collisionX : 0;
+
+  // Create the collision cube
   let geo = new THREE.BoxGeometry(size.x, size.y - yModifier, size.z - zModifier);
   let mat = new THREE.MeshBasicMaterial({color: 0x00ff00, visible: false});
   let cube = new THREE.Mesh(geo, mat);
   scene.add(cube);
-  cube.position.copy(modelObj.position);
-  // some of these models are stupid and require special treatment ...
-  cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
+
+  fixModelCollisionPosition(cube, modelObj, size, xModifier, yModifier, zModifier);
   collisionObjects.push(cube);
 
   // TODO: Remove this when I finish these functions
@@ -342,16 +348,45 @@ function mod(n, m) {
  */
 function determineModelYTranslation() {
   // whoever made these retarded models needs to learn about consistency
-  if (currentObj.name == 'Steering Wheel') {
-    return rollOverMesh.userData.dimensions.y / 2 - 9;
+  let y = rollOverMesh.userData.dimensions.y;
+  switch(currentObj.name) {
+    case 'Steering Wheel': return y / 2 - 9;
+    case '2x3x2': return y - 7;
   }
   switch(currentObj.yTranslation) {
-    case 1: return rollOverMesh.userData.dimensions.y - 5;
-    case 0: return rollOverMesh.userData.dimensions.y / 2;
+    case 1: return y - 5.5;
+    case 0: return y / 2;
     case -1: return 0;
   }
 }
 
+function fixModelCollisionPosition(cube, modelObj, size, xModifier, yModifier, zModifier) {
+  cube.position.copy(modelObj.position);
+  // some of these models are stupid and require special treatment ...
+  cube.position.y -= determineModelYTranslation() - size.y / 2 + yModifier - 2;
+  // i swear ... i should have modeled these pieces myself
+  if (Math.abs(modelObj.rotation.z) % Math.PI == 0) {
+    // some models need to have their collision cube rotated
+    let multiplier = Math.floor(modelObj.rotation.z / Math.PI) % 2 != 0 ? -1 : 1;
+    switch(modelObj.userData.modelType) {
+      case '2x3x2': cube.position.x += (size.x / 2 - xModifier) * multiplier; break;
+      case '1x2 Pin': cube.position.z += (size.z / 2 - 12) * multiplier; break;      
+      case '2x2 Pin': cube.position.x += (size.x / 6 - 3) * multiplier; break;
+    }
+  }
+  else {
+    let multiplier = Math.floor((modelObj.rotation.z / (Math.PI / 2) - 1) / 2) % 2 != 0 ? -1 : 1;
+    switch(modelObj.userData.modelType) {
+      case '2x3x2': cube.position.z -= (size.z / 2 - xModifier) * multiplier; break;
+      case '1x2 Pin': cube.position.x += (size.x / 2 - 12) * multiplier; break;
+      case '2x2 Pin': cube.position.z -= (size.z / 6 - 3) * multiplier; break;
+    }
+  }
+}
+
+
+// I decided that I didn't really like the snapping
+// I might come back to it later though
 /**
  * Changes position of passed in object so that it snaps to grid
  * This is to avoid overlapping that can happen if two objects are too close
@@ -360,6 +395,7 @@ function determineModelYTranslation() {
  * @param {THREE.Object3D} intersect
  * @param {THREE.Vector3} size
  */
+/*
 function changeObjPosOnPlane(obj, intersect, size) {
   // QUICK MAFFS
   let normalizedCoord = {};
@@ -373,3 +409,4 @@ function changeObjPosOnPlane(obj, intersect, size) {
   obj.position.x = size.x / 2 + size.x * normalizedCoord.x;
   obj.position.z = size.z / 2 + size.z * normalizedCoord.z;
 }
+*/
