@@ -352,6 +352,12 @@ function determineModelYTranslation() {
   switch(currentObj.name) {
     case 'Steering Wheel': return y / 2 - 9;
     case '2x3x2': return y - 7;
+    case 'Tire 1':
+    case 'Tire 2':
+    case 'Tire 3':
+    case 'Rim 1':
+    case 'Rim 2':
+    case 'Rim 3': return y / 2 + 2;
   }
   switch(currentObj.yTranslation) {
     case 1: return y - 5.5;
@@ -372,6 +378,9 @@ function fixModelCollisionPosition(cube, modelObj, size, xModifier, yModifier, z
       case '2x3x2': cube.position.x += (size.x / 2 - xModifier) * multiplier; break;
       case '1x2 Pin': cube.position.z += (size.z / 2 - 12) * multiplier; break;      
       case '2x2 Pin': cube.position.x += (size.x / 6 - 3) * multiplier; break;
+      case '2x2x2 Pin': cube.position.x += (size.x / 6) * multiplier; break;
+      case 'Windshield': cube.position.z += (size.z / 4) * multiplier; break;
+      case 'Lego Man': cube.position.z += 2 * multiplier; break;
     }
   }
   else {
@@ -380,6 +389,9 @@ function fixModelCollisionPosition(cube, modelObj, size, xModifier, yModifier, z
       case '2x3x2': cube.position.z -= (size.z / 2 - xModifier) * multiplier; break;
       case '1x2 Pin': cube.position.x += (size.x / 2 - 12) * multiplier; break;
       case '2x2 Pin': cube.position.z -= (size.z / 6 - 3) * multiplier; break;
+      case '2x2x2 Pin': cube.position.z -= (size.z / 6) * multiplier; break;
+      case 'Windshield': cube.position.x += (size.x / 4) * multiplier; break;
+      case 'Lego Man': cube.position.x += 2 * multiplier; break;
     }
   }
 }
