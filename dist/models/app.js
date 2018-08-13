@@ -21,8 +21,8 @@ class App {
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
             next();
         });
-        this.app.use(bodyParser.json({ limit: '50mb' }));
-        this.app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 1000000 }));
+        this.app.use(bodyParser.json({ limit: '100mb' }));
+        this.app.use(bodyParser.urlencoded({ limit: "100mb", extended: true, parameterLimit: 1000000 }));
     }
     setRoutes() {
         this.app.use('/startGame', routes_1.StartGameRouter);

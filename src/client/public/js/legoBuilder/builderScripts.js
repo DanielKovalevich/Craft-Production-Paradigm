@@ -187,8 +187,19 @@ function placeLego(intersect) {
       let dim = intersect.face.normal;
       dim.normalize();
       // TODO: THERE SEEMS TO BE A PROBLEM WITH A SLIGHTLY LOWER PLACEMENT THAN IT SHOULD BE
-      placementPossible = determineModelPosition(modelObj, intersect, size, dim);
-    }
+      let iName = intersect.object.userData.obj.name.split(' ');
+      let mName = modelObj.userData.modelType.split(' ');
+      mName = mName[0];
+
+      // this is lazy programming. i don't want to handle the array bounds
+      // i did this all already in a better manner but it was lost with my desktop. RIP
+      if ((iName[1] == 'Pin' || iName[1] == 'Double' || iName[0] == 'Rim') && (mName == 'Rim' || mName == 'Tire')) {
+        placementPossible = determineWheelPosition(modelObj, intersect, dim);
+      }
+      else {
+        placementPossible = determineModelPosition(modelObj, intersect, size, dim);
+      }
+    }    
 
     // If the piece can't be placed on another, I don't want it to create and add the modelObj to the scene
     if (placementPossible) {
@@ -240,11 +251,11 @@ function generateCollisionCube(modelObj, size) {
   fixModelCollisionPosition(cube, modelObj, size, xModifier, yModifier, zModifier);
   collisionObjects.push(cube);
 
-  // TODO: Remove this when I finish these functions
+  /* This creates a bounding box around the collision cube. 
   let helper = new THREE.BoxHelper(cube, 0xff0000);
   helper.update();
   // visible bounding box
-  scene.add(helper);
+  scene.add(helper);*/
 
   // add names to all of the objects for debugging purposes
   modelObj.name = 'obj' + objects.length;
@@ -311,6 +322,68 @@ function determineModelPosition(modelObj, intersect, size, dim) {
     return false;
   }
 
+  return true;
+}
+
+/**
+ * The wheel position needs to be determined separately as 
+ * the interaction between the pins, tires, and rims act differently
+ * @param {*} modelObj 
+ * @param {*} intersect
+ * @param {*} dim 
+ */
+function determineWheelPosition(modelObj, intersect, dim) {
+  let interPos = intersect.object.position;
+  let collisionModel = intersect.object.userData.obj;
+  let rotation = (modelObj.rotation.z / (Math.PI / 2)) % 4;
+  let rotationMatrix = determineRotationMatrix(intersect, rotation);  
+
+  let typeColl = collisionModel.name.split(' ');
+  let typeModel = modelObj.userData.modelType.split(' ');
+  if (typeColl.length == 1) {
+    scene.remove(modelObj);
+    return false;
+  }
+
+  if ((typeColl[1] == 'Pin' || typeColl[1] == 'Double') && typeModel[0] == 'Rim') {
+    return attachRimToPin(modelObj, intersect, dim);
+  }
+
+  if (typeColl[0] == 'Rim' && typeModel[0] == 'Tire' && typeColl[1] == typeModel[1]) {
+    return attachTireToRim(modelObj, intersect, size, dim)
+  }
+  else {
+    scene.remove(modelObj);
+    return false;
+  };
+}
+
+function attachRimToPin(modelObj, intersect, dim) {
+  let collisionPos = intersect.object.position;
+  let dimensions = intersect.object.userData.dimensions;
+  if (Math.abs(dim.z) == 1 || Math.abs(dim.x) == 1) {
+    modelObj.position.x = dim.x != 0 ? collisionPos.x + dimensions.x / 2 * dim.x : collisionPos.x;
+    modelObj.position.y = collisionPos.y;
+    modelObj.position.z = dim.z != 0 ? collisionPos.z + dimensions.z / 2 * dim.z : collisionPos.z;
+  }
+  else {
+    scene.remove(modelObj);
+    return false;
+  }
+  return true;
+}
+
+function attachTireToRim(modelObj, intersect, size, dim) {
+  let collisionPos = intersect.object.position;
+  if (Math.abs(dim.z) == 1 || Math.abs(dim.x) == 1) {
+    modelObj.position.y = collisionPos.y;
+    modelObj.position.x = collisionPos.x;
+    modelObj.position.z = collisionPos.z;
+  }
+  else {
+    scene.remove(modelObj);
+    return false;
+  }
   return true;
 }
 
