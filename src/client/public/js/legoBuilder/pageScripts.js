@@ -8,11 +8,14 @@ let pieces = null;
 let pieceIndex = -1; // used to modify the supply of the piece type
 let orderInformation = {};
 let currentOrder = {};
+let colors = [];
 
 $(document).ready(() => {
   initButtons();
   checkOrders();
+  for (let i = 0; i < names.length; i++) colors[i] = "#d0d3d4";
   setTimeout(checkPieces, 1000);
+  setTimeout(getColors, 3000);
 });
 
 // gets the pin from the url
@@ -90,7 +93,7 @@ function checkOrders() {
   $.ajax({
     type: 'GET',
     url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
-    timeout: 5000,
+    timeout: 30000,
     success: (data) => {
       orderInformation = data;
       // Need to find the oldest order that hasn't been finished or canceled
@@ -114,7 +117,6 @@ function checkOrders() {
   setTimeout(checkOrders, 10000);
 }
 
-
 function removeOrdersAtManuf(orders) {
   orders.forEach((elem, i) => {
     // don't want other stages to see orders when it is at manufacturer
@@ -130,12 +132,13 @@ function sendGroup() {
   $.ajax({
     type: 'POST',
     data: postData,
+    timeout: 300000,
     url: 'http://localhost:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
     success: (data) => {
       console.log(data);
     },
     error: (xhr, status, error) => {
-      console.log(error);
+      console.log('Group Error: ' + error);
     }
   });
 }
@@ -218,6 +221,19 @@ function initSupplyButtons() {
       getModel(modelName);
     });
   }
+}
+
+function getColors() {
+  $.ajax({
+    type: 'GET',
+    url: 'http://localhost:3000/gameLogic/colors/' + getPin() + '/' + currentOrder._id,
+    success: data => {
+      colors = data;
+    },
+    error: (xhr, status, error) => {
+      console.log(status, error);
+    }
+  });
 }
 
 function generatePiecesGrid() {

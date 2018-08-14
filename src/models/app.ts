@@ -18,17 +18,16 @@ class App {
     }),*/
     this.app.use(cors({origin: 'http://localhost:8080'}));
     this.app.use((req, res, next) => {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
-      res.header(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept'
-      );
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+      res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
       next();
     });
     
-    this.app.use(bodyParser.json({limit: '100mb'}));
-    this.app.use(bodyParser.urlencoded({limit: "100mb", extended: true, parameterLimit:1000000}));
+    this.app.use(bodyParser.json({limit: '500mb'}));
+    this.app.use(bodyParser.urlencoded({limit: "500mb", extended: true, parameterLimit:10000000}));
+    this.app.use(bodyParser({limit: '50mb'}));
   }
 
   private setRoutes(): void {

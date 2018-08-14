@@ -40,9 +40,10 @@ class GameLogicDatabaseConnector extends database_1.default {
     }
     // This happens at the supplier stage
     // I don't know why I have two functions that essentially do the same thing (idgaf at this point)
-    addSupplyOrder(pin, orderId, order) {
+    // fixed: they no longer do the same thing
+    addSupplyOrder(pin, orderId, order, colors) {
         let time = new Date().getTime();
-        let update = { $set: { supplyOrders: order, lastModified: time, stage: 'Assembler' } };
+        let update = { $set: { supplyOrders: order, colors: colors, lastModified: time, stage: 'Assembler' } };
         this.orderCollection.update({ pin: parseInt(pin), _id: orderId }, update);
     }
     getSupplyOrder(pin, orderId) {
@@ -56,8 +57,21 @@ class GameLogicDatabaseConnector extends database_1.default {
             }
         });
     }
+    getColors(pin, orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let query = { pin: parseInt(pin), _id: orderId };
+                let fields = { fields: { colors: 1, _id: 0 } };
+                let result = yield this.orderCollection.findOne(query, fields);
+                return yield result.colors;
+            }
+            catch (e) {
+                console.log(e);
+                return new Array();
+            }
+        });
+    }
     // this is used in the assembler stage
-    // this function basically does the same thing as addSupplyOrder
     updatePieces(pin, orderId, pieces) {
         if (pieces != null && pieces != undefined) {
             let time = new Date().getTime();

@@ -29,12 +29,18 @@ class GameLogicController {
             return yield this.db.getOrders(pin);
         });
     }
-    addSupplyOrder(pin, orderId, order) {
-        this.db.addSupplyOrder(pin, orderId, order);
+    addSupplyOrder(pin, orderId, order, colors) {
+        this.db.addSupplyOrder(pin, orderId, order, colors);
     }
     getSupplyOrder(pin, orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.db.getSupplyOrder(pin, orderId);
+        });
+    }
+    getColors(pin, orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = yield this.db.getColors(pin, orderId);
+            return result;
         });
     }
     updatePieces(pin, orderId, pieces) {

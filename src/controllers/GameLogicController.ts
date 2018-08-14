@@ -24,12 +24,17 @@ export class GameLogicController {
     return await this.db.getOrders(pin);
   }
 
-  public addSupplyOrder(pin: string, orderId: string, order: Array<number>): void {
-    this.db.addSupplyOrder(pin, orderId, order);
+  public addSupplyOrder(pin: string, orderId: string, order: Array<number>, colors: Array<string>): void {
+    this.db.addSupplyOrder(pin, orderId, order, colors);
   }
 
   public async getSupplyOrder(pin: string, orderId: string): Promise<Array<number>> {
     return await this.db.getSupplyOrder(pin, orderId);
+  }
+
+  public async getColors(pin: string, orderId: string): Promise<Array<any>> {
+    let result = await this.db.getColors(pin, orderId);
+    return result;
   }
 
   public updatePieces(pin: string, orderId: string, pieces: Array<number>): number {

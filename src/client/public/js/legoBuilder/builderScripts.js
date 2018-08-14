@@ -6,7 +6,7 @@ function loadRollOverMesh() {
   let index = allModels.indexOf(currentObj);
   loader.load(allModels[index].directory, function (geometry) {
     geometry.computeBoundingBox();
-    let material = new THREE.MeshPhongMaterial({ color: 0xC7C7C7, shininess: 30, specular: 0x111111 });
+    let material = new THREE.MeshPhongMaterial({ color: colors[index], shininess: 30, specular: 0x111111 });
     rollOverMesh = new THREE.Mesh(geometry, material);
     scene.add(rollOverMesh);
     rollOverMesh.scale.set(currentObj.scale, currentObj.scale, currentObj.scale);
@@ -135,7 +135,7 @@ function onDocumentMouseDown(event) {
           // I get this kind of shit when I forget to actually design some parts
           // It's also because some parts of JS can be "interesting"
           let index = names.indexOf(intersect.object.children[0].userData.modelType);
-          pieces[index] = pieces[index] + 1;
+          pieces[index] = parseInt(pieces[index]) + 1;
           // It's about as stupid as it looks
           // this is because the intersection object is the collision object
           group.remove(intersect.object.children[0]);
@@ -144,9 +144,12 @@ function onDocumentMouseDown(event) {
       }
     }
     else if (isShiftDown && pieces[pieceIndex] > 0) {
-      placeLego(intersect);
-      pieces[pieceIndex] = pieces[pieceIndex] - 1;
-      updatePieces();
+      placeLego(intersect, placement => {
+        if (placement) {
+          pieces[pieceIndex] = parseInt(pieces[pieceIndex]) - 1;
+          updatePieces();
+        }
+      });
     }
     render();
   }
@@ -164,9 +167,10 @@ function clearPreviousRollOverObject() {
 
 /**
  * Handles placing the object on the scene and creating the collision object
- * @param {THREE.Intersection} intersect 
+ * @param {THREE.Intersection} intersect
+ * @param {function} cb this is to return whether or not the object has been placed
  */
-function placeLego(intersect) {
+function placeLego(intersect, cb) {
   let placementPossible = true;
   let loader = new THREE.STLLoader();
   let index = allModels.indexOf(currentObj);
@@ -180,31 +184,38 @@ function placeLego(intersect) {
 
     if (intersect.object.name == 'plane') {
       //changeObjPosOnPlane(modelObj, intersect, size);
-      modelObj.position.copy(intersect.point).add(intersect.face.normal);
-      modelObj.position.y += determineModelYTranslation();
+      let mName = currentRollOverModel.split(' ');
+      if (mName[0] != 'Rim' && mName[0] != 'Tire') {
+        modelObj.position.copy(intersect.point).add(intersect.face.normal);
+        modelObj.position.y += determineModelYTranslation();
+      }
+      else {
+        placementPossible = false;
+      }
     }
     else {
       let dim = intersect.face.normal;
       dim.normalize();
       // TODO: THERE SEEMS TO BE A PROBLEM WITH A SLIGHTLY LOWER PLACEMENT THAN IT SHOULD BE
       let iName = intersect.object.userData.obj.name.split(' ');
-      let mName = modelObj.userData.modelType.split(' ');
-      mName = mName[0];
+      let mName = currentRollOverModel.split(' ');
 
       // this is lazy programming. i don't want to handle the array bounds
       // i did this all already in a better manner but it was lost with my desktop. RIP
-      if ((iName[1] == 'Pin' || iName[1] == 'Double' || iName[0] == 'Rim') && (mName == 'Rim' || mName == 'Tire')) {
+      if ((iName[1] == 'Pin' || iName[1] == 'Double' || iName[0] == 'Rim') && (mName[0] == 'Rim' || mName[0] == 'Tire')) {
         placementPossible = determineWheelPosition(modelObj, intersect, dim);
       }
       else {
         placementPossible = determineModelPosition(modelObj, intersect, size, dim);
       }
-    }    
+    }
 
     // If the piece can't be placed on another, I don't want it to create and add the modelObj to the scene
     if (placementPossible) {
       generateCollisionCube(modelObj, size);
     }
+
+    cb(placementPossible);
   });
 }
 
@@ -217,7 +228,7 @@ function placeLego(intersect) {
  */
 function generateObjFromModel(geometry, modelObj, size) {
   geometry.computeBoundingBox();
-  let material = new THREE.MeshPhongMaterial({color: 0xC7C7C7, shininess: 30, specular: 0x111111});
+  let material = new THREE.MeshPhongMaterial({color: colors[allModels.indexOf(currentObj)], shininess: 30, specular: 0x111111});
   modelObj.mesh = new THREE.Mesh(geometry, material);
   modelObj.mesh.rotation.x = rollOverMesh.rotation.x;
   modelObj.mesh.rotation.y = rollOverMesh.rotation.y;
@@ -255,19 +266,20 @@ function generateCollisionCube(modelObj, size) {
   let helper = new THREE.BoxHelper(cube, 0xff0000);
   helper.update();
   // visible bounding box
-  scene.add(helper);*/
+  scene.add(helper);
+  helper.name = modelObj.name + ".helper";
+  cube.children.push(helper);  
+  */
 
   // add names to all of the objects for debugging purposes
   modelObj.name = 'obj' + objects.length;
   cube.name = modelObj.name + '.collisionObj';
-  helper.name = modelObj.name + ".helper";
 
   cube.userData.dimensions = size;
   cube.userData.obj = currentObj;
   cube.userData.rotation = (modelObj.rotation.z / (Math.PI / 2)) % 4;
 
   cube.children.push(modelObj);
-  cube.children.push(helper);
   objects.push(modelObj);
 }
 
@@ -298,7 +310,12 @@ function determineModelPosition(modelObj, intersect, size, dim) {
     modelObj.position.z = rollPos.z;
   }
   else if (dim.y == 1 && collisionModel.top == 1) {
-    modelObj.position.y = currentObj.yTranslation ? rollPos.y : size.y + (size.y / 2) + interPos.y;
+    // i honestly don't remember why i need to do this
+    // stupid models are never consistent
+    if (currentObj.name == 'Steering Wheel')
+      modelObj.position.y = rollPos.y;
+    else
+      modelObj.position.y = currentObj.yTranslation ? rollPos.y : size.y + (size.y / 2) + interPos.y;
     modelObj.position.x = rollPos.x;
     modelObj.position.z = rollPos.z;
   }
@@ -350,12 +367,11 @@ function determineWheelPosition(modelObj, intersect, dim) {
   }
 
   if (typeColl[0] == 'Rim' && typeModel[0] == 'Tire' && typeColl[1] == typeModel[1]) {
-    return attachTireToRim(modelObj, intersect, size, dim)
+    return attachTireToRim(modelObj, intersect, dim);
   }
-  else {
-    scene.remove(modelObj);
-    return false;
-  };
+
+  scene.remove(modelObj);
+  return false;
 }
 
 function attachRimToPin(modelObj, intersect, dim) {
@@ -373,7 +389,7 @@ function attachRimToPin(modelObj, intersect, dim) {
   return true;
 }
 
-function attachTireToRim(modelObj, intersect, size, dim) {
+function attachTireToRim(modelObj, intersect, dim) {
   let collisionPos = intersect.object.position;
   if (Math.abs(dim.z) == 1 || Math.abs(dim.x) == 1) {
     modelObj.position.y = collisionPos.y;

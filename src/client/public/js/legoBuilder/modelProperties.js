@@ -57,9 +57,9 @@ const windshield = new Model('Windshield', '../objects/windshield.stl', 3, 1, 1,
 const steering = new Model('Steering Wheel', '../objects/steering.stl', 3, 0, 0, 1, 0, 0, 0, 0, 0, 5, 10);
 
 var allModels = [];
-allModels.push(lego_man);
 allModels.push(oneByOne);
 allModels.push(twoByTwo);
+allModels.push(twoByThreeByTwo);
 allModels.push(oneByTwoPin);
 allModels.push(twoByTwoPin);
 allModels.push(twoByTwoByTwoPin);
@@ -70,7 +70,6 @@ allModels.push(tire3);
 allModels.push(rim1);
 allModels.push(rim2);
 allModels.push(rim3);
-allModels.push(twoByThreeByTwo);
 allModels.push(oneByTwo);
 allModels.push(oneByFour);
 allModels.push(oneByTwoPlate);
@@ -79,3 +78,4 @@ allModels.push(sixByEightPlate);
 allModels.push(twoByTenPlate);
 allModels.push(windshield);
 allModels.push(steering);
+allModels.push(lego_man);

@@ -8,6 +8,7 @@ let pieceOrders = [];
 let manufacturingPieces = [];
 let orderInformation = {};
 let currentOrder = {};
+let colors = [];
 
 $(document).ready(() => {
   generateSupplyGrid();
@@ -24,24 +25,14 @@ function getPin() {
 }
 
 function initArray() {
-  for (let i = 0; i < names.length; i++) pieceOrders[i] = 0;
+  for (let i = 0; i < names.length; i++) {
+    pieceOrders[i] = 0; 
+    colors[i] = '#d0d3d4';
+  }
 }
 
 function initButtons() {
-  for (let i = 0; i < names.length; i++) {
-    let num = '#' + i;
-    $(num + '-plus').click(e => {
-      let currentNum = parseInt($(num + '-value').html());
-      $(num + '-value').html(currentNum < 10 ? ++currentNum : 10);
-      pieceOrders[i] = currentNum;
-    });
-    $(num + '-minus').click(e => {
-      let currentNum = parseInt($(num + '-value').html());
-      $(num + '-value').html(currentNum == 0 ? 0 : --currentNum);
-      pieceOrders[i] = currentNum;
-    });
-  }
-
+  initGridButtons();
   $('#left').click(e => {
     let index = orderInformation.indexOf(currentOrder);
     currentOrder = --index < 0 ? orderInformation[orderInformation.length - 1] : orderInformation[index];
@@ -65,6 +56,31 @@ function initButtons() {
   });
 }
 
+/**
+ * Refreshes the buttons when the supply grid gets regenerated
+ */
+function initGridButtons() {
+  for (let i = 0; i < names.length; i++) {
+    let num = '#' + i;
+    $(num + '-plus').click(e => {
+      let currentNum = parseInt($(num + '-value').html());
+      $(num + '-value').html(currentNum < 10 ? ++currentNum : 10);
+      pieceOrders[i] = currentNum;
+    });
+    $(num + '-minus').click(e => {
+      let currentNum = parseInt($(num + '-value').html());
+      $(num + '-value').html(currentNum == 0 ? 0 : --currentNum);
+      pieceOrders[i] = currentNum;
+    });
+
+    $('.' + i + '-picker').spectrum({
+      change: color => {
+        colors[i] = color.toHexString();;
+      }
+    });
+  }
+}
+
 // the supply order needs to match (it can have more pieces) the manufacturer order
 function checkSupplyMatchesManufacturer() {
   for (let i = 0; i < manufacturingPieces.length; i++) {
@@ -76,7 +92,8 @@ function checkSupplyMatchesManufacturer() {
 function sendSupplyOrder() {
   let postData = {
     "id": currentOrder._id,
-    "order": pieceOrders
+    "order": pieceOrders,
+    "colors": colors
   }
 
   $.ajax({
@@ -87,6 +104,7 @@ function sendSupplyOrder() {
       console.log('Order sent!');
       $('#ready-order').modal('toggle');
       generateSupplyGrid();
+      initGridButtons();
     },
     error: (xhr, status, error) => {
       console.log(error);
@@ -138,32 +156,34 @@ function removeOrdersAtManuf(orders) {
 /**
  * Because including other functions in es5 is shit,
  * I moved 3 functions to supplyGrid since the manufacturer.js also requires the same functions
+ * I ended up needing to change the function for the supplier.js lol 
+ * i still stand by my point that es5 sucks
  */
 
- function openManufacturingModal() {
+function openManufacturingModal() {
   if (manufacturingPieces.length == 0) 
     $('#no-request').modal('toggle');
   else 
     $('#ready-request').modal('toggle');
- }
+}
 
- function checkRequestedPieces() {
-   $.ajax({
-    type: 'GET',
-    url: 'http://localhost:3000/gameLogic/getManufacturerRequest/' + getPin() + '/' + currentOrder._id,
-    success: (data) => {
-      if (data.length != 0) {
-        manufacturingPieces = data;
-        populateRequestData(manufacturingPieces);
-      }
-    },
-    error: (xhr, status, error) => {
-      console.log(error);
+function checkRequestedPieces() {
+  $.ajax({
+  type: 'GET',
+  url: 'http://localhost:3000/gameLogic/getManufacturerRequest/' + getPin() + '/' + currentOrder._id,
+  success: (data) => {
+    if (data.length != 0) {
+      manufacturingPieces = data;
+      populateRequestData(manufacturingPieces);
     }
-   });
- }
+  },
+  error: (xhr, status, error) => {
+    console.log(error);
+  }
+  });
+}
 
- function populateRequestData(data) {
+function populateRequestData(data) {
   let html = "";
   data.forEach((elem, i) => {
     if (elem != 0) {
@@ -171,4 +191,60 @@ function removeOrdersAtManuf(orders) {
     }
   });
   $('#requested-pieces').html(html);
- }
+}
+
+ function openModal() {
+  if (jQuery.isEmptyObject(orderInformation)) {
+    $('#no-orders').modal('show');
+  }
+  else {
+    $('#ready-order').modal('show');
+  }
+}
+
+function updateOrder() {
+  switch(currentOrder.modelType) {
+    case 'super': $('#order-image').attr('src', '/../images/race.jpg');        break;
+    case 'race': $('#order-image').attr('src', '/../images/lego_car.jpg');     break;
+    case 'RC': $('#order-image').attr('src', '/../images/rc.jpg');             break;
+    case 'yellow': $('#order-image').attr('src', '/../images/yellow_car.jpg'); break;
+  }
+  let html = '<p>Date Ordered: ' + new Date(currentOrder.createDate).toString() + '</p>';
+  html += '<p>Last Modified: ' + new Date(currentOrder.lastModified).toString() + '</p>';
+  if (currentOrder.status === 'Completed')
+    html += '<p>Finished: ' + new Date(currentOrder.finishedTime).toString() + '</p>';
+  html += '<p>Model Type: ' + currentOrder.modelType + '</p>';
+  html += '<p>Stage: ' + currentOrder.stage + '</p>';
+  html += '<p>Status: ' + currentOrder.status + '</p><br>';
+  $('#order-info').html(html);
+}
+
+/**
+ * Dynamically generate all the squares to add to a supply order
+ * This would have been terrible to do by hand
+ */
+function generateSupplyGrid() {
+  let html = "";
+  for (let i = 0; i < names.length / 4; i++) {
+    html += '<div class="row">';
+    for (let j = 0; j < 4; j++) {
+      if (i * 4 + j < names.length) {
+        html += '<div class="four wide column">';
+        html += '<p>' + names[i * 4 + j] + '</p>';
+        // Start off each piece with an order of 0
+        html += '<div class="row"><div class="ui statistic"><div id="' + (i * 4 + j) + '-value' + '"class="value">0</div></div></div>'
+        // add a color picker to each item
+        html += '<div class="row picker"><input type="text" class="' + (i * 4 + j) + '-picker" value="#d0d3d4"/></div>'
+        // Adds the plus and minus buttons to each piece
+        html += '<div class="row"><div class="ui icon buttons">' +
+          '<button id="'+ (i * 4 + j) + '-minus' + '" class="ui button"><i class="minus icon"></i></button>' +
+          '<button id="'+ (i * 4 + j) + '-plus' + '" class="ui button"><i class="plus icon"></i></button></div></div></div>';
+      }
+    }
+    // I want there to be vertical lines between each cube so I need to add a blank space 
+    if (i + 1 >= names.length / 4) html += '<div class="five wide column"></div>';
+    html += '</div>';
+  }
+
+  $('#supply-grid').html(html);
+}
