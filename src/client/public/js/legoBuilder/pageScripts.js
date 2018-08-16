@@ -133,7 +133,7 @@ function sendGroup() {
   }
   exporter.parse(objects, gltf => {
     console.log(gltf);
-    let postData = {'model': gltf};
+    let postData = {'model': JSON.stringify(gltf)};
     
     $.ajax({
       type: 'POST',

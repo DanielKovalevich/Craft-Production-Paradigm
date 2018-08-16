@@ -153,8 +153,7 @@ function loadModel(modelData) {
     console.log(error);
   });*/
   var loader = new THREE.GLTFLoader();
-  let models = JSON.stringify(modelData);
-  loader.parse(models, '', data => {
+  loader.parse(modelData, '', data => {
     console.log(data);
     let elemsToAdd = [];
     data.scene.children.forEach(elem => {
