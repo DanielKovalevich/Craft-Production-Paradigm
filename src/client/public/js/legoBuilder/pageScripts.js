@@ -127,20 +127,36 @@ function removeOrdersAtManuf(orders) {
 }
 
 function sendGroup() {
-  let postData = {'model': group.toJSON()};
-  console.log(postData);
-  $.ajax({
-    type: 'POST',
-    data: postData,
-    timeout: 300000,
-    url: 'http://localhost:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
-    success: (data) => {
-      console.log(data);
-    },
-    error: (xhr, status, error) => {
-      console.log('Group Error: ' + error);
-    }
-  });
+  let exporter = new THREE.GLTFExporter();
+  let options = {
+    onlyVisible: false
+  }
+  exporter.parse(objects, gltf => {
+    console.log(gltf);
+    let postData = {'model': gltf};
+    
+    $.ajax({
+      type: 'POST',
+      data: postData,
+      timeout: 10000,
+      url: 'http://localhost:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
+      success: (data) => {
+        console.log(data);
+        let elemsToRemove = []
+        scene.children.forEach(elem => {
+          if (elem.type == 'Mesh' && elem.name != 'plane')
+            elemsToRemove.push(elem);
+        });
+      
+        elemsToRemove.forEach(elem => {
+          scene.remove(elem);
+        })
+      },
+      error: (xhr, status, error) => {
+        console.log('Group Error: ' + error);
+      }
+    });
+  }, options);
 }
 
 //======================================================================================================

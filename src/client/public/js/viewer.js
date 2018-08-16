@@ -138,12 +138,38 @@ function getAssembledModel() {
 }
 
 function loadModel(modelData) {
-  var loader = new THREE.ObjectLoader();
-  scene.add(loader.parse(modelData));
-  render();
-  setTimeout(() => {
-    $('#loading').modal('toggle');
-  }, 2000);
+  /*
+  var loader = new THREE.GLTFLoader();
+  console.log(modelData);
+  modelData = JSON.stringify(modelData);
+  loader.parse(modelData, '', models => {
+    console.log(models);
+    let obj = models.scene.children;
+    render();
+    setTimeout(() => {
+      $('#loading').modal('toggle');
+    }, 2000);
+  }, error => {
+    console.log(error);
+  });*/
+  var loader = new THREE.GLTFLoader();
+  let models = JSON.stringify(modelData);
+  loader.parse(models, '', data => {
+    console.log(data);
+    let elemsToAdd = [];
+    data.scene.children.forEach(elem => {
+      elemsToAdd.push(elem);
+    });
+
+    elemsToAdd.forEach(elem => {
+      scene.add(elem);
+    });
+
+    render();
+    setTimeout(() => {
+      $('#loading').modal('toggle');
+    }, 2000);
+  });
 }
 
 function initButtons() {
