@@ -18,11 +18,63 @@ class GameLogicController {
     constructor() {
         this.db = new GameLogicDatabaseConnector_1.GameLogicDatabaseConnector();
     }
-    placeOrder(pin, modelType) {
-        let order = new order_1.default(parseInt(pin));
-        order.setModelType(modelType);
-        order.setStage('Manufacturer');
-        this.db.addOrder(order.toJSON());
+    placeOrder(pin, modelType, generated, max, skew) {
+        if (generated) {
+            this.generateOrders(pin, max, skew);
+        }
+        else {
+            let order = new order_1.default(pin);
+            order.setModelType(modelType);
+            order.setStage('Manufacturer');
+            this.db.addOrder(order.toJSON());
+        }
+    }
+    generateOrders(pin, max, skew) {
+        for (let i = 0; i < max; i++) {
+            let order = new order_1.default(pin);
+            let type = '';
+            switch (Math.ceil(this.normalDistribution(skew))) {
+                case 1:
+                    type = 'super';
+                    break;
+                case 2:
+                    type = 'race';
+                    break;
+                case 3:
+                    type = 'RC';
+                    break;
+                case 4:
+                    type = 'yellow';
+                    break;
+            }
+            order.setModelType(type);
+            order.setStage('Manufacturer');
+            this.db.addOrder(order.toJSON());
+        }
+    }
+    /**
+     * Found on StackOverflow
+     * https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
+     * @param min
+     * @param max
+     * @param skew
+     */
+    normalDistribution(skew) {
+        const min = 0;
+        const max = 4;
+        var u = 0, v = 0;
+        while (u === 0)
+            u = Math.random(); //Converting [0,1) to (0,1)
+        while (v === 0)
+            v = Math.random();
+        let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        num = num / 10.0 + 0.5; // Translate to 0 -> 1
+        if (num > 1 || num < 0)
+            num = this.normalDistribution(skew); // resample between 0 and 1 if out of range
+        num = Math.pow(num, skew); // Skew
+        num *= max - min; // Stretch to fill range
+        num += min; // offset to min
+        return num;
     }
     getOrders(pin) {
         return __awaiter(this, void 0, void 0, function* () {

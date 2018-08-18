@@ -7,7 +7,7 @@ class Order {
         this.createDate = new Date().getTime();
         this.status = "In Progress";
         this.stage = "Manufacturer";
-        this.modelType = 1;
+        this.modelType = '';
         this.lastModified = this.createDate;
         this.finishedTime = -1;
         this.manufacturerReq = new Array();
