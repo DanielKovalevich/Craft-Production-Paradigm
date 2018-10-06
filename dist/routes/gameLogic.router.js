@@ -13,24 +13,32 @@ const GameLogicController_1 = require("../controllers/GameLogicController");
 const router = express_1.Router();
 const controller = new GameLogicController_1.GameLogicController();
 router.post('/sendOrder', (req, res) => {
-    controller.placeOrder(req.body.pin, req.body.model);
+    let pin = parseInt(req.body.pin);
+    let model = req.body.model;
+    let generated = req.body.generated;
+    let max = parseInt(req.body.max);
+    let skew = parseFloat(req.body.skew);
+    controller.placeOrder(pin, model, generated, max, skew);
     res.status(200).send('OK');
 });
 router.get('/getOrders/:id', (req, res) => __awaiter(this, void 0, void 0, function* () {
     res.send(yield controller.getOrders(req.params.id));
 }));
 router.post('/sendSupplyOrder/:id', (req, res) => {
-    controller.addSupplyOrder(req.params.id, req.body.id, req.body.order);
+    controller.addSupplyOrder(req.params.id, req.body.id, req.body.order, req.body.colors);
     res.status(200).send('OK');
 });
 router.get('/getSupplyOrder/:id/:orderId', (req, res) => __awaiter(this, void 0, void 0, function* () {
     res.send(yield controller.getSupplyOrder(req.params.id, req.params.orderId));
 }));
+router.get('/colors/:id/:orderId', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    let result = yield controller.getColors(req.params.id, req.params.orderId);
+    res.send(result);
+}));
 router.post('/updatePieces/:id/:orderId', (req, res) => {
     res.send(controller.updatePieces(req.params.id, req.params.orderId, req.body.pieces));
 });
 router.post('/sendAssembledModel/:id/:orderId', (req, res) => {
-    console.log(req.params.id, req.params.orderId);
     console.log('Assembled model has been sent');
     res.send(controller.updateAssembledModel(req.params.id, req.params.orderId, req.body.model));
 });

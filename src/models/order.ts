@@ -12,22 +12,24 @@ export default class Order {
   // 4 Stages of Production
   // Customer -> Manufacturer -> Supplier -> Assembler -> Customer
   private stage: string;
-  private modelType: number;
+  private modelType: string;
   private manufacturerReq: Array<number>;
   private supplyOrders: Array<number>;
   private assembledModel: object;
+  private colors: Array<any>;
   constructor(pin: number) {
     this.pin = pin;
     this._id = this.generateId();
     this.createDate = new Date().getTime();
     this.status = "In Progress";
     this.stage = "Manufacturer";
-    this.modelType = 1;
+    this.modelType = '';
     this.lastModified = this.createDate;
     this.finishedTime = -1;
     this.manufacturerReq = new Array<number>();
     this.supplyOrders = new Array<number>();
     this.assembledModel = {};
+    this.colors = new Array<any>();
   }
 
   private setLastModified(): void {
@@ -60,7 +62,7 @@ export default class Order {
     this.stage = stage;
   }
 
-  public setModelType(type: number): void {
+  public setModelType(type: string): void {
     this.setLastModified();
     this.modelType = type;
   }
@@ -78,6 +80,7 @@ export default class Order {
       "modelType": this.modelType,
       "manufacturerReq": this.manufacturerReq,
       "supplyOrders": this.supplyOrders,
+      "colors": this.colors,
       "assembledModel": this.assembledModel
     };
 

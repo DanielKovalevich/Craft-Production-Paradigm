@@ -1,5 +1,6 @@
 let orderInformation = {};
 let currentOrder = {};
+let generated = false;
 
 $(document).ready(() => {
   checkOrders();
@@ -33,6 +34,11 @@ function initButtons() {
   });
 
   $('.ok.button').click((e) => {
+    sendOrder();
+  });
+
+  $('#generate').click(e => {
+    generated = true;
     sendOrder();
   });
 
@@ -71,7 +77,14 @@ function changeCarType(number) {
 function sendOrder() {
   let pin = getPin();
   let type = $('#car-type').html();
-  let postData = {"pin": pin, "model": type};
+  let postData = {};
+  if (generated) {
+    let max = $('#num-orders').val();
+    max = max > 10 ? 10 : max < 1 ? 1 : max;
+    let skew = $('#skew').val();
+    postData = {"pin": pin, "model": type, "generated": generated, "max": max, "skew": skew}
+  }
+  else postData = {"pin": pin, "model": type, "generated": generated};
   $.ajax({
     type: 'POST',
     data: postData,
@@ -82,6 +95,7 @@ function sendOrder() {
       if ($('#order').hasClass('disabled')) {
         $('#order').removeClass('disabled');
       }
+      generated = false;
     },
     error: function(xhr,status,error) {
       console.log(error);
@@ -101,7 +115,8 @@ function checkOrders() {
     success: (data) => {
       orderInformation = data;
       if (orderInformation.length != 0) {
-        currentOrder = orderInformation[0];
+        if (currentOrder == null || jQuery.isEmptyObject(currentOrder))
+          currentOrder = orderInformation[0];
         updateOrder();
         $('#order').removeClass('disabled');
       }

@@ -7,12 +7,13 @@ class Order {
         this.createDate = new Date().getTime();
         this.status = "In Progress";
         this.stage = "Manufacturer";
-        this.modelType = 1;
+        this.modelType = '';
         this.lastModified = this.createDate;
         this.finishedTime = -1;
         this.manufacturerReq = new Array();
         this.supplyOrders = new Array();
         this.assembledModel = {};
+        this.colors = new Array();
     }
     setLastModified() {
         this.lastModified = new Date().getTime();
@@ -57,6 +58,7 @@ class Order {
             "modelType": this.modelType,
             "manufacturerReq": this.manufacturerReq,
             "supplyOrders": this.supplyOrders,
+            "colors": this.colors,
             "assembledModel": this.assembledModel
         };
         return jsonObj;

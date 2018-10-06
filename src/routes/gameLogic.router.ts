@@ -6,7 +6,12 @@ const router: Router = Router();
 const controller: GameLogicController = new GameLogicController();
 
 router.post('/sendOrder', (req: Request, res: Response) => {
-  controller.placeOrder(req.body.pin, req.body.model);
+  let pin: number = parseInt(req.body.pin);
+  let model: string = req.body.model;
+  let generated: boolean = req.body.generated;
+  let max: number = parseInt(req.body.max);
+  let skew: number = parseFloat(req.body.skew);
+  controller.placeOrder(pin, model, generated, max, skew);
   res.status(200).send('OK');
 });
 
@@ -15,7 +20,7 @@ router.get('/getOrders/:id', async (req: Request, res: Response) => {
 });
 
 router.post('/sendSupplyOrder/:id', (req: Request, res: Response) => {
-  controller.addSupplyOrder(req.params.id, req.body.id, req.body.order);
+  controller.addSupplyOrder(req.params.id, req.body.id, req.body.order, req.body.colors);
   res.status(200).send('OK');
 });
 
@@ -23,12 +28,16 @@ router.get('/getSupplyOrder/:id/:orderId', async (req: Request, res: Response) =
   res.send(await controller.getSupplyOrder(req.params.id, req.params.orderId));
 });
 
+router.get('/colors/:id/:orderId', async(req: Request, res: Response) => {
+  let result = await controller.getColors(req.params.id, req.params.orderId);
+  res.send(result);
+});
+
 router.post('/updatePieces/:id/:orderId', (req: Request, res: Response) => {
   res.send(controller.updatePieces(req.params.id, req.params.orderId, req.body.pieces));
 });
 
 router.post('/sendAssembledModel/:id/:orderId', (req: Request, res: Response) => {
-  console.log(req.params.id, req.params.orderId);
   console.log('Assembled model has been sent');
   res.send(controller.updateAssembledModel(req.params.id, req.params.orderId, req.body.model));
 });
