@@ -53,6 +53,7 @@ export class GameLogicDatabaseConnector extends DatabaseConnector {
       let query = {pin: parseInt(pin), _id: orderId};
       let fields = {fields: {colors: 1, _id: 0}}
       let result = await this.orderCollection.findOne(query, fields);
+      if (await result == null) return await result;
       return await result.colors;
     } catch(e) {
       console.log(e);

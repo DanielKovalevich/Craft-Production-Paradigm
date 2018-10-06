@@ -19,7 +19,7 @@ class GameLogicController {
         this.db = new GameLogicDatabaseConnector_1.GameLogicDatabaseConnector();
     }
     placeOrder(pin, modelType, generated, max, skew) {
-        if (generated) {
+        if (generated == true) {
             this.generateOrders(pin, max, skew);
         }
         else {

@@ -14,7 +14,7 @@ export class GameLogicController {
   }
 
   public placeOrder(pin: number, modelType: string, generated: boolean, max: number, skew: number): void {
-    if (generated) {
+    if (generated == true) {
       this.generateOrders(pin, max, skew);
     }
     else {

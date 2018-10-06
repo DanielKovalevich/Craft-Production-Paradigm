@@ -63,6 +63,8 @@ class GameLogicDatabaseConnector extends database_1.default {
                 let query = { pin: parseInt(pin), _id: orderId };
                 let fields = { fields: { colors: 1, _id: 0 } };
                 let result = yield this.orderCollection.findOne(query, fields);
+                if ((yield result) == null)
+                    return yield result;
                 return yield result.colors;
             }
             catch (e) {
