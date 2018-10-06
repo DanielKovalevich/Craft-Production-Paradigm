@@ -15,7 +15,7 @@ function closingCode() {
   $.ajax({
     type: 'GET',
     timeout: 5000,
-    url: 'http://psu-research-api:3000/startGame/removeActivePlayer/' + pin,
+    url: 'https://psu-research-api.herokuapp.com/startGame/removeActivePlayer/' + pin,
     error: (error) => console.log(error)
   });
   return "Are you sure you want to close?";
@@ -54,7 +54,7 @@ function initProgressAndButtons() {
     $.ajax({
       type: 'GET',
       timeout: 5000,
-      url: 'http://psu-research-api:3000/startGame/removeActivePlayer/' + pin + '/' + sessionStorage.position,
+      url: 'https://psu-research-api.herokuapp.com/startGame/removeActivePlayer/' + pin + '/' + sessionStorage.position,
       success: (result) => window.location.href = '/',
       error: (error) => console.log(error)
     });
@@ -65,7 +65,7 @@ function initProgressAndButtons() {
 function getGameInfo() {
   $.ajax({
     type: 'GET',
-    url: 'http://psu-research-api:3000/startGame/getGameInfo/' + pin,
+    url: 'https://psu-research-api.herokuapp.com/startGame/getGameInfo/' + pin,
     timeout: 5000,
     success: (result) => {
       applyGameInfo(result[0]);

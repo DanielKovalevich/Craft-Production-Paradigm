@@ -65,7 +65,7 @@ function initButtons() {
 function checkOrders() {
   $.ajax({
     type: 'GET',
-    url: 'http://psu-research-api:3000/gameLogic/getOrders/' + getPin(),
+    url: 'https://psu-research-api.herokuapp.com/gameLogic/getOrders/' + getPin(),
     cache: false,
     timeout: 5000,
     success: (data) => {
@@ -94,7 +94,7 @@ function sendPiecesOrder() {
   $.ajax({
     type: 'POST',
     data: postData,
-    url: 'http://psu-research-api:3000/gameLogic/updateManufacturerRequest/' + getPin() + '/' + currentOrder._id,
+    url: 'https://psu-research-api.herokuapp.com/gameLogic/updateManufacturerRequest/' + getPin() + '/' + currentOrder._id,
     success: (data) => {
       generateSupplyGrid();
       initButtons();
