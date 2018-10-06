@@ -89,7 +89,7 @@ function sendOrder() {
     type: 'POST',
     data: postData,
     timeout: 5000,
-    url: 'http://localhost:3000/gameLogic/sendOrder',
+    url: 'http://psu-research-api:3000/gameLogic/sendOrder',
     success: function(result) {
       //window.location.href = '/startGame/' + result.pin;
       if ($('#order').hasClass('disabled')) {
@@ -109,7 +109,7 @@ function sendOrder() {
 function checkOrders() {
   $.ajax({
     type: 'GET',
-    url: 'http://localhost:3000/gameLogic/getOrders/' + getPin(),
+    url: 'http://psu-research-api:3000/gameLogic/getOrders/' + getPin(),
     cache: false,
     timeout: 5000,
     success: (data) => {

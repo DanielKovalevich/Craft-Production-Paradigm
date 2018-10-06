@@ -19,5 +19,5 @@ app.use('/manufacturer', manufacturerRouter);
 app.use('/viewer', viewerRouter);
 
 app.listen(port, () => {
-    console.log(`Listening at http://localhost:${port}/`);
+    console.log(`Listening at http://psu-research-api:${port}/`);
 });
