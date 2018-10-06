@@ -11,14 +11,10 @@ class App {
         this.setRoutes();
     }
     config() {
-<<<<<<< HEAD
         /*this.app.use((req, res, next) => {
           res.setHeader('Access-Control-Allow-Origin', '*');
         }),*/
         this.app.use(cors({ origin: 'http://psu-research-api.herokuapp.com' }));
-=======
-        this.app.use(cors({ origin: 'http://psu-research.herokuapp.com' }));
->>>>>>> 04639062d1c1498972691bdda69874280684d34f
         this.app.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
