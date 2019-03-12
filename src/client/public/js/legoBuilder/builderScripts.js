@@ -216,6 +216,18 @@ function placeLego(intersect, cb) {
     }
 
     cb(placementPossible);
+
+      /**POSITIONAL SNAPPING FOR LEGO PLACEMENTS*/
+      let bSize = modelObj.width;
+      let x = modelObj.position.x;
+      let y = modelObj.position.y;
+      if((x % bSize) < (.5*bSize)){
+          modelObj.position.x = x-(x%bSize);
+      }
+      else if((x % bSize) > (.5*bSize)){
+          modelObj.position.x = x+(x%bSize);
+      }
+      /**end of positional snapping algorithm*/
   });
 }
 
