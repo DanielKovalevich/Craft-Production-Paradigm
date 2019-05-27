@@ -61,7 +61,7 @@ function sendToServer(postData) {
     dataType: 'json',
     contentType: 'application/json',
     timeout: 5000,
-    url: 'http://psu-research-api:3000/startGame', 
+    url: GameAPI.rootURL + '/startGame',
     success: function(result) {
       window.location.href = '/startGame/' + result.pin;
     },
@@ -78,7 +78,7 @@ function checkIfPinIsValid() {
   $.ajax({
     type: 'GET',
     cache: false,
-    url: 'http://psu-research-api:3000/startGame/checkIfPinExists/' + pin,
+    url: GameAPI.rootURL + '/startGame/checkIfPinExists/' + pin,
     success: (result) => {
       if (result) {
         $('.invalid-pin').addClass('hidden');
@@ -109,7 +109,7 @@ function getPossiblePositions(pin) {
   $.ajax({
     type: 'GET',
     cache: false,
-    url: 'http://psu-research-api:3000/startGame/getPossiblePositions/' + pin,
+    url: GameAPI.rootURL + '/startGame/getPossiblePositions/' + pin,
     success: (result) => {
       if (result.length == 0) {
         $('.invalid-pin').removeClass('hidden');
@@ -171,7 +171,7 @@ function joinGame(pin, position) {
   $.ajax({
     type: 'POST',
     data: postData,
-    url: 'http://psu-research-api:3000/startGame/joinGame/' + pin,
+    url: GameAPI.rootURL + '/startGame/joinGame/' + pin,
     timeout: 5000,
     success: () => {
       sessionStorage.position = position;
@@ -192,7 +192,7 @@ function updateActivePlayers(pin) {
   $.ajax({
     type: 'GET',
     timeout: 5000,
-    url: 'http://psu-research-api:3000/startGame/addActivePlayer/' + pin,
+    url: GameAPI.rootURL + '/startGame/addActivePlayer/' + pin,
     success: (result) => window.location.href = '/startGame/' + pin,
     error: (error) => console.log(error)
   });
