@@ -1,3 +1,3 @@
 const GameAPI = {
-  rootURL: 'http://localhost:3000'
+  rootURL: 'https://lean-simulation-game-api.herokuapp.com'
 };
