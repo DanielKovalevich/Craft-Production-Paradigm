@@ -71,3 +71,6 @@ semantic/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+#JetBrains WebStorm files
+.idea

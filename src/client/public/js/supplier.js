@@ -99,7 +99,7 @@ function sendSupplyOrder() {
   $.ajax({
     type: 'POST',
     data: postData,
-    url: 'http://psu-research-api:3000/gameLogic/sendSupplyOrder/' + getPin(),
+    url: GameAPI.rootURL + '/gameLogic/sendSupplyOrder/' + getPin(),
     success: (data) => {
       console.log('Order sent!');
       $('#ready-order').modal('toggle');
@@ -118,7 +118,7 @@ function sendSupplyOrder() {
 function checkOrders() {
   $.ajax({
     type: 'GET',
-    url: 'http://psu-research-api:3000/gameLogic/getOrders/' + getPin(),
+    url: GameAPI.rootURL + '/gameLogic/getOrders/' + getPin(),
     cache: false,
     timeout: 5000,
     success: (data) => {
@@ -170,7 +170,7 @@ function openManufacturingModal() {
 function checkRequestedPieces() {
   $.ajax({
   type: 'GET',
-  url: 'http://psu-research-api:3000/gameLogic/getManufacturerRequest/' + getPin() + '/' + currentOrder._id,
+  url: GameAPI.rootURL + '/gameLogic/getManufacturerRequest/' + getPin() + '/' + currentOrder._id,
   success: (data) => {
     if (data.length != 0) {
       manufacturingPieces = data;

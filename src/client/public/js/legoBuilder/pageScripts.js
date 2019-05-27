@@ -92,7 +92,7 @@ function updateOrder() {
 function checkOrders() {
   $.ajax({
     type: 'GET',
-    url: 'http://psu-research-api:3000/gameLogic/getOrders/' + getPin(),
+    url: GameAPI.rootURL + '/gameLogic/getOrders/' + getPin(),
     timeout: 30000,
     success: (data) => {
       orderInformation = data;
@@ -139,7 +139,7 @@ function sendGroup() {
       type: 'POST',
       data: postData,
       timeout: 10000,
-      url: 'http://psu-research-api:3000/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
+      url: GameAPI.rootURL + '/gameLogic/sendAssembledModel/' + getPin() + '/' + currentOrder._id,
       success: (data) => {
         console.log(data);
         let elemsToRemove = []
@@ -167,7 +167,7 @@ function checkPieces() {
   $.ajax({
     type: 'GET',
     cache: 'false',
-    url: 'http://psu-research-api:3000/gameLogic/getSupplyOrder/' + getPin() + '/' + currentOrder._id,
+    url: GameAPI.rootURL + '/gameLogic/getSupplyOrder/' + getPin() + '/' + currentOrder._id,
     timeout: 5000,
     success: (data) => {
       if (data != null && data != undefined && data != "") {
@@ -215,7 +215,7 @@ function updatePieces() {
     $.ajax({
       type: 'POST',
       data: postData,
-      url: 'http://psu-research-api:3000/gameLogic/updatePieces/' + getPin() + '/' + currentOrder._id,
+      url: GameAPI.rootURL + '/gameLogic/updatePieces/' + getPin() + '/' + currentOrder._id,
       success: (data) => {
         //console.log(data);
         checkPieces();
@@ -242,7 +242,7 @@ function initSupplyButtons() {
 function getColors() {
   $.ajax({
     type: 'GET',
-    url: 'http://psu-research-api:3000/gameLogic/colors/' + getPin() + '/' + currentOrder._id,
+    url: GameAPI.rootURL + '/gameLogic/colors/' + getPin() + '/' + currentOrder._id,
     success: data => {
       colors = data;
     },

@@ -16,9 +16,9 @@ class App {
     /*this.app.use((req, res, next) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
     }),*/
-    this.app.use(cors({origin: 'http://psu-research-api.herokuapp.com'}));
+    this.app.use(cors({origin: '*'}));
     this.app.use((req, res, next) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
+      // res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
       res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
       res.setHeader('Access-Control-Allow-Credentials', 'true');
