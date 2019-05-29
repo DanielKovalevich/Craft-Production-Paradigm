@@ -11,7 +11,7 @@ export default class DatabaseConnector {
     else 
       this.url = 'mongodb://localhost/local';
     console.log(this.url);
-    mongoose.connect(this.url,{useNewUrlParser:true}).catch((e) => {
+    mongoose.connect(this.url).catch((e) => {
       console.log(e);
     });
     this.db = mongoose.connection;
