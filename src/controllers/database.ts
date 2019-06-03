@@ -7,7 +7,7 @@ export default class DatabaseConnector {
   protected url: string;
   constructor() {
     if (process.env.NODE_ENV == 'production')
-      this.url = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_HOST;
+      this.url = 'mongodb+srv://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_HOST;
     else 
       this.url = 'mongodb://localhost/local';
     console.log(this.url);
