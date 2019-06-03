@@ -60,6 +60,28 @@ function initButtons() {
  * Refreshes the buttons when the supply grid gets regenerated
  */
 function initGridButtons() {
+  const STANDARD_LEGO_COLORS = [
+    ["#f5cd2f" /* 24, Bright yellow */, "#fdea8c" /* 226, Cool yellow */],
+    ["#da8540" /* 106, Bright orange */, "#e8ab2d" /* 191, Flame yellowish orange */],
+    ["#c4281b" /* 21, Bright red */, "#7b2e2f" /* 154, Dark red */],
+    ["#cd6298" /* 221, Bright purple */, "#e4adc8" /* 222, Light purple */, "#923978" /* 124, Bright reddish violet */,
+      "#342b75" /* 268, Medium lilac */],
+    ["#0d69ab" /* 23, Bright blue */, "#9fc3e9" /* 212, Light Royal blue */, "#6e99c9" /* 102, Medium blue */,
+      "#203a56" /* 140, Earth blue */],
+    ["#74869c" /* 135, Sand blue */],
+    ["#287f46" /* 28, Dark green */, "#4b974a" /* 37, Bright green */, "#789081" /* 151, Sand green */,
+      "#27462c" /* 141, Earth green */],
+    ["#a4bd46" /* 119, Br. yellowish green */],
+    ["#694027" /* 192, Reddish brown */, "#d7c599" /* 5, Brick yellow */, "#958a73" /* 138, Sand yellow */,
+      "#330000" /* 308, Dark brown */ ],
+    ["#e78b3e" /* 312, Medium nougat */, "#cc8e68" /* 18, Nougat */, "#f5c189" /* 283, Light nougat */,
+      "#a05f34" /* 38, Dark orange */],
+    ["#f2f3f2" /* 1, White */, "#e5e4de" /* 208, Light stone grey */, "#a3a2a4" /* 194, Medium stone grey */,
+      "#635f61" /* 199, Dark stone grey */],
+    ["#1b2a34" /* 26, Black */]
+  ]; // Based on http://www.brothers-brick.com/downloads/2010-LEGO-color-palette.pdf, with color values generated from
+     // http://www.peeron.com/cgi-bin/invcgis/colorguide.cgi.
+
   for (let i = 0; i < names.length; i++) {
     let num = '#' + i;
     $(num + '-plus').click(e => {
@@ -74,6 +96,10 @@ function initGridButtons() {
     });
 
     $('.' + i + '-picker').spectrum({
+      showPalette: true,
+      showPaletteOnly: true,
+      palette: STANDARD_LEGO_COLORS,
+      color: "#a3a2a4" /* 194, Medium stone grey */,
       change: color => {
         colors[i] = color.toHexString();;
       }
